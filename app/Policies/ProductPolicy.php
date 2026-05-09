@@ -31,17 +31,17 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin' || $user->role === 'gerente';
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
     }
 
     public function update(User $user, ?Product $product = null): bool
     {
-        return $user->role === 'admin' || $user->role === 'gerente';
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
     }
 
     public function delete(User $user, ?Product $product = null): bool
     {
-        return $user->role === 'admin' || $user->role === 'gerente';
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
     }
 
     /**
@@ -49,11 +49,11 @@ class ProductPolicy
      */
     public function restore(User $user, ?Product $product = null): bool
     {
-        return $user->role === 'admin' || $user->role === 'gerente';
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
     }
 
     public function forceDelete(User $user, ?Product $product = null): bool
     {
-        return $user->role === 'admin' || $user->role === 'gerente';
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
     }
 }
