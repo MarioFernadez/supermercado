@@ -1,0 +1,27 @@
+﻿
+   FAIL  Tests\Feature\MultiplePaymentTest
+  Ô¿» can procesÔÇª 7.25s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+  ÔÇª   QueryException   
+  SQLSTATE[HY000]: General error: 1364 Field 'sku' doesn't have a default value (Connection: mysql, SQL: insert into `products` (`name`, `price_sale`, `stock`, `manage_stock`, `is_active`, `unit_type`, `price_cost`, `id`, `updated_at`, `created_at`) values (Producto Test, 100000, 10, 1, 1, unit, 50000, a11f019e-3e65-4031-9860-62a60e0d5840, 2026-02-19 20:57:12, 2026-02-19 20:57:12))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò 
+  Ô×£ 829Ôûò             throw new QueryException(
+    830Ôûò                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    831Ôûò             );
+    832Ôûò         }
+    833Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+
+  2   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:45
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[HY000]: General error: 1364 Field 'sku' doesn't have a default value")
+
+
+  Tests:    1 failed (0 assertions)
+  Duration: 7.46s
+

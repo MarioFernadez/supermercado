@@ -1,0 +1,54 @@
+<x-guest-layout>
+    <x-authentication-card>
+        <div class="mb-8 text-center sm:mb-6">
+            <h1 class="text-3xl font-black text-gray-900 dark:text-gray-100 sm:text-2xl uppercase tracking-tighter">
+                Bienvenido a <span class="text-green-500">ZonaPOS</span>
+            </h1>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                Ingresa tus credenciales para acceder
+            </p>
+        </div>
+
+        <x-validation-errors class="mb-4" />
+
+        @if (session('status'))
+            <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
+            <div>
+                <x-label for="email" value="{{ __('Usuario / Email') }}" class="font-bold text-xs uppercase tracking-widest text-gray-400" />
+                <x-input id="email" class="block mt-1 w-full py-3 sm:py-2 px-4 rounded-xl border-gray-200 focus:ring-green-500" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            </div>
+
+            <div class="mt-5">
+                <x-label for="password" value="{{ __('Contraseña') }}" class="font-bold text-xs uppercase tracking-widest text-gray-400" />
+                <x-input id="password" class="block mt-1 w-full py-3 sm:py-2 px-4 rounded-xl border-gray-200 focus:ring-green-500" type="password" name="password" required autocomplete="current-password" />
+            </div>
+
+            <div class="block mt-4">
+                <label for="remember_me" class="flex items-center">
+                    <x-checkbox id="remember_me" name="remember" />
+                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Recordarme') }}</span>
+                </label>
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" class="w-full justify-center inline-flex items-center px-4 py-4 sm:py-2 bg-green-500 border border-transparent rounded-xl sm:rounded-md font-black text-sm text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-lg shadow-green-500/30 transition ease-in-out duration-150">
+                    {{ __('Iniciar Sesión') }}
+                </button>
+            </div>
+            
+            <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
+                ZonaPOS® es un producto digital desarrollado por <a href="https://soteweb.com" target="_blank" class="text-green-500 hover:text-green-600 font-bold hover:underline">Soteweb Tecnología</a>
+                <div class="mt-2 flex justify-center items-center gap-1">
+                    Made in <img src="https://flagcdn.com/w20/py.png" srcset="https://flagcdn.com/w40/py.png 2x" width="20" alt="Paraguay">
+                </div>
+            </div>
+        </form>
+    </x-authentication-card>
+</x-guest-layout>

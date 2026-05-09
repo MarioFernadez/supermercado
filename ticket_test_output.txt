@@ -1,0 +1,27 @@
+﻿
+   FAIL  Tests\Feature\TicketTest
+  Ô¿» ticket shoÔÇª 7.41s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+  ÔÇª   QueryException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cost' in 'field list' (Connection: mysql, SQL: insert into `products` (`name`, `sku`, `price_sale`, `cost`, `stock`, `min_stock`, `manage_stock`, `is_active`, `unit_type`, `price_cost`, `id`, `updated_at`, `created_at`) values (Producto Test, TEST-001, 100000, 50000, 10, 5, 1, 1, unit, 50000, a11f0479-2aa7-4d41-89bb-8b544257b160, 2026-02-19 21:05:11, 2026-02-19 21:05:11))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò 
+  Ô×£ 829Ôûò             throw new QueryException(
+    830Ôûò                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    831Ôûò             );
+    832Ôûò         }
+    833Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+
+  2   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:39
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cost' in 'field list'")
+
+
+  Tests:    1 failed (0 assertions)
+  Duration: 7.62s
+
