@@ -99,12 +99,9 @@
 
                                 <x-slot name="content">
                                     <x-dropdown-link href="{{ route('expenses.index') }}">
-                                        {{ __('Gastos') }}
-                                    </x-dropdown-link>
-                                    <x-dropdown-link href="{{ route('expenses.categories.index') }}">
-                                        {{ __('Categorías de Gastos') }}
-                                    </x-dropdown-link>
-                                    <div class="border-t border-gray-100 dark:border-gray-600"></div>
+                                         {{ __('Gastos') }}
+                                     </x-dropdown-link>
+                                     <div class="border-t border-gray-100 dark:border-gray-600"></div>
                                     <x-dropdown-link href="{{ route('reports.cash') }}">
                                         {{ __('Sesiones de Caja') }}
                                     </x-dropdown-link>
@@ -335,9 +332,6 @@
                 <div class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-widest bg-gray-50 dark:bg-gray-900/50 mt-2">Finanzas</div>
                 <x-responsive-nav-link href="{{ route('expenses.index') }}" :active="request()->routeIs('expenses.index')">
                     {{ __('Gastos') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('expenses.categories.index') }}" :active="request()->routeIs('expenses.categories.index')">
-                    {{ __('Categorías de Gastos') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('reports.cash') }}" :active="request()->routeIs('reports.cash')">
                     {{ __('Sesiones de Caja') }}
