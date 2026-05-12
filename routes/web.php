@@ -59,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/saldos-clientes', \App\Livewire\Reports\Debtors::class)->name('reports.debtors');
         Route::get('/reports/utilidad-real', \App\Livewire\Reports\Profit::class)->name('reports.profit');
         Route::get('/expenses', \App\Livewire\Expenses\Index::class)->name('expenses.index');
+        Route::get('/expenses/categories', \App\Livewire\Expenses\Categories::class)->name('expenses.categories.index');
     });
 
     // Admin-Only Routes (system config)
