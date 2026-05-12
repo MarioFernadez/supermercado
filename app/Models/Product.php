@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Product extends Model
 {
     use HasFactory, HasUuidV7, HasPygFormatting, \App\Traits\Searchable;
+    
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',

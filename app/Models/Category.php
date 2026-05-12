@@ -10,6 +10,9 @@ class Category extends Model
 {
     use HasFactory, HasUuidV7, \App\Traits\Searchable;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'name',
         'slug',
