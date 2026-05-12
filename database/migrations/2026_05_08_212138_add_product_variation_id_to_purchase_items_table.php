@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('purchase_items', function (Blueprint $table) {
-            $table->foreignUuid('product_variation_id')->nullable()->after('product_id')->constrained()->nullOnDelete();
-        });
+        if (!Schema::hasColumn('purchase_items', 'product_variation_id')) {
+            Schema::table('purchase_items', function (Blueprint $table) {
+                $table->foreignUuid('product_variation_id')->nullable()->after('product_id')->constrained()->nullOnDelete();
+            });
+        }
     }
 
     /**

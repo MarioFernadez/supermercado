@@ -436,6 +436,21 @@
                     </div>
 
                     <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Categoría (Opcional)</label>
+                            <a href="{{ route('settings.cash-movement-categories') }}" target="_blank" class="text-[9px] text-indigo-600 hover:underline font-bold uppercase tracking-widest">
+                                ⚙️ Gestionar
+                            </a>
+                        </div>
+                        <select wire:model="movementCategory" class="shadow-sm border border-gray-200 rounded-2xl w-full py-2.5 px-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                            <option value="">Sin categoría</option>
+                            @foreach($movementCategories as $cat)
+                                <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Descripción / Concepto</label>
                         <textarea wire:model="movementDescription" class="shadow-sm border border-gray-200 rounded-2xl w-full py-3 px-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" rows="2" placeholder="Ej: Pago de flete, aporte de socio..."></textarea>
                     </div>

@@ -174,9 +174,9 @@
                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Método de Pago</label>
                         <select wire:model="form.payment_method" class="w-full border-gray-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition text-sm font-bold">
                             <option value="efectivo">Efectivo (Sale de Caja)</option>
-                            <option value="transferencia">Transferencia</option>
-                            <option value="tarjeta">Tarjeta</option>
-                            <option value="qr">QR / Billetera</option>
+                            @foreach($paymentMethods as $pm)
+                                <option value="{{ $pm->name }}">{{ $pm->name }}</option>
+                            @endforeach
                         </select>
                         @error('form.payment_method') <span class="text-red-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</span> @enderror
                     </div>

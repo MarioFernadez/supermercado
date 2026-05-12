@@ -225,7 +225,7 @@
                 </div>
             </form>
 
-             @if (session()->has('message'))
+            @if (session()->has('message'))
                 <div class="mt-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm flex items-center" role="alert">
                     <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     <div>
@@ -234,6 +234,22 @@
                     </div>
                 </div>
             @endif
+        </div>
+
+        <div class="border-t border-gray-200 mb-10"></div>
+
+        <!-- Section: Métodos de Pago Dinámicos -->
+        <div class="mb-6 flex justify-between items-end">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900 uppercase tracking-tight font-black">Métodos de Pago</h3>
+                <p class="mt-1 text-sm text-gray-600 font-medium">
+                    Gestiona las opciones de pago disponibles en el POS y Gastos.
+                </p>
+            </div>
+            <a href="{{ route('settings.payment-methods') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-lg text-xs uppercase tracking-widest flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Configurar Métodos
+            </a>
         </div>
 
         <div class="border-t border-gray-200 mb-10"></div>

@@ -22,6 +22,7 @@ class SessionManager extends Component
     public $movementAmount = '';
     public $movementDescription = '';
     public $movementType = 'in'; // 'in' or 'out'
+    public $movementCategory = '';
     public $movementModal = false;
 
 
@@ -172,6 +173,7 @@ class SessionManager extends Component
         $this->currentSession->movements()->create([
             'type' => $this->movementType,
             'amount' => $amount,
+            'category' => $this->movementCategory ?: null,
             'description' => $this->movementDescription,
             'user_id' => Auth::id()
         ]);
@@ -217,8 +219,16 @@ class SessionManager extends Component
 
     public function render()
     {
+        $movementCategories = \App\Models\CashMovementCategory::where('is_active', true)
+            ->where(function($q) {
+                $q->where('type', $this->movementType == 'in' ? 'income' : 'expense')
+                  ->orWhere('type', 'both');
+            })
+            ->get();
+
         return view('livewire.cash.session-manager', [
             'allSessions' => auth()->user()->can('admin') ? $this->allSessions : collect(),
+            'movementCategories' => $movementCategories,
         ])->layout('layouts.app');
     }
 }

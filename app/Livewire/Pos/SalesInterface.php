@@ -113,6 +113,15 @@ class SalesInterface extends Component
 
         $this->discountProductEnabled = $settings->get('discount_product_enabled', '0') === '1';
         $this->discountManualEnabled  = $settings->get('discount_manual_enabled', '0') === '1';
+
+        $this->loadPaymentMethods();
+    }
+
+    public function loadPaymentMethods()
+    {
+        $this->paymentMethods = \App\Models\PaymentMethod::where('is_active', true)
+            ->orderBy('name')
+            ->get();
     }
 
     public function render()
@@ -134,7 +143,12 @@ class SalesInterface extends Component
         return view('livewire.pos.sales-interface', [
             'products' => $products,
             'categories' => $categories,
-            'movementCategories' => \App\Models\CashMovement::CATEGORIES,
+            'movementCategories' => \App\Models\CashMovementCategory::where('is_active', true)
+                ->where(function($q) {
+                    $q->where('type', $this->movementType == 'in' ? 'income' : 'expense')
+                      ->orWhere('type', 'both');
+                })
+                ->get(),
             'pendingWebOrdersCount' => \App\Models\WebOrder::whereIn('status', ['Pendiente WhatsApp', 'Atendido'])->count()
         ])->layout('layouts.pos');
     }
@@ -602,6 +616,8 @@ class SalesInterface extends Component
         'due_date' => '',
     ];
 
+    public $paymentMethods = [];
+
     // Seller
     public $sellerId = null;
     public $sellerOptions = [];
@@ -626,12 +642,10 @@ class SalesInterface extends Component
         $this->showPaymentModal = true;
         
         // Initialize multiple payments
-        $this->multiplePayments = [
-            'efectivo' => 0,
-            'tarjeta' => 0,
-            'transferencia' => 0,
-            'qr' => 0
-        ];
+        $this->multiplePayments = ['efectivo' => 0];
+        foreach($this->paymentMethods as $pm) {
+            $this->multiplePayments[$pm->name] = 0;
+        }
         $this->chequeDetails = [
             'bank_name' => '',
             'cheque_number' => '',
@@ -658,10 +672,10 @@ class SalesInterface extends Component
         if ($this->paymentMethod === 'multiple') {
             $this->receivedAmount = 0;
             // Maybe initialize with total in cash?
-            $this->multiplePayments['efectivo'] = $this->total; 
-            $this->multiplePayments['tarjeta'] = 0;
-            $this->multiplePayments['transferencia'] = 0;
-            $this->multiplePayments['qr'] = 0;
+            $this->multiplePayments = ['efectivo' => $this->total]; 
+            foreach($this->paymentMethods as $pm) {
+                $this->multiplePayments[$pm->name] = 0;
+            }
         } elseif ($this->paymentMethod === 'cheque') {
             // For cheque, we usually don't need 'receivedAmount' behavior like cash change
             // But we do need to set it to total so validation passes (received >= total)

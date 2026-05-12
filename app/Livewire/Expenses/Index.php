@@ -53,9 +53,12 @@ class Index extends Component
             ->when($this->categoryId, fn($q) => $q->where('expense_category_id', $this->categoryId))
             ->sum('amount');
 
+        $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->orderBy('name')->get();
+
         return view('livewire.expenses.index', [
             'expenses' => $expenses,
             'categories' => $categories,
+            'paymentMethods' => $paymentMethods,
             'totalPeriod' => $totalPeriod
         ])->layout('layouts.app');
     }

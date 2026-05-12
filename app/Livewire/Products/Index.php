@@ -44,7 +44,7 @@ class Index extends BaseCrudComponent
     #[Rule('nullable|exists:suppliers,id')]
     public $supplier_id;
 
-    #[Rule('required|in:unit,kg,liter,meter')]
+    #[Rule('required')]
     public $unit_type = 'unit';
 
     public $manage_stock = true;
@@ -70,11 +70,13 @@ class Index extends BaseCrudComponent
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $suppliers = Supplier::where('active', true)->orderBy('name')->get();
+        $units = \App\Models\Unit::where('is_active', true)->orderBy('name')->get();
 
         return view('livewire.products.index', [
             'products'               => $products,
             'categories'             => $categories,
             'suppliers'              => $suppliers,
+            'units'                  => $units,
             'discountProductEnabled' => $discountProductEnabled,
         ])->layout('layouts.app');
     }
@@ -125,7 +127,7 @@ class Index extends BaseCrudComponent
             'price_sale' => 'required',
             'stock'      => $this->manage_stock ? 'required|numeric|min:0' : 'nullable',
             'min_stock'  => $this->manage_stock ? 'required|numeric|min:0' : 'nullable',
-            'unit_type'  => 'required|in:unit,kg,liter,meter',
+            'unit_type'  => 'required',
             'discount_percentage' => 'integer|min:0|max:100',
             'product_image' => 'nullable|image|max:1024',
         ];

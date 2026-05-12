@@ -59,6 +59,10 @@
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Nuevo Producto
                     </button>
+
+                    <a href="{{ route('settings.units') }}" class="p-2 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition shadow-sm" title="Gestionar Unidades">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                    </a>
                 </div>
             </div>
 
@@ -144,9 +148,9 @@
                                 <label for="unit_type" class="block text-gray-700 text-sm font-bold mb-2">Unidad de Medida:</label>
                                 <select wire:model="unit_type" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <option value="unit">Unidad (Default)</option>
-                                    <option value="kg">Kilogramo (kg)</option>
-                                    <option value="liter">Litro</option>
-                                    <option value="meter">Metro</option>
+                                    @foreach($units as $unit)
+                                        <option value="{{ $unit->name }}">{{ $unit->name }} ({{ $unit->abbreviation }})</option>
+                                    @endforeach
                                 </select>
                                 @error('unit_type') <span class="text-red-500 text-xs">{{ $message }}</span>@enderror
                             </div>

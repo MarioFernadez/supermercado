@@ -68,6 +68,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/registers', \App\Livewire\CashRegisters\Index::class)->name('cash_registers.index');
         Route::get('/settings/general', \App\Livewire\Settings\General::class)->name('settings.general');
         Route::get('/settings/banners', \App\Livewire\Settings\BannerManager::class)->name('settings.banners');
+        Route::get('/settings/units', \App\Livewire\Settings\Units::class)->name('settings.units');
+        Route::get('/settings/payment-methods', \App\Livewire\Settings\PaymentMethods::class)->name('settings.payment-methods');
+        Route::get('/settings/cash-movement-categories', \App\Livewire\Settings\CashMovementCategories::class)->name('settings.cash-movement-categories');
         Route::get('/collections', \App\Livewire\Admin\Collections::class)->name('admin.collections');
         Route::post('/settings/backup', [\App\Http\Controllers\BackupController::class, 'run'])->name('settings.backup.run');
         Route::get('/settings/quotation', \App\Livewire\Settings\Quotation::class)->name('settings.quotation');

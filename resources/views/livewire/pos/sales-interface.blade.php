@@ -417,18 +417,17 @@
                                         @error('movementDescription') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
                                     <div>
-                                        <label class="block text-gray-700 text-sm font-bold mb-2">Categoría (Opcional)</label>
+                                        <div class="flex justify-between items-center mb-2">
+                                            <label class="block text-gray-700 text-sm font-bold">Categoría (Opcional)</label>
+                                            <a href="{{ route('settings.cash-movement-categories') }}" target="_blank" class="text-[10px] text-indigo-600 hover:underline font-bold uppercase tracking-widest">
+                                                ⚙️ Gestionar
+                                            </a>
+                                        </div>
                                         <select wire:model="movementCategory" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                             <option value="">Sin categoría</option>
-                                            @if($movementType === 'in')
-                                                @foreach($movementCategories['in'] as $key => $label)
-                                                    <option value="{{ $key }}">{{ $label }}</option>
-                                                @endforeach
-                                            @else
-                                                @foreach($movementCategories['out'] as $key => $label)
-                                                    <option value="{{ $key }}">{{ $label }}</option>
-                                                @endforeach
-                                            @endif
+                                            @foreach($movementCategories as $cat)
+                                                <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                                            @endforeach
                                         </select>
                                         @error('movementCategory') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
@@ -795,15 +794,13 @@
                                     <button type="button" wire:click="$set('paymentMethod', 'efectivo')" class="flex items-center justify-center px-2 py-2 border rounded-md shadow-sm text-xs font-bold transition-colors {{ $paymentMethod === 'efectivo' ? 'bg-indigo-600 border-transparent text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50' }}">
                                         💵 Efectivo
                                     </button>
-                                    <button type="button" wire:click="$set('paymentMethod', 'tarjeta')" class="flex items-center justify-center px-2 py-2 border rounded-md shadow-sm text-xs font-bold transition-colors {{ $paymentMethod === 'tarjeta' ? 'bg-indigo-600 border-transparent text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50' }}">
-                                        💳 Tarjeta
-                                    </button>
-                                    <button type="button" wire:click="$set('paymentMethod', 'qr')" class="flex items-center justify-center px-2 py-2 border rounded-md shadow-sm text-xs font-bold transition-colors {{ $paymentMethod === 'qr' ? 'bg-indigo-600 border-transparent text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50' }}">
-                                         QR 📱
-                                    </button>
-                                    <button type="button" wire:click="$set('paymentMethod', 'transferencia')" class="flex items-center justify-center px-2 py-2 border rounded-md shadow-sm text-xs font-bold transition-colors {{ $paymentMethod === 'transferencia' ? 'bg-indigo-600 border-transparent text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50' }}">
-                                        🏦 Transf.
-                                    </button>
+                                    
+                                    @foreach($paymentMethods as $pm)
+                                        <button type="button" wire:click="$set('paymentMethod', '{{ $pm->name }}')" class="flex items-center justify-center px-2 py-2 border rounded-md shadow-sm text-xs font-bold transition-colors {{ $paymentMethod === $pm->name ? 'bg-indigo-600 border-transparent text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50' }}">
+                                            {{ $pm->type === 'card' ? '💳' : ($pm->type === 'qr' ? '📱' : '🏦') }} {{ $pm->name }}
+                                        </button>
+                                    @endforeach
+
                                     <button type="button" wire:click="$set('paymentMethod', 'cheque')" class="flex items-center justify-center px-2 py-2 border rounded-md shadow-sm text-xs font-bold transition-colors {{ $paymentMethod === 'cheque' ? 'bg-indigo-600 border-transparent text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50' }}">
                                         🎫 Cheque
                                     </button>
@@ -861,18 +858,12 @@
                                             <label class="block text-[10px] font-bold text-gray-500 mb-1">Efectivo 💵</label>
                                             <input type="number" wire:model.live.debounce.300ms="multiplePayments.efectivo" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right" placeholder="0">
                                         </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-gray-500 mb-1">Tarjeta 💳</label>
-                                            <input type="number" wire:model.live.debounce.300ms="multiplePayments.tarjeta" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right" placeholder="0">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-gray-500 mb-1">Transferencia 🏦</label>
-                                            <input type="number" wire:model.live.debounce.300ms="multiplePayments.transferencia" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right" placeholder="0">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-gray-500 mb-1">QR 📱</label>
-                                            <input type="number" wire:model.live.debounce.300ms="multiplePayments.qr" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right" placeholder="0">
-                                        </div>
+                                        @foreach($paymentMethods as $pm)
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-gray-500 mb-1">{{ $pm->name }} {{ $pm->type === 'card' ? '💳' : ($pm->type === 'qr' ? '📱' : '🏦') }}</label>
+                                                <input type="number" wire:model.live.debounce.300ms="multiplePayments.{{ $pm->name }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right" placeholder="0">
+                                            </div>
+                                        @endforeach
                                     </div>
 
                                     <div class="flex justify-between items-center pt-2 border-t border-gray-200">
