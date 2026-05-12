@@ -89,6 +89,7 @@ class Index extends Component
     public function loadMore()
     {
         $this->perPage += 12;
+        $this->dispatch('products-loaded');
     }
 
     public function render()

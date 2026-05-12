@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="swiper categories-swiper !pb-12" wire:ignore>
+        <div class="swiper categories-swiper !pb-12">
             <div class="swiper-wrapper">
                 @foreach($categories as $category)
                 <div class="swiper-slide">
@@ -262,8 +262,8 @@
         });
 
         document.addEventListener('livewire:init', () => {
-            Livewire.hook('morph.updated', (el, component) => {
-                initSwiper();
+            Livewire.on('products-loaded', () => {
+                setTimeout(() => initSwiper(), 100);
             });
         });
 
