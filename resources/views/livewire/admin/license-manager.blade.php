@@ -55,7 +55,7 @@
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                                 </div>
                                 <input type="number" wire:model="maxUsers" 
-                                       class="w-full pl-14 pr-5 py-4.5 bg-white border border-indigo-100 rounded-2xl text-2xl font-black text-indigo-700 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition duration-300 shadow-sm">
+                                       class="w-full pl-14 pr-5 py-4 bg-white border border-indigo-100 rounded-2xl text-2xl font-black text-indigo-700 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition duration-300 shadow-sm">
                             </div>
                             @error('maxUsers') <span class="text-red-500 text-xs mt-2 block font-bold tracking-tight">{{ $message }}</span> @enderror
                             <p class="text-[9px] text-indigo-400/80 mt-3.5 uppercase font-black tracking-wider">Afecta la creación de Administradores, Gerentes y Cajeros</p>
@@ -69,7 +69,7 @@
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                 </div>
                                 <input type="number" wire:model="maxCashRegisters" 
-                                       class="w-full pl-14 pr-5 py-4.5 bg-white border border-purple-100 rounded-2xl text-2xl font-black text-purple-700 focus:ring-4 focus:ring-purple-100 focus:border-purple-400 transition duration-300 shadow-sm">
+                                       class="w-full pl-14 pr-5 py-4 bg-white border border-purple-100 rounded-2xl text-2xl font-black text-purple-700 focus:ring-4 focus:ring-purple-100 focus:border-purple-400 transition duration-300 shadow-sm">
                             </div>
                             @error('maxCashRegisters') <span class="text-red-500 text-xs mt-2 block font-bold tracking-tight">{{ $message }}</span> @enderror
                             <p class="text-[9px] text-purple-400/80 mt-3.5 uppercase font-black tracking-wider">Cajas activas que pueden operar simultáneamente</p>
@@ -104,9 +104,9 @@
 
                     <div class="pt-4">
                         <button type="submit" 
-                                class="w-full bg-slate-900 hover:bg-black text-white font-black py-4.5 rounded-2xl transition duration-300 transform active:scale-[0.98] shadow-xl shadow-slate-900/10 text-xs uppercase tracking-widest flex items-center justify-center gap-2 group">
+                                class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl transition duration-300 transform active:scale-[0.98] shadow-xl shadow-slate-900/10 text-xs uppercase tracking-widest flex items-center justify-center gap-2 group">
                             <span>Actualizar Licencia Maestra</span>
-                            <svg class="w-4.5 h-4.5 group-hover:translate-x-1 transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            <svg class="w-5 h-5 group-hover:translate-x-1 transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </button>
                     </div>
                 </form>
@@ -188,7 +188,7 @@
 
                             <button type="submit"
                                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-xl transition shadow-lg shadow-indigo-200 text-xs uppercase tracking-widest flex items-center justify-center gap-2 transform active:scale-[0.98]">
-                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                                 <span>Registrar Cobro</span>
                             </button>
                         </form>
@@ -206,10 +206,10 @@
                                 <table class="w-full text-xs">
                                     <thead class="bg-slate-50 uppercase text-[9px] tracking-widest font-black text-slate-400 border-b border-slate-100">
                                         <tr>
-                                            <th class="px-5 py-4.5 text-left">Fecha</th>
-                                            <th class="px-5 py-4.5 text-center">Método</th>
-                                            <th class="px-5 py-4.5 text-left">Notas / Concepto</th>
-                                            <th class="px-5 py-4.5 text-right">Monto</th>
+                                            <th class="px-5 py-4 text-left">Fecha</th>
+                                            <th class="px-5 py-4 text-center">Método</th>
+                                            <th class="px-5 py-4 text-left">Notas / Concepto</th>
+                                            <th class="px-5 py-4 text-right">Monto</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50 font-semibold text-slate-700">
