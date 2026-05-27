@@ -36,9 +36,11 @@
                                 <x-dropdown-link href="{{ route('pos.index') }}">
                                     {{ __('Caja POS (Vender)') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('admin.web-orders.index') }}">
-                                    {{ __('Pedidos Online') }}
-                                </x-dropdown-link>
+                                @if(\App\Services\LicenseService::isEcommerceEnabled())
+                                    <x-dropdown-link href="{{ route('admin.web-orders.index') }}">
+                                        {{ __('Pedidos Online') }}
+                                    </x-dropdown-link>
+                                @endif
                                 <x-dropdown-link href="{{ route('admin.collections') }}">
                                     {{ __('Cobranzas (Créditos)') }}
                                 </x-dropdown-link>
@@ -171,6 +173,9 @@
                                         <x-dropdown-link href="{{ route('settings.general') }}">
                                             {{ __('Ajustes Generales') }}
                                         </x-dropdown-link>
+                                        <x-dropdown-link href="{{ route('settings.billing') }}">
+                                            {{ __('Mi Suscripción') }}
+                                        </x-dropdown-link>
                                         <x-dropdown-link href="{{ route('cash_registers.index') }}">
                                             {{ __('Puntos de Venta (Cajas)') }}
                                         </x-dropdown-link>
@@ -302,9 +307,11 @@
             <x-responsive-nav-link href="{{ route('pos.index') }}" :active="request()->routeIs('pos.index')">
                 {{ __('Caja POS (Vender)') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('admin.web-orders.index') }}" :active="request()->routeIs('admin.web-orders.index')">
-                {{ __('Pedidos Online') }}
-            </x-responsive-nav-link>
+            @if(\App\Services\LicenseService::isEcommerceEnabled())
+                <x-responsive-nav-link href="{{ route('admin.web-orders.index') }}" :active="request()->routeIs('admin.web-orders.index')">
+                    {{ __('Pedidos Online') }}
+                </x-responsive-nav-link>
+            @endif
             <x-responsive-nav-link href="{{ route('admin.collections') }}" :active="request()->routeIs('admin.collections')">
                 {{ __('Cobranzas (Créditos)') }}
             </x-responsive-nav-link>
@@ -365,6 +372,9 @@
                 @can('admin')
                     <x-responsive-nav-link href="{{ route('settings.general') }}" :active="request()->routeIs('settings.general')">
                         {{ __('Ajustes Generales') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link href="{{ route('settings.billing') }}" :active="request()->routeIs('settings.billing')">
+                        {{ __('Mi Suscripción') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link href="{{ route('cash_registers.index') }}" :active="request()->routeIs('cash_registers.index')">
                         {{ __('Cajas / Puntos de Venta') }}

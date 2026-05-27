@@ -37,8 +37,12 @@
          x-cloak>
         
         <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
-            <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200 uppercase tracking-tight">Pedidos Web Recientes</h3>
-            <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Últimos 5</span>
+            <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200 uppercase tracking-tight">
+                {{ \App\Services\LicenseService::isEcommerceEnabled() ? 'Pedidos Web Recientes' : 'Alertas del Sistema' }}
+            </h3>
+            @if(\App\Services\LicenseService::isEcommerceEnabled())
+                <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Últimos 5</span>
+            @endif
         </div>
 
         <div class="max-h-96 overflow-y-auto">
@@ -52,58 +56,69 @@
                 </div>
             @endif
 
-            @forelse($recentOrders as $order)
-                <div class="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                    <div class="flex justify-between items-start mb-1">
-                        <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ $order['customer_name'] }}</span>
-                        <span class="text-[10px] text-gray-400 tabular-nums">
-                            {{ \Carbon\Carbon::parse($order['created_at'])->diffForHumans() }}
-                        </span>
+            @if(\App\Services\LicenseService::isEcommerceEnabled())
+                @forelse($recentOrders as $order)
+                    <div class="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ $order['customer_name'] }}</span>
+                            <span class="text-[10px] text-gray-400 tabular-nums">
+                                {{ \Carbon\Carbon::parse($order['created_at'])->diffForHumans() }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[11px] text-gray-500">Total: ₲ {{ number_format($order['total'], 0, ',', '.') }}</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 font-bold uppercase">{{ $order['status'] }}</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[11px] text-gray-500">Total: ₲ {{ number_format($order['total'], 0, ',', '.') }}</span>
-                        <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 font-bold uppercase">{{ $order['status'] }}</span>
+                @empty
+                    <div class="p-8 text-center">
+                        <svg class="w-10 h-10 text-gray-200 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <p class="text-xs text-gray-400">No hay pedidos registrados hoy</p>
                     </div>
-                </div>
-            @empty
+                @endforelse
+            @elseif($lowStockCount == 0)
                 <div class="p-8 text-center">
-                    <svg class="w-10 h-10 text-gray-200 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <p class="text-xs text-gray-400">No hay pedidos registrados hoy</p>
+                    <svg class="w-10 h-10 text-emerald-100 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-xs text-gray-400">El sistema no reporta alertas pendientes</p>
                 </div>
-            @endforelse
+            @endif
         </div>
 
-        <a href="{{ route('admin.web-orders.index') }}" class="block p-3 text-center text-xs font-bold text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition uppercase tracking-widest border-t border-gray-100 dark:border-gray-700">
-            Ver todos los pedidos
-        </a>
+        @if(\App\Services\LicenseService::isEcommerceEnabled())
+            <a href="{{ route('admin.web-orders.index') }}" class="block p-3 text-center text-xs font-bold text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition uppercase tracking-widest border-t border-gray-100 dark:border-gray-700">
+                Ver todos los pedidos
+            </a>
+        @endif
     </div>
 
     <!-- Audio & Toast Assets -->
     <audio id="admin-notification-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <div x-data="{ show: false, customer: '', total: '' }"
-         x-on:show-order-toast.window="customer = $event.detail[0].customer; total = $event.detail[0].total; show = true; setTimeout(() => show = false, 5000)"
-         class="fixed bottom-6 right-6 z-[100]">
-        <div x-show="show" 
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 translate-y-4"
-             class="bg-gray-900 text-white p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-4 max-w-xs"
-             x-cloak>
-            <div class="bg-indigo-600 p-2 rounded-full flex-shrink-0 animate-bounce">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+    @if(\App\Services\LicenseService::isEcommerceEnabled())
+        <div x-data="{ show: false, customer: '', total: '' }"
+             x-on:show-order-toast.window="customer = $event.detail[0].customer; total = $event.detail[0].total; show = true; setTimeout(() => show = false, 5000)"
+             class="fixed bottom-6 right-6 z-[100]">
+            <div x-show="show" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-4"
+                 class="bg-gray-900 text-white p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-4 max-w-xs"
+                 x-cloak>
+                <div class="bg-indigo-600 p-2 rounded-full flex-shrink-0 animate-bounce">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Nuevo Pedido Web</p>
+                    <p class="text-sm font-bold" x-text="customer"></p>
+                    <p class="text-xs text-gray-400">₲ <span x-text="total"></span></p>
+                </div>
+                <button @click="show = false" class="text-gray-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
-            <div>
-                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Nuevo Pedido Web</p>
-                <p class="text-sm font-bold" x-text="customer"></p>
-                <p class="text-xs text-gray-400">₲ <span x-text="total"></span></p>
-            </div>
-            <button @click="show = false" class="text-gray-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
-    </div>
+    @endif
 
     <script>
         document.addEventListener('livewire:initialized', () => {

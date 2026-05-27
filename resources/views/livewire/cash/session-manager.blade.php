@@ -115,7 +115,7 @@
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Terminal / Caja Física</label>
                                 <div class="relative group">
-                                    <select wire:model="selectedRegisterId" class="appearance-none w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-10 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                                    <select wire:model="selectedRegisterId" class="appearance-none bg-none w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-10 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
                                         <option value="">-- Seleccionar Terminal --</option>
                                         @foreach($this->registers as $register)
                                             <option value="{{ $register->id }}" {{ $register->is_occupied ? 'disabled' : '' }}>

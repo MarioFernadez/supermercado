@@ -65,4 +65,49 @@ class LicenseService
             ],
         ];
     }
+
+    public static function getEnabledAt(): \Carbon\Carbon
+    {
+        $date = StoreSetting::where('key', 'license_enabled_at')->first()?->value;
+        return $date ? \Carbon\Carbon::parse($date)->startOfDay() : now()->startOfDay();
+    }
+
+    public static function getExpiresAt(): \Carbon\Carbon
+    {
+        $date = StoreSetting::where('key', 'license_expires_at')->first()?->value;
+        return $date ? \Carbon\Carbon::parse($date)->endOfDay() : now()->addMonth()->endOfDay();
+    }
+
+    public static function isExpired(): bool
+    {
+        return now()->gt(self::getExpiresAt());
+    }
+
+    public static function getDaysRemaining(): int
+    {
+        $expires = self::getExpiresAt();
+        if (now()->gt($expires)) {
+            return 0;
+        }
+        return now()->startOfDay()->diffInDays($expires->startOfDay());
+    }
+
+    public static function isNearExpiration(): bool
+    {
+        if (self::isExpired()) {
+            return false;
+        }
+        return self::getDaysRemaining() <= 5;
+    }
+
+    public static function isGracePeriodUsed(): bool
+    {
+        $setting = StoreSetting::where('key', 'license_grace_period_used')->first();
+        return $setting ? $setting->value === '1' : false;
+    }
+
+    public static function canActivateGracePeriod(): bool
+    {
+        return self::isExpired() && !self::isGracePeriodUsed();
+    }
 }

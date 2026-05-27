@@ -16,8 +16,7 @@ class RequireEcommerceLicense
     public function handle(Request $request, Closure $next): Response
     {
         if (!\App\Services\LicenseService::isEcommerceEnabled()) {
-            return response()->view('errors.ecommerce-disabled', [], 403);
-            // Alternatively, redirect to login: return redirect()->route('login');
+            return redirect()->route('login');
         }
 
         return $next($request);

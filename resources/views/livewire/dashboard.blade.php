@@ -16,7 +16,7 @@
         </div>
 
         <!-- KPI Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-{{ \App\Services\LicenseService::isEcommerceEnabled() ? '5' : '4' }} gap-4 mb-8">
             <!-- Sales Today -->
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
@@ -42,17 +42,19 @@
             </div>
             @endcan
 
-            <!-- Pending Web Orders -->
-            <a href="{{ route('admin.web-orders.index') }}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group hover:border-orange-200 transition-colors">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
-                <div class="relative z-10">
-                    <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Pedidos Web</p>
-                    <h3 class="text-2xl font-bold text-gray-900 leading-none tabular-nums">{{ $pendingWebOrdersCount }}</h3>
-                    <div class="mt-4 flex items-center text-[10px] font-bold {{ $pendingWebOrdersCount > 0 ? 'text-orange-600 bg-orange-50 animate-pulse' : 'text-gray-400 bg-gray-50' }} px-2 py-1 rounded-lg w-fit uppercase">
-                        {{ $pendingWebOrdersCount > 0 ? 'Pendientes de atención' : 'Sin pendientes' }}
+            @if(\App\Services\LicenseService::isEcommerceEnabled())
+                <!-- Pending Web Orders -->
+                <a href="{{ route('admin.web-orders.index') }}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group hover:border-orange-200 transition-colors">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
+                    <div class="relative z-10">
+                        <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Pedidos Web</p>
+                        <h3 class="text-2xl font-bold text-gray-900 leading-none tabular-nums">{{ $pendingWebOrdersCount }}</h3>
+                        <div class="mt-4 flex items-center text-[10px] font-bold {{ $pendingWebOrdersCount > 0 ? 'text-orange-600 bg-orange-50 animate-pulse' : 'text-gray-400 bg-gray-50' }} px-2 py-1 rounded-lg w-fit uppercase">
+                            {{ $pendingWebOrdersCount > 0 ? 'Pendientes de atención' : 'Sin pendientes' }}
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            @endif
 
             <!-- Customers -->
             <a href="{{ route('customers.index') }}" class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group hover:border-blue-200 transition-colors">

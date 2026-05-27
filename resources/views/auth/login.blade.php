@@ -2,9 +2,16 @@
     <x-authentication-card>
         <div class="mb-8 text-center sm:mb-6">
             <h1 class="text-3xl font-black text-gray-900 dark:text-gray-100 sm:text-2xl uppercase tracking-tighter">
-                Bienvenido a <span class="text-green-500">ZonaPOS</span>
+                Bienvenido a <span class="text-green-500">{{ \App\Services\LicenseService::isEcommerceEnabled() ? 'ZonaShop' : 'ZonaPOS' }}</span>
             </h1>
-            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+            
+            <div class="mt-2">
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-green-50 text-green-700 border border-green-100 dark:bg-green-950/40 dark:text-green-400 dark:border-green-900/60 shadow-sm">
+                    {{ \App\Services\LicenseService::isEcommerceEnabled() ? 'Catálogo E-commerce' : 'Sistemas POS' }}
+                </span>
+            </div>
+
+            <p class="mt-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                 Ingresa tus credenciales para acceder
             </p>
         </div>

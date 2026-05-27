@@ -28,6 +28,22 @@
         <x-banner />
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            @if(auth()->check() && \App\Services\LicenseService::isNearExpiration() && !request()->routeIs('settings.billing'))
+                <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-3 shadow-md relative z-50 font-sans">
+                    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 shrink-0 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <p class="text-xs font-black uppercase tracking-wider">
+                                Atención: Su suscripción vencerá en {{ \App\Services\LicenseService::getDaysRemaining() }} días (el {{ \App\Services\LicenseService::getExpiresAt()->format('d/m/Y') }}).
+                            </p>
+                        </div>
+                        <a href="{{ route('settings.billing') }}" class="inline-flex items-center px-4 py-1.5 bg-white text-orange-600 hover:bg-orange-50 text-[10px] font-black uppercase tracking-widest rounded-xl transition duration-300 shadow shadow-orange-700/20 shrink-0">
+                            Ver Detalles / Pagar
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             @livewire('navigation-menu')
 
             <!-- Page Heading -->

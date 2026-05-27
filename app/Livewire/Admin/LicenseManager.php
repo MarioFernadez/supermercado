@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\StoreSetting;
+use App\Models\LicensePayment;
 use App\Services\LicenseService;
 use Illuminate\Support\Facades\Artisan;
 
@@ -12,8 +13,17 @@ class LicenseManager extends Component
     public $maxUsers;
     public $maxCashRegisters;
     public $tierName;
-
     public $ecommerceEnabled;
+
+    // Campos de Suscripción
+    public $enabledAt;
+    public $expiresAt;
+
+    // Campos de Registro de Pago
+    public $paymentAmount;
+    public $paymentDate;
+    public $paymentMethod = 'transferencia';
+    public $paymentNotes;
 
     public function mount()
     {
@@ -23,6 +33,10 @@ class LicenseManager extends Component
         $this->maxCashRegisters = LicenseService::getMaxCashRegisters();
         $this->tierName = LicenseService::getTierName();
         $this->ecommerceEnabled = LicenseService::isEcommerceEnabled();
+
+        $this->enabledAt = LicenseService::getEnabledAt()->format('Y-m-d');
+        $this->expiresAt = LicenseService::getExpiresAt()->format('Y-m-d');
+        $this->paymentDate = now()->format('Y-m-d');
     }
 
     public function updateLicense()
@@ -34,6 +48,8 @@ class LicenseManager extends Component
             'maxCashRegisters' => 'required|integer|min:1',
             'tierName' => 'required|string|min:2',
             'ecommerceEnabled' => 'boolean',
+            'enabledAt' => 'required|date',
+            'expiresAt' => 'required|date',
         ]);
 
         Artisan::call('licensing:set', [
@@ -43,12 +59,70 @@ class LicenseManager extends Component
             '--ecommerce' => $this->ecommerceEnabled ? '1' : '0',
         ]);
 
-        session()->flash('message', 'Licencia actualizada correctamente desde la interfaz Master.');
+        StoreSetting::updateOrCreate(
+            ['key' => 'license_enabled_at'],
+            ['value' => $this->enabledAt]
+        );
+
+        StoreSetting::updateOrCreate(
+            ['key' => 'license_expires_at'],
+            ['value' => $this->expiresAt]
+        );
+
+        session()->flash('message', 'Licencia y fechas de suscripción actualizadas correctamente.');
+    }
+
+    public function registerPayment()
+    {
+        abort_unless(auth()->user()->isDeveloper(), 403);
+
+        $this->validate([
+            'paymentAmount' => 'required|numeric|min:1',
+            'paymentDate' => 'required|date',
+            'paymentMethod' => 'required|in:transferencia,efectivo',
+            'paymentNotes' => 'nullable|string',
+        ]);
+
+        LicensePayment::create([
+            'amount' => $this->paymentAmount,
+            'payment_date' => $this->paymentDate,
+            'payment_method' => $this->paymentMethod,
+            'notes' => $this->paymentNotes,
+        ]);
+
+        // Extender 30 días
+        $currentExpires = LicenseService::getExpiresAt();
+        $newExpires = $currentExpires->isPast() 
+            ? \Carbon\Carbon::parse($this->paymentDate)->addMonth() 
+            : $currentExpires->addMonth();
+
+        $this->expiresAt = $newExpires->format('Y-m-d');
+        StoreSetting::updateOrCreate(
+            ['key' => 'license_expires_at'],
+            ['value' => $this->expiresAt]
+        );
+
+        StoreSetting::updateOrCreate(
+            ['key' => 'license_grace_period_used'],
+            ['value' => '0']
+        );
+
+        $this->reset(['paymentAmount', 'paymentNotes']);
+        $this->paymentDate = now()->format('Y-m-d');
+        $this->paymentMethod = 'transferencia';
+
+        session()->flash('payment_message', 'Pago registrado e historial actualizado correctamente.');
+    }
+
+    public function getPaymentsProperty()
+    {
+        return LicensePayment::orderBy('payment_date', 'desc')->get();
     }
 
     public function render()
     {
-        return view('livewire.admin.license-manager')
-            ->layout('layouts.app');
+        return view('livewire.admin.license-manager', [
+            'payments' => $this->payments
+        ])->layout('layouts.app');
     }
 }
