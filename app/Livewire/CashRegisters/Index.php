@@ -25,7 +25,7 @@ class Index extends BaseCrudComponent
             ->orderBy('created_at', 'desc')
             ->paginate(10);
             
-        $branches = \App\Models\Branch::where('active', true)->get();
+        $branches = \App\Models\Branch::where('is_active', true)->get();
 
         return view('livewire.cash-registers.index', [
             'registers' => $registers,
