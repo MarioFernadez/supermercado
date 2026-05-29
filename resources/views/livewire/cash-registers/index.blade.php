@@ -97,6 +97,16 @@
                             <textarea class="shadow-sm appearance-none border border-gray-200 rounded-xl w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:shadow-none dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900" id="description" wire:model="description" rows="2" placeholder="Sector ventas, planta baja..."></textarea>
                             @error('description') <span class="text-red-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</span>@enderror
                         </div>
+                        <div class="mb-2">
+                            <label for="branch_id" class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 dark:text-gray-500">Sucursal Asignada</label>
+                            <select id="branch_id" wire:model="branch_id" class="shadow-sm appearance-none border border-gray-200 rounded-xl w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:shadow-none dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
+                                <option value="">Seleccione una sucursal...</option>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('branch_id') <span class="text-red-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</span>@enderror
+                        </div>
                         <div class="flex items-center">
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="active" class="sr-only peer dark:bg-gray-900 dark:text-gray-300">
@@ -125,6 +135,7 @@
                         <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-bold text-gray-400 dark:bg-gray-900 dark:text-gray-400">
                             <tr>
                                 <th class="px-6 py-4 text-left">Nombre</th>
+                                <th class="px-6 py-4 text-left">Sucursal</th>
                                 <th class="px-6 py-4 text-left">Descripción</th>
                                 <th class="px-6 py-4 text-center">Estado</th>
                                 <th class="px-6 py-4 text-right">Acciones</th>
@@ -134,6 +145,7 @@
                             @foreach($registers as $register)
                                 <tr class="hover:bg-indigo-50/30 transition group">
                                     <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">{{ $register->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ $register->branch ? $register->branch->name : 'Sin sucursal' }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 font-medium dark:text-gray-400">{{ $register->description ?? '—' }}</td>
                                     <td class="px-6 py-4 text-center">
                                         <span class="px-2.5 py-1 inline-flex text-[10px] font-black uppercase rounded-full {{ $register->active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">

@@ -742,6 +742,7 @@ class SalesInterface extends Component
 
     public function processSale()
     {
+        \Illuminate\Support\Facades\Log::info("processSale called. Cart empty? " . empty($this->cart));
         if(empty($this->cart)) return;
 
         // Double check session
