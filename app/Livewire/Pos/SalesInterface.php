@@ -806,7 +806,7 @@ class SalesInterface extends Component
         }
 
         try {
-            \DB::transaction(function () {
+            \DB::transaction(function () use ($branchId) {
                 // 1. Create Sale
                 $sale = \App\Models\Sale::create([
                     'user_id'                  => auth()->id(),
