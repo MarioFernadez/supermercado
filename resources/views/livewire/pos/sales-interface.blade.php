@@ -91,8 +91,15 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 @foreach($products as $product)
                     @php
-                        $isOutOfStock = $product->manage_stock && $product->stock <= 0;
-                        $isLowStock = $product->manage_stock && !$isOutOfStock && $product->stock <= $product->min_stock;
+                        $currentStock = $product->stock;
+                        $otherStock = 0;
+                        if (isset($branchId) && $branchId) {
+                            $branchStock = $product->branchStocks->where('branch_id', $branchId)->first();
+                            $currentStock = $branchStock ? $branchStock->stock : 0;
+                            $otherStock = $product->branchStocks->where('branch_id', '!=', $branchId)->sum('stock');
+                        }
+                        $isOutOfStock = $product->manage_stock && $currentStock <= 0;
+                        $isLowStock = $product->manage_stock && !$isOutOfStock && $currentStock <= $product->min_stock;
                     @endphp
                     <div 
                         wire:key="{{ $product->id }}"
@@ -126,11 +133,16 @@
                                 @else
                                     <span class="text-gray-900 dark:text-white font-bold text-base">&#8370; {{ number_format($product->price_sale, 0, ',', '.') }}</span>
                                 @endif
-                                <div class="text-[10px] px-1.5 py-0.5 rounded {{ $isLowStock ? 'bg-orange-100 text-orange-800 font-bold' : ($isOutOfStock ? 'bg-red-100 text-red-800 font-bold' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-200') }}">
-                                    @if($product->manage_stock)
-                                        Stock: {{ $product->stock }}
-                                    @else
-                                        ∞
+                                <div class="flex flex-col items-end">
+                                    <div class="text-[10px] px-1.5 py-0.5 rounded {{ $isLowStock ? 'bg-orange-100 text-orange-800 font-bold' : ($isOutOfStock ? 'bg-red-100 text-red-800 font-bold' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-200') }}">
+                                        @if($product->manage_stock)
+                                            Stock: {{ $currentStock }}
+                                        @else
+                                            ∞
+                                        @endif
+                                    </div>
+                                    @if($product->manage_stock && $currentStock <= 0 && $otherStock > 0)
+                                        <div class="text-[9px] text-blue-500 mt-1 font-bold">Otras suc: {{ $otherStock }}</div>
                                     @endif
                                 </div>
                             </div>
@@ -1253,7 +1265,14 @@
                         <div class="grid grid-cols-1 gap-3 max-h-[60vh] overflow-y-auto pr-2">
                             @foreach($selectingProduct->variations as $var)
                                 @php
-                                    $varOutOfStock = $selectingProduct->manage_stock && $var->stock <= 0;
+                                    $varCurrentStock = $var->stock;
+                                    $varOtherStock = 0;
+                                    if (isset($branchId) && $branchId) {
+                                        $varBranchStock = $var->branchStocks->where('branch_id', $branchId)->first();
+                                        $varCurrentStock = $varBranchStock ? $varBranchStock->stock : 0;
+                                        $varOtherStock = $var->branchStocks->where('branch_id', '!=', $branchId)->sum('stock');
+                                    }
+                                    $varOutOfStock = $selectingProduct->manage_stock && $varCurrentStock <= 0;
                                 @endphp
                                 <button 
                                     wire:click="selectVariation('{{ $var->id }}')"
@@ -1264,11 +1283,14 @@
                                         <div class="font-black text-gray-900 uppercase tracking-tight group-hover:text-indigo-700 dark:text-white">{{ $var->name }}</div>
                                         <div class="text-[10px] text-gray-400 font-mono dark:text-gray-500">{{ $var->sku }}</div>
                                     </div>
-                                    <div class="text-right">
+                                    <div class="text-right flex flex-col items-end">
                                         <div class="font-black text-indigo-600 dark:text-indigo-400">₲ {{ format_pyg($var->price_sale) }}</div>
-                                        <div class="text-[10px] {{ $var->stock <= 0 ? 'text-red-500' : 'text-gray-500' }}">
-                                            Stock: {{ $var->stock }}
+                                        <div class="text-[10px] {{ $varCurrentStock <= 0 ? 'text-red-500' : 'text-gray-500' }}">
+                                            Stock: {{ $varCurrentStock }}
                                         </div>
+                                        @if($selectingProduct->manage_stock && $varCurrentStock <= 0 && $varOtherStock > 0)
+                                            <div class="text-[9px] text-blue-500 font-bold mt-0.5">Otras suc: {{ $varOtherStock }}</div>
+                                        @endif
                                     </div>
                                 </button>
                             @endforeach
