@@ -891,10 +891,19 @@
                             </div>
                         @endif
 
-                        @if (session()->has('error'))
+                        @if (session()->has('error') || $errors->any())
                             <div class="mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-3 text-sm animate-shake dark:bg-red-900/40 dark:text-red-400" role="alert">
                                 <p class="font-bold">Error al procesar</p>
-                                <p>{{ session('error') }}</p>
+                                @if(session()->has('error'))
+                                    <p>{{ session('error') }}</p>
+                                @endif
+                                @if($errors->any())
+                                    <ul class="list-disc list-inside mt-1">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
                             </div>
                         @endif
 
@@ -902,8 +911,8 @@
                     <div class="bg-gray-50 px-4 py-2 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-900">
                         <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto dark:shadow-none">
                             <button wire:click="processSale" type="button" 
-                                class="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 text-sm leading-6 font-bold text-white shadow-sm focus:outline-none focus:shadow-outline-indigo transition ease-in-out duration-150 {{ $paymentCondition === 'contado' ? 'bg-green-600 hover:bg-green-500 focus:border-green-700' : 'bg-orange-600 hover:bg-orange-500 focus:border-orange-700' }} dark:shadow-none"
-                                @if($paymentCondition === 'contado' && (($paymentMethod === 'efectivo' && $change < 0) || ($paymentMethod === 'multiple' && $change < 0))) disabled opacity-50 @endif
+                                class="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 text-sm leading-6 font-bold text-white shadow-sm focus:outline-none focus:shadow-outline-indigo transition ease-in-out duration-150 {{ $paymentCondition === 'contado' ? 'bg-green-600 hover:bg-green-500 focus:border-green-700' : 'bg-orange-600 hover:bg-orange-500 focus:border-orange-700' }} {{ ($paymentCondition === 'contado' && (($paymentMethod === 'efectivo' && $change < 0) || ($paymentMethod === 'multiple' && $change < 0))) ? 'opacity-50 cursor-not-allowed' : '' }} dark:shadow-none"
+                                @if($paymentCondition === 'contado' && (($paymentMethod === 'efectivo' && $change < 0) || ($paymentMethod === 'multiple' && $change < 0))) disabled @endif
                             >
                                 {{ $paymentCondition === 'contado' ? 'CONFIRMAR PAGO' : 'CONFIRMAR CRÉDITO' }}
                             </button>
