@@ -891,6 +891,13 @@
                             </div>
                         @endif
 
+                        @if (session()->has('error'))
+                            <div class="mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-3 text-sm animate-shake dark:bg-red-900/40 dark:text-red-400" role="alert">
+                                <p class="font-bold">Error al procesar</p>
+                                <p>{{ session('error') }}</p>
+                            </div>
+                        @endif
+
                     </div>
                     <div class="bg-gray-50 px-4 py-2 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-900">
                         <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto dark:shadow-none">
