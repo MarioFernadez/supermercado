@@ -126,7 +126,10 @@ class SalesInterface extends Component
 
     public function render()
     {
-        $products = Product::where('is_active', true)
+        $currentSession = \App\Models\CashSession::with('register')->where('user_id', auth()->id())->where('status', 'open')->first();
+        $branchId = $currentSession?->register?->branch_id;
+
+        $products = Product::with(['branchStocks', 'variations.branchStocks'])->where('is_active', true)
             ->where(function($query) {
                 // MySQL uses LIKE for case-insensitive search
                 $query->where('name', 'like', '%' . $this->search . '%')
@@ -143,6 +146,7 @@ class SalesInterface extends Component
         return view('livewire.pos.sales-interface', [
             'products' => $products,
             'categories' => $categories,
+            'branchId' => $branchId,
             'movementCategories' => \App\Models\CashMovementCategory::where('is_active', true)
                 ->where(function($q) {
                     $q->where('type', $this->movementType == 'in' ? 'income' : 'expense')
@@ -802,7 +806,7 @@ class SalesInterface extends Component
         }
 
         try {
-            \DB::transaction(function () {
+            \DB::transaction(function () use ($branchId) {
                 // 1. Create Sale
                 $sale = \App\Models\Sale::create([
                     'user_id'                  => auth()->id(),
