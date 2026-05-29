@@ -55,4 +55,9 @@ class ProductVariation extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function branchStocks()
+    {
+        return $this->morphMany(BranchStock::class, 'stockable');
+    }
 }

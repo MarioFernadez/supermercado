@@ -22,6 +22,8 @@ class Index extends BaseCrudComponent
     #[Rule('required')]
     public $role = 'cajero';
 
+    public $branch_id = null;
+
 
     public function render()
     {
@@ -31,8 +33,11 @@ class Index extends BaseCrudComponent
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        $branches = \App\Models\Branch::where('is_active', true)->orderBy('name')->get();
+
         return view('livewire.users.index', [
-            'users' => $users
+            'users' => $users,
+            'branches' => $branches
         ])->layout('layouts.app');
     }
 
@@ -43,6 +48,7 @@ class Index extends BaseCrudComponent
         $this->email = '';
         $this->password = '';
         $this->role = 'cajero';
+        $this->branch_id = null;
         $this->resetValidation();
     }
 
@@ -71,6 +77,7 @@ class Index extends BaseCrudComponent
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
+            'branch_id' => $this->branch_id ?: null,
         ];
 
         if ($this->password) {
@@ -91,6 +98,7 @@ class Index extends BaseCrudComponent
         $this->name = $user->name;
         $this->email = $user->email;
         $this->role = $user->role;
+        $this->branch_id = $user->branch_id;
         $this->password = ''; // Don't send back password hash
 
         $this->openModal();

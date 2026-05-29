@@ -42,12 +42,15 @@
     <!-- Categories Section -->
     <section class="max-w-7xl mx-auto px-4 mt-12 relative">
         <div class="flex items-center justify-between mb-8">
-            <h3 class="text-xl font-bold text-gray-900 uppercase tracking-tighter">Explorar Categorías</h3>
+            <div>
+                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">Navegar por</p>
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Explorar Categorías</h3>
+            </div>
             <div class="flex gap-2">
-                <div class="cat-prev cursor-pointer p-2 rounded-full border border-gray-100 hover:bg-indigo-600 hover:text-white transition shadow-sm">
+                <div class="cat-prev cursor-pointer p-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition shadow-md dark:shadow-none">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </div>
-                <div class="cat-next cursor-pointer p-2 rounded-full border border-gray-100 hover:bg-indigo-600 hover:text-white transition shadow-sm">
+                <div class="cat-next cursor-pointer p-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition shadow-md dark:shadow-none">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </div>
@@ -57,19 +60,19 @@
             <div class="swiper-wrapper">
                 @foreach($categories as $category)
                 <div class="swiper-slide">
-                    <a href="{{ route('shop.category', $category) }}" class="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition duration-500 flex flex-col items-center p-4 sm:p-6 text-center h-full">
+                    <a href="{{ route('shop.category', $category) }}" class="group relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-md hover:shadow-2xl hover:shadow-indigo-100 transition duration-500 flex flex-col items-center p-5 sm:p-6 text-center h-full dark:shadow-none dark:hover:shadow-none hover:-translate-y-1">
                         <div class="relative w-20 h-20 sm:w-24 sm:h-24 mb-4">
-                            <div class="absolute inset-0 bg-indigo-50 rounded-full group-hover:scale-110 transition duration-500"></div>
+                            <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 to-indigo-50 dark:bg-indigo-900/30 dark:from-indigo-900/30 dark:to-indigo-900/10 rounded-full group-hover:scale-110 transition duration-500"></div>
                             @if($category->image_path)
                                 <img src="{{ Storage::url($category->image_path) }}" class="relative z-10 w-full h-full object-contain p-2 group-hover:rotate-6 transition duration-500">
                             @else
-                                <div class="relative z-10 w-full h-full flex items-center justify-center text-indigo-200">
-                                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                                <div class="relative z-10 w-full h-full flex items-center justify-center text-indigo-400 dark:text-indigo-600">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                                 </div>
                             @endif
                         </div>
-                        <h3 class="text-xs sm:text-sm font-bold text-gray-900 uppercase tracking-tighter group-hover:text-indigo-600 transition truncate w-full">{{ $category->name }}</h3>
-                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-tighter">{{ $category->products_count }} productos</p>
+                        <h3 class="text-xs sm:text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition truncate w-full">{{ $category->name }}</h3>
+                        <p class="text-[10px] font-bold text-indigo-400 dark:text-gray-500 mt-1 uppercase tracking-widest">{{ $category->products_count }} productos</p>
                     </a>
                 </div>
                 @endforeach
@@ -94,36 +97,39 @@
                 }
              }">
         
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6 border-b border-gray-100 pb-8">
-            <h3 class="text-2xl font-bold text-gray-900 uppercase tracking-tighter flex items-center gap-3">
-                <span x-text="onlyFavs ? 'Mis Favoritos' : 'Nuevos Ingresos'"></span>
-                <span x-show="onlyFavs" class="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse" x-text="favorites.length"></span>
-            </h3>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6 border-b border-gray-100 dark:border-gray-800 pb-8">
+            <div>
+                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">Recién llegados</p>
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
+                    <span x-text="onlyFavs ? 'Mis Favoritos' : 'Nuevos Ingresos'"></span>
+                    <span x-show="onlyFavs" class="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse" x-text="favorites.length"></span>
+                </h3>
+            </div>
 
             <!-- Filter Favorites Button -->
             <button @click="onlyFavs = !onlyFavs" 
-                    :class="onlyFavs ? 'bg-red-500 text-white border-red-500 shadow-red-100' : 'bg-white text-gray-400 border-gray-200 hover:border-red-400 hover:text-red-500'"
-                    class="flex items-center gap-3 px-6 py-3 rounded-2xl border-2 font-bold text-[10px] uppercase tracking-widest transition-all transform active:scale-95 shadow-xl">
+                    :class="onlyFavs ? 'bg-red-500 text-white border-red-500 shadow-red-100' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-red-400 hover:text-red-500'"
+                    class="flex items-center gap-3 px-6 py-3 rounded-2xl border-2 font-bold text-[10px] uppercase tracking-widest transition-all transform active:scale-95 shadow-lg">
                 <svg class="w-5 h-5" :fill="onlyFavs ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 <span x-text="onlyFavs ? 'Ver Todo el Catálogo' : 'Ver mis Favoritos'"></span>
             </button>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             @foreach($recentProducts as $product)
             <div x-show="!onlyFavs || favorites.includes('{{ $product->id }}')"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"
                  x-transition:enter-end="opacity-100 scale-100"
-                 class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full relative p-4">
+                 class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-md hover:shadow-2xl hover:shadow-indigo-100/60 transition-all duration-300 group flex flex-col h-full relative p-4 dark:shadow-none dark:hover:shadow-none hover:-translate-y-1">
                 
                 <!-- 1. Header: Category & Title -->
                 <div class="mb-4">
-                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-300 mb-1">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1">
                         {{ $product->category->name ?? 'Catálogo' }}
                     </div>
                     <a href="{{ route('shop.product', $product) }}" class="block group/title">
-                        <h4 class="text-xs sm:text-sm font-bold text-gray-800 leading-snug line-clamp-2 h-10 uppercase tabular-nums group-hover/title:text-indigo-600 transition">{{ $product->name }}</h4>
+                        <h4 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-100 leading-snug line-clamp-2 h-10 uppercase tabular-nums group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition">{{ $product->name }}</h4>
                     </a>
                 </div>
 
@@ -139,21 +145,21 @@
 
                     <!-- Badges -->
                     @if($product->discount_percentage > 0)
-                        <div class="absolute top-0 left-0 bg-red-500 text-white text-[9px] font-bold px-2 py-1 rounded-lg uppercase tracking-widest z-10 shadow-sm">
+                        <div class="absolute top-0 left-0 bg-red-500 text-white text-[9px] font-bold px-2 py-1 rounded-lg uppercase tracking-widest z-10 shadow-sm dark:shadow-none">
                             -{{ $product->discount_percentage }}%
                         </div>
                     @elseif($product->stock <= 0)
-                        <div class="absolute top-0 left-0 bg-gray-500 text-white text-[9px] font-bold px-2 py-1 rounded-lg uppercase tracking-widest z-10 shadow-sm">
+                        <div class="absolute top-0 left-0 bg-gray-500 text-white text-[9px] font-bold px-2 py-1 rounded-lg uppercase tracking-widest z-10 shadow-sm dark:shadow-none">
                             Agotado
                         </div>
                     @endif
 
                     <!-- Hover Actions Overlay -->
-                    <div class="absolute inset-0 flex items-center justify-center gap-2 bg-white/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+                    <div class="absolute inset-0 flex items-center justify-center gap-2 bg-white/40 dark:bg-gray-900/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                         <!-- Favorites -->
                         <button @click="toggleFav('{{ $product->id }}')" 
-                                :class="favorites.includes('{{ $product->id }}') ? 'bg-red-500 text-white scale-110' : 'bg-white text-gray-800'"
-                                class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white transition transform active:scale-95 border border-gray-100">
+                                :class="favorites.includes('{{ $product->id }}') ? 'bg-red-500 text-white scale-110' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100'"
+                                class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white transition transform active:scale-95 border border-gray-100 dark:border-gray-600">
                             <svg class="w-5 h-5" :fill="favorites.includes('{{ $product->id }}') ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         </button>
 
@@ -185,7 +191,7 @@
 
                         <!-- Quick View -->
                         <a href="{{ route('shop.product', $product) }}" 
-                           class="w-10 h-10 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-lg hover:bg-indigo-600 hover:text-white transition transform active:scale-95 border border-gray-100">
+                           class="w-10 h-10 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-lg hover:bg-indigo-600 hover:text-white transition transform active:scale-95 border border-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </a>
                     </div>
@@ -198,17 +204,17 @@
                             Gs. {{ number_format($product->price_sale, 0, ',', '.') }}
                         </div>
                     @endif
-                    <div class="text-xl font-bold text-gray-900 leading-none tabular-nums">
+                    <div class="text-xl font-bold text-gray-900 dark:text-white leading-none tabular-nums">
                         <span class="text-xs font-medium mr-0.5">Gs.</span> {{ number_format($product->effective_price, 0, ',', '.') }}
                     </div>
                     
                     <!-- Multi-currency (Small/Clean) -->
-                    <div class="mt-2 flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                    <div class="mt-2 flex items-center gap-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
                         @php 
                             $usd_rate = floatval($settings['currency_usd'] ?? 7500);
                             $price_usd = $product->effective_price / ($usd_rate ?: 1);
                         @endphp
-                        <span class="text-emerald-600">USD {{ number_format($price_usd, 2) }}</span>
+                        <span class="text-emerald-600 dark:text-emerald-400">USD {{ number_format($price_usd, 2) }}</span>
                         <span>•</span>
                         <span>REF: {{ $product->sku ?? 'S/N' }}</span>
                     </div>
@@ -221,11 +227,11 @@
         <!-- Loading Skeletons -->
         <div wire:loading class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8 mt-8">
             @for($i = 0; $i < 4; $i++)
-            <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 p-4">
-                <div class="aspect-square skeleton rounded-2xl mb-4"></div>
-                <div class="h-4 w-2/3 skeleton rounded mb-2"></div>
-                <div class="h-4 w-1/2 skeleton rounded mb-4"></div>
-                <div class="h-10 w-full skeleton rounded-xl"></div>
+            <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 p-4">
+                <div class="aspect-square skeleton dark:skeleton-dark rounded-2xl mb-4"></div>
+                <div class="h-4 w-2/3 skeleton dark:skeleton-dark rounded mb-2"></div>
+                <div class="h-4 w-1/2 skeleton dark:skeleton-dark rounded mb-4"></div>
+                <div class="h-10 w-full skeleton dark:skeleton-dark rounded-xl"></div>
             </div>
             @endfor
         </div>
@@ -234,7 +240,7 @@
         <div class="mt-16 text-center" wire:loading.remove>
             <button wire:click="loadMore" 
                     wire:loading.attr="disabled"
-                    class="inline-flex items-center gap-3 px-8 py-3 bg-white border-2 border-indigo-600 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-600 hover:text-white transition-all transform active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-indigo-100 text-sm">
+                    class="inline-flex items-center gap-3 px-8 py-3 bg-white dark:bg-gray-800 border-2 border-indigo-600 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-600 hover:text-white transition-all transform active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-indigo-100 dark:shadow-none text-sm dark:text-indigo-400">
                 <span>VER MÁS</span>
                 <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
@@ -246,7 +252,7 @@
         @if(count($recentProducts) == 0)
             <div class="text-center py-20">
                 <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <p class="text-gray-400 font-bold">No encontramos productos que coincidan.</p>
+                <p class="text-gray-400 font-bold dark:text-gray-500">No encontramos productos que coincidan.</p>
             </div>
         @endif
     </section>
@@ -351,6 +357,9 @@
         .skeleton {
             background-color: #f3f4f6;
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .dark .skeleton {
+            background-color: #374151;
         }
         @keyframes pulse {
             0%, 100% { opacity: 1; }

@@ -19,6 +19,43 @@ class Profit extends Component
         $this->dateTo = Carbon::now()->endOfMonth()->format('Y-m-d');
     }
 
+    public function updatedDateFrom() { $this->dispatch('update-profit-chart', ['data' => $this->getEvolutionData()]); }
+    public function updatedDateTo() { $this->dispatch('update-profit-chart', ['data' => $this->getEvolutionData()]); }
+
+    // Helper to get raw evolution data for live updates
+    private function getEvolutionData() {
+        // Redundant logic for Alpine update payload
+        $revenueByDay = Sale::whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
+            ->where('status', 'completed')
+            ->selectRaw('DATE(created_at) as date, SUM(total) as total')
+            ->groupBy('date')->orderBy('date')->get()->keyBy('date');
+
+        $costByDay = SaleItem::whereHas('sale', function($q) {
+                $q->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
+                  ->where('status', 'completed');
+            })
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->selectRaw('DATE(sale_items.created_at) as date, SUM(sale_items.quantity * products.price_cost) as cost')
+            ->groupBy('date')->orderBy('date')->get()->keyBy('date');
+
+        $evolutionData = [];
+        $currentDate = Carbon::parse($this->dateFrom);
+        $endDate = Carbon::parse($this->dateTo);
+
+        while ($currentDate->lte($endDate)) {
+            $dateStr = $currentDate->format('Y-m-d');
+            $rev = $revenueByDay->get($dateStr)->total ?? 0;
+            $cst = $costByDay->get($dateStr)->cost ?? 0;
+            $evolutionData[] = [
+                'date' => $currentDate->format('d/m'),
+                'revenue' => (float)$rev,
+                'profit' => (float)($rev - $cst)
+            ];
+            $currentDate->addDay();
+        }
+        return $evolutionData;
+    }
+
     public function render()
     {
         // 1. Sales Revenue (Gross Sales)
@@ -55,6 +92,45 @@ class Profit extends Component
         
         $profitMargin = $totalRevenue > 0 ? ($netProfit / $totalRevenue) * 100 : 0;
 
+        // 7. Evolution Data for Chart
+        // Group revenue by date
+        $revenueByDay = Sale::whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
+            ->where('status', 'completed')
+            ->selectRaw('DATE(created_at) as date, SUM(total) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
+
+        // Group cost by date
+        $costByDay = SaleItem::whereHas('sale', function($q) {
+                $q->whereBetween('created_at', [$this->dateFrom . ' 00:00:00', $this->dateTo . ' 23:59:59'])
+                  ->where('status', 'completed');
+            })
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->selectRaw('DATE(sale_items.created_at) as date, SUM(sale_items.quantity * products.price_cost) as cost')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
+
+        // Merge into an evolution array
+        $evolutionData = [];
+        $currentDate = Carbon::parse($this->dateFrom);
+        $endDate = Carbon::parse($this->dateTo);
+
+        while ($currentDate->lte($endDate)) {
+            $dateStr = $currentDate->format('Y-m-d');
+            $rev = $revenueByDay->get($dateStr)->total ?? 0;
+            $cst = $costByDay->get($dateStr)->cost ?? 0;
+            $evolutionData[] = [
+                'date' => $currentDate->format('d/m'),
+                'revenue' => (float)$rev,
+                'profit' => (float)($rev - $cst)
+            ];
+            $currentDate->addDay();
+        }
+
         return view('livewire.reports.profit', [
             'totalRevenue' => $totalRevenue,
             'totalCost' => $totalCost,
@@ -63,7 +139,8 @@ class Profit extends Component
             'netProfit' => $netProfit,
             'salesCount' => $salesCount,
             'avgTicket' => $avgTicket,
-            'profitMargin' => $profitMargin
+            'profitMargin' => $profitMargin,
+            'evolutionData' => $evolutionData
         ])->layout('layouts.app');
     }
 }

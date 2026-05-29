@@ -10,22 +10,19 @@
     html {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+        @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
     
-    /* Modern Scrollbars */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        @apply bg-gray-100;
-    }
-    ::-webkit-scrollbar-thumb {
-        @apply bg-gray-300 rounded-full;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        @apply bg-gray-400;
-    }
+    /* Light scrollbars */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { @apply bg-gray-100 dark:bg-gray-900; }
+    ::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-600 rounded-full; }
+    ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-500; }
 
     /* Remove number input spinners */
     input[type=number]::-webkit-inner-spin-button, 
@@ -41,10 +38,18 @@
     }
     
     .card {
-        @apply bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden;
+        @apply bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden;
     }
 
     .form-input {
-        @apply border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-lg shadow-sm;
+        @apply border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-primary-500 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
+    }
+
+    /* Dark mode toggle button */
+    .dark-mode-toggle {
+        @apply relative inline-flex items-center justify-center w-9 h-9 rounded-xl
+               text-gray-500 dark:text-gray-400
+               hover:bg-gray-100 dark:hover:bg-gray-700
+               transition-all duration-200 cursor-pointer;
     }
 }

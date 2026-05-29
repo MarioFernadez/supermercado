@@ -1,31 +1,31 @@
 @section('title', $product->name . ' | ' . ($settings['store_name'] ?? 'ZonaShop'))
 @section('meta_description', Str::limit(strip_tags($product->description), 160) ?: 'Compra ' . $product->name . ' al mejor precio en ' . ($settings['store_name'] ?? 'nuestra tienda') . '.')
 
-<div class="min-h-screen bg-gray-50 pb-20">
+<div class="min-h-screen bg-gray-50 pb-20 dark:bg-gray-900">
     <!-- Breadcrumbs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <nav class="flex text-sm font-bold uppercase tracking-widest text-gray-400 gap-2 items-center">
+        <nav class="flex text-sm font-bold uppercase tracking-widest text-gray-400 gap-2 items-center dark:text-gray-500">
             <a href="{{ route('shop.index') }}" class="hover:text-indigo-600 transition">Inicio</a>
             <span>/</span>
             <a href="{{ route('shop.category', $product->category) }}" class="hover:text-indigo-600 transition">{{ $product->category->name }}</a>
             <span>/</span>
-            <span class="text-gray-900 truncate">{{ $product->name }}</span>
+            <span class="text-gray-900 truncate dark:text-white">{{ $product->name }}</span>
         </nav>
     </div>
 
     <!-- Product Detail -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <div class="bg-white rounded-[2rem] shadow-xl shadow-indigo-100/50 overflow-hidden">
+        <div class="bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 overflow-hidden border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
             <div class="grid grid-cols-1 lg:grid-cols-2">
                 <!-- Image Section -->
-                <div class="p-8 sm:p-12 bg-white flex items-center justify-center border-b lg:border-b-0 lg:border-r border-gray-50">
+                <div class="p-8 sm:p-12 bg-gradient-to-br from-gray-50 to-white flex items-center justify-center border-b lg:border-b-0 lg:border-r border-gray-100 dark:from-gray-800 dark:to-gray-900 dark:border-gray-700">
                     <div class="relative w-full aspect-square group">
                         @if($product->image_path)
                             <img src="{{ Storage::url($product->image_path) }}" 
                                  alt="{{ $product->name }}" 
                                  class="w-full h-full object-contain transform group-hover:scale-105 transition duration-700">
                         @else
-                            <div class="w-full h-full bg-gray-50 rounded-3xl flex items-center justify-center text-gray-200">
+                            <div class="w-full h-full bg-gray-50 rounded-3xl flex items-center justify-center text-gray-200 dark:bg-gray-900">
                                 <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm-4.5-9L11 14l-2.5-3L5 17h14l-4.5-7z"/></svg>
                             </div>
                         @endif
@@ -52,11 +52,11 @@
                         <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-500 mb-2 block">
                             {{ $product->category->name }}
                         </span>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4 dark:text-white">
                             {{ $product->name }}
                         </h1>
-                        <div class="flex items-center gap-4 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                            <span>SKU: <span class="text-gray-900">{{ $selectedVariation ? $selectedVariation->sku : ($product->sku ?? 'N/A') }}</span></span>
+                        <div class="flex items-center gap-4 text-xs font-bold text-gray-400 uppercase tracking-widest dark:text-gray-500">
+                            <span>SKU: <span class="text-gray-900 dark:text-white">{{ $selectedVariation ? $selectedVariation->sku : ($product->sku ?? 'N/A') }}</span></span>
                             <span class="w-1.5 h-1.5 rounded-full bg-gray-200"></span>
                             @php
                                 $currentStock = $selectedVariation ? $selectedVariation->stock : $product->stock;
@@ -68,12 +68,12 @@
                     @if($product->has_variations && $product->variations->count() > 0)
                     <!-- Variation Selector -->
                     <div class="mb-8">
-                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Seleccionar Opción</h3>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 dark:text-gray-500">Seleccionar Opción</h3>
                         <div class="flex flex-wrap gap-2">
                             @foreach($product->variations as $var)
                                 <button 
                                     wire:click="selectVariation('{{ $var->id }}')"
-                                    class="px-4 py-2 rounded-xl border-2 transition-all font-bold text-xs uppercase tracking-widest {{ $selectedVariation && $selectedVariation->id === $var->id ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-lg shadow-indigo-100' : 'border-gray-100 bg-white text-gray-500 hover:border-gray-300' }}"
+                                    class="px-4 py-2 rounded-xl border-2 transition-all font-bold text-xs uppercase tracking-widest {{ $selectedVariation && $selectedVariation->id === $var->id ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-lg shadow-indigo-100' : 'border-gray-100 bg-white text-gray-500 hover:border-gray-300' }} dark:bg-indigo-900/30 dark:text-indigo-400"
                                 >
                                     {{ $var->name }}
                                 </button>
@@ -82,8 +82,8 @@
                     </div>
                     @endif
 
-                    <div class="bg-gray-50 rounded-3xl p-6 sm:p-8 mb-8">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Precio Contado</p>
+                    <div class="bg-gradient-to-br from-indigo-50 to-white border border-indigo-100/50 rounded-3xl p-6 sm:p-8 mb-8 dark:from-gray-900 dark:to-gray-800 dark:border-gray-700">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-2 dark:text-gray-500">Precio Contado</p>
                         
                         @php
                             $displayPrice = $selectedVariation ? $selectedVariation->price_sale : $product->price_sale;
@@ -103,12 +103,12 @@
                                 </div>
                             @endif
                             <div class="flex items-baseline gap-2">
-                                <span class="text-xl font-bold text-gray-900">Gs.</span>
-                                <span class="text-2xl sm:text-3xl font-bold text-gray-900">{{ number_format($displayEffectivePrice, 0, ',', '.') }}</span>
+                                <span class="text-xl font-bold text-gray-900 dark:text-white">Gs.</span>
+                                <span class="text-2xl sm:text-4xl font-black tracking-tighter text-gray-900 dark:text-white">{{ number_format($displayEffectivePrice, 0, ',', '.') }}</span>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 border-t border-gray-200 pt-6">
+                        <div class="grid grid-cols-2 gap-4 border-t border-indigo-100/50 pt-6 dark:border-gray-700">
                             @php 
                                 $usd_rate = floatval($settings['currency_usd'] ?? 7500);
                                 $ars_rate = floatval($settings['currency_ars'] ?? 20);
@@ -116,11 +116,11 @@
                                 $price_ars = $displayEffectivePrice / ($ars_rate ?: 1);
                             @endphp
                             <div>
-                                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Dólares</p>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 dark:text-gray-500">Dólares</p>
                                 <p class="text-lg font-bold text-emerald-600">U$ {{ number_format($price_usd, 0, ',', '.') }}</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Pesos Arg.</p>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 dark:text-gray-500">Pesos Arg.</p>
                                 <p class="text-lg font-bold text-blue-600">P$ {{ number_format($price_ars, 0, ',', '.') }}</p>
                             </div>
                         </div>
@@ -128,14 +128,14 @@
 
                     @if($product->description)
                     <div class="mb-8">
-                        <h3 class="text-sm font-bold uppercase tracking-widest text-gray-900 mb-4">Descripción</h3>
-                        <div class="text-gray-600 leading-relaxed text-sm format-description">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-gray-900 mb-4 dark:text-white">Descripción</h3>
+                        <div class="text-gray-600 leading-relaxed text-sm format-description dark:text-gray-400">
                             {!! nl2br(e($product->description)) !!}
                         </div>
                     </div>
                     @endif
 
-                    <div class="mt-auto pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
+                    <div class="mt-auto pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4 dark:border-gray-700">
                         @if($currentStock > 0)
                         <button @click="addItem({
                             id: '{{ $product->id }}',
@@ -151,7 +151,7 @@
                         </button>
                         @else
                         <button disabled 
-                        class="flex-1 bg-gray-200 text-gray-400 font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed text-xs uppercase tracking-widest">
+                        class="flex-1 bg-gray-200 text-gray-400 font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed text-xs uppercase tracking-widest dark:text-gray-500">
                             Sin Stock
                         </button>
                         @endif
@@ -165,7 +165,7 @@
 
                         <!-- Share Button -->
                         <button onclick="shareProduct()" 
-                                class="bg-gray-100 hover:bg-gray-200 text-gray-500 p-3 rounded-xl transition transform active:scale-95 shadow-sm">
+                                class="bg-gray-100 hover:bg-gray-200 text-gray-500 p-3 rounded-xl transition transform active:scale-95 shadow-sm dark:bg-gray-700 dark:text-gray-400 dark:shadow-none">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 12.684a3 3 0 100-2.684 3 3 0 000 2.684z"></path></svg>
                         </button>
                     </div>
@@ -197,18 +197,18 @@
     <!-- Related Products -->
     @if($relatedProducts->count() > 0)
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
-        <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 uppercase tracking-tighter">También te puede interesar</h2>
-            <a href="{{ route('shop.category', $product->category) }}" class="text-xs font-bold uppercase tracking-widest text-indigo-600 hover:text-indigo-800 transition flex items-center gap-2">
+        <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-4 dark:border-gray-700">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 uppercase tracking-tighter dark:text-white">También te puede interesar</h2>
+            <a href="{{ route('shop.category', $product->category) }}" class="text-xs font-bold uppercase tracking-widest text-indigo-600 hover:text-indigo-800 transition flex items-center gap-2 dark:text-indigo-400">
                 Ver más de esta categoría <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </a>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             @foreach($relatedProducts as $related)
-            <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col h-full relative">
+            <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-300 group flex flex-col h-full relative dark:bg-gray-800 dark:border-gray-700 dark:shadow-none hover:-translate-y-1">
                 <!-- Product Image -->
-                <a href="{{ route('shop.product', $related) }}" class="relative h-48 sm:h-56 overflow-hidden bg-white p-4 block">
+                <a href="{{ route('shop.product', $related) }}" class="relative h-48 sm:h-56 overflow-hidden bg-white p-4 block dark:bg-gray-800">
                     @if($related->image_path)
                         <img src="{{ Storage::url($related->image_path) }}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500" loading="lazy">
                     @else
@@ -221,15 +221,15 @@
                 <!-- Product Info -->
                 <div class="p-4 sm:p-6 flex flex-col flex-1 border-t border-gray-50">
                     <a href="{{ route('shop.product', $related) }}" class="block">
-                        <h4 class="text-xs sm:text-sm font-bold text-gray-800 leading-snug line-clamp-2 h-10 mb-4 uppercase tabular-nums hover:text-indigo-600 transition">{{ $related->name }}</h4>
+                        <h4 class="text-xs sm:text-sm font-bold text-gray-800 leading-snug line-clamp-2 h-10 mb-4 uppercase tabular-nums hover:text-indigo-600 transition dark:text-white">{{ $related->name }}</h4>
                     </a>
                     
                     <div class="mt-auto">
-                        <div class="text-md font-bold text-gray-900 mb-1">
+                        <div class="text-md font-bold text-gray-900 mb-1 dark:text-white">
                             <span class="text-sm font-medium mr-0.5">Gs.</span> {{ number_format($related->price_sale, 0, ',', '.') }}
                         </div>
 
-                        <div class="flex items-center gap-3 text-[10px] font-bold text-gray-400">
+                        <div class="flex items-center gap-3 text-[10px] font-bold text-gray-400 dark:text-gray-500">
                             @php 
                                 $price_usd_rel = $related->price_sale / ($usd_rate ?: 1);
                             @endphp
@@ -245,7 +245,7 @@
                             image_url: '{{ $related->image_path ? Storage::url($related->image_path) : '' }}',
                             category: '{{ addslashes($related->category->name) }}'
                         })" 
-                        class="w-full mt-4 bg-gray-50 hover:bg-indigo-600 hover:text-white text-gray-900 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-2 transform active:scale-95 border border-gray-100 group-hover:border-indigo-600">
+                        class="w-full mt-4 bg-gray-50 hover:bg-indigo-600 hover:text-white text-gray-900 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-2 transform active:scale-95 border border-gray-100 group-hover:border-indigo-600 dark:bg-gray-900 dark:text-white dark:border-gray-700">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             Añadir al carrito
                         </button>

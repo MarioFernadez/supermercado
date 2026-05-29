@@ -33,7 +33,9 @@ class Index extends BaseCrudComponent
     public $price_sale;
 
     #[Rule('required|numeric|min:0')]
-    public $stock = 0;
+    public $stock = 0; // Total stock (read-only in UI, calculated)
+
+    public $branch_stocks = []; // Format: [branch_id => stock]
 
     #[Rule('required|numeric|min:0')]
     public $min_stock = 5;
@@ -56,7 +58,7 @@ class Index extends BaseCrudComponent
 
     // Variations
     public $has_variations = false;
-    public $variations = []; // Each: ['name' => '', 'sku' => '', 'price_cost' => '', 'price_sale' => '', 'stock' => 0]
+    public $variations = []; // Each: ['name' => '', 'sku' => '', 'price_cost' => '', 'price_sale' => '', 'stock' => 0, 'branch_stocks' => []]
 
 
     public function render()
@@ -71,12 +73,14 @@ class Index extends BaseCrudComponent
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $suppliers = Supplier::where('active', true)->orderBy('name')->get();
         $units = \App\Models\Unit::where('is_active', true)->orderBy('name')->get();
+        $branches = \App\Models\Branch::where('is_active', true)->orderBy('name')->get();
 
         return view('livewire.products.index', [
             'products'               => $products,
             'categories'             => $categories,
             'suppliers'              => $suppliers,
             'units'                  => $units,
+            'branches'               => $branches,
             'discountProductEnabled' => $discountProductEnabled,
         ])->layout('layouts.app');
     }
@@ -90,6 +94,7 @@ class Index extends BaseCrudComponent
         $this->price_cost = '';
         $this->price_sale = '';
         $this->stock = 0;
+        $this->branch_stocks = [];
         $this->min_stock = 5;
         $this->category_id = null;
         $this->supplier_id = null;
@@ -125,7 +130,8 @@ class Index extends BaseCrudComponent
             'description'=> 'nullable|string',
             'price_cost' => 'required',
             'price_sale' => 'required',
-            'stock'      => $this->manage_stock ? 'required|numeric|min:0' : 'nullable',
+            // Stock is now dynamically checked per branch if manage_stock is true
+            // 'stock'      => $this->manage_stock ? 'required|numeric|min:0' : 'nullable',
             'min_stock'  => $this->manage_stock ? 'required|numeric|min:0' : 'nullable',
             'unit_type'  => 'required',
             'discount_percentage' => 'integer|min:0|max:100',
@@ -149,6 +155,14 @@ class Index extends BaseCrudComponent
             } while (Product::where('sku', $this->sku)->exists());
         }
 
+        // Calculate total stock from branch_stocks for simple products
+        $totalStock = 0;
+        if ($this->manage_stock && !$this->has_variations) {
+            foreach ($this->branch_stocks as $bStock) {
+                $totalStock += (float) ($bStock ?? 0);
+            }
+        }
+
         $product = Product::updateOrCreate(['id' => $id], [
             'name'       => $this->name,
             'sku'        => $this->sku,
@@ -156,7 +170,7 @@ class Index extends BaseCrudComponent
             'price_cost' => $this->price_cost,
             'price_sale' => $this->price_sale,
             'discount_percentage' => (int) $this->discount_percentage,
-            'stock'      => $this->manage_stock ? $this->stock : 0,
+            'stock'      => $totalStock,
             'min_stock'  => $this->manage_stock ? $this->min_stock : 0,
             'category_id' => $this->category_id ?: null,
             'supplier_id' => $this->supplier_id ?: null,
@@ -167,10 +181,31 @@ class Index extends BaseCrudComponent
             'image_path' => $this->product_image_path
         ]);
 
+        // Sync branch stocks for simple product
+        if ($this->manage_stock && !$this->has_variations) {
+            foreach ($this->branch_stocks as $branchId => $bStock) {
+                $product->branchStocks()->updateOrCreate(
+                    ['branch_id' => $branchId],
+                    ['stock' => (float) ($bStock ?? 0)]
+                );
+            }
+        } else {
+            // If it has variations or doesn't manage stock, clear product-level branch stocks
+            $product->branchStocks()->delete();
+        }
+
         // Handle Variations
         if ($this->has_variations) {
             $existingIds = [];
             foreach ($this->variations as $var) {
+                $varTotalStock = 0;
+                $varBranchStocks = $var['branch_stocks'] ?? [];
+                if ($this->manage_stock) {
+                    foreach ($varBranchStocks as $bStock) {
+                        $varTotalStock += (float) ($bStock ?? 0);
+                    }
+                }
+
                 $v = $product->variations()->updateOrCreate(
                     ['id' => $var['id'] ?? null],
                     [
@@ -178,10 +213,22 @@ class Index extends BaseCrudComponent
                         'sku' => $var['sku'] ?: $product->sku . '-' . \Illuminate\Support\Str::random(4),
                         'price_cost' => $var['price_cost'],
                         'price_sale' => $var['price_sale'],
-                        'stock' => $var['stock'],
+                        'stock' => $varTotalStock,
                         'is_active' => true
                     ]
                 );
+                
+                if ($this->manage_stock) {
+                    foreach ($varBranchStocks as $branchId => $bStock) {
+                        $v->branchStocks()->updateOrCreate(
+                            ['branch_id' => $branchId],
+                            ['stock' => (float) ($bStock ?? 0)]
+                        );
+                    }
+                } else {
+                    $v->branchStocks()->delete();
+                }
+
                 $existingIds[] = $v->id;
             }
             // Delete removed variations
@@ -206,7 +253,8 @@ class Index extends BaseCrudComponent
             'sku' => '',
             'price_cost' => $this->price_cost,
             'price_sale' => $this->price_sale,
-            'stock' => 0
+            'stock' => 0,
+            'branch_stocks' => []
         ];
     }
 
@@ -236,13 +284,16 @@ class Index extends BaseCrudComponent
         $this->product_image_path = $product->image_path;
         $this->has_variations = $product->has_variations;
         
+        $this->branch_stocks = $product->branchStocks->pluck('stock', 'branch_id')->toArray();
+
         $this->variations = $product->variations->map(fn($v) => [
             'id' => $v->id,
             'name' => $v->name,
             'sku' => $v->sku,
             'price_cost' => $v->formatPyg($v->price_cost),
             'price_sale' => $v->formatPyg($v->price_sale),
-            'stock' => $v->stock
+            'stock' => $v->stock,
+            'branch_stocks' => $v->branchStocks->pluck('stock', 'branch_id')->toArray()
         ])->toArray();
 
 
