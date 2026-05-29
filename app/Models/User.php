@@ -33,6 +33,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'branch_id',
     ];
 
     /**
@@ -84,5 +85,10 @@ class User extends Authenticatable
     public function isDeveloper(): bool
     {
         return $this->role === 'developer';
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

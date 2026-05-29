@@ -12,7 +12,7 @@
     @endif
 
     <!-- Notification Bell -->
-    <button @click="open = !open; if(open) $wire.clearNotifications()" class="relative p-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus:outline-none">
+    <button @click="open = !open; if(open) $wire.clearNotifications()" class="relative p-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus:outline-none dark:text-gray-500">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
         </svg>
@@ -41,7 +41,7 @@
                 {{ \App\Services\LicenseService::isEcommerceEnabled() ? 'Pedidos Web Recientes' : 'Alertas del Sistema' }}
             </h3>
             @if(\App\Services\LicenseService::isEcommerceEnabled())
-                <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Últimos 5</span>
+                <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold dark:text-indigo-400">Últimos 5</span>
             @endif
         </div>
 
@@ -61,31 +61,31 @@
                     <div class="p-4 border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ $order['customer_name'] }}</span>
-                            <span class="text-[10px] text-gray-400 tabular-nums">
+                            <span class="text-[10px] text-gray-400 tabular-nums dark:text-gray-500">
                                 {{ \Carbon\Carbon::parse($order['created_at'])->diffForHumans() }}
                             </span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[11px] text-gray-500">Total: ₲ {{ number_format($order['total'], 0, ',', '.') }}</span>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 font-bold uppercase">{{ $order['status'] }}</span>
+                            <span class="text-[11px] text-gray-500 dark:text-gray-400">Total: ₲ {{ number_format($order['total'], 0, ',', '.') }}</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 font-bold uppercase dark:bg-green-900/40 dark:text-green-400">{{ $order['status'] }}</span>
                         </div>
                     </div>
                 @empty
                     <div class="p-8 text-center">
-                        <svg class="w-10 h-10 text-gray-200 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        <p class="text-xs text-gray-400">No hay pedidos registrados hoy</p>
+                        <svg class="w-10 h-10 text-gray-200 mx-auto mb-2 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <p class="text-xs text-gray-400 dark:text-gray-500">No hay pedidos registrados hoy</p>
                     </div>
                 @endforelse
             @elseif($lowStockCount == 0)
                 <div class="p-8 text-center">
-                    <svg class="w-10 h-10 text-emerald-100 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <p class="text-xs text-gray-400">El sistema no reporta alertas pendientes</p>
+                    <svg class="w-10 h-10 text-emerald-100 dark:text-emerald-900/50 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-xs text-gray-400 dark:text-gray-500">El sistema no reporta alertas pendientes</p>
                 </div>
             @endif
         </div>
 
         @if(\App\Services\LicenseService::isEcommerceEnabled())
-            <a href="{{ route('admin.web-orders.index') }}" class="block p-3 text-center text-xs font-bold text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition uppercase tracking-widest border-t border-gray-100 dark:border-gray-700">
+            <a href="{{ route('admin.web-orders.index') }}" class="block p-3 text-center text-xs font-bold text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition uppercase tracking-widest border-t border-gray-100 dark:border-gray-700 dark:text-indigo-400">
                 Ver todos los pedidos
             </a>
         @endif
@@ -113,9 +113,9 @@
                 <div>
                     <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Nuevo Pedido Web</p>
                     <p class="text-sm font-bold" x-text="customer"></p>
-                    <p class="text-xs text-gray-400">₲ <span x-text="total"></span></p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500">₲ <span x-text="total"></span></p>
                 </div>
-                <button @click="show = false" class="text-gray-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button @click="show = false" class="text-gray-500 hover:text-white dark:text-gray-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
         </div>
     @endif

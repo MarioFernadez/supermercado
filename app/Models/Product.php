@@ -142,6 +142,11 @@ class Product extends Model
         return $this->hasMany(ProductVariation::class);
     }
 
+    public function branchStocks()
+    {
+        return $this->morphMany(BranchStock::class, 'stockable');
+    }
+
     /**
      * Get the total stock across all variations or the product stock if simple.
      */

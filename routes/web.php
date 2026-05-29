@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     // Admin-Only Routes (system config)
     Route::middleware(['can:admin'])->group(function () {
         Route::get('/users', \App\Livewire\Users\Index::class)->name('users.index');
+        Route::get('/settings/branches', \App\Livewire\Branches\Index::class)->name('branches.index');
         Route::get('/settings/registers', \App\Livewire\CashRegisters\Index::class)->name('cash_registers.index');
         Route::get('/settings/general', \App\Livewire\Settings\General::class)->name('settings.general');
         Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {

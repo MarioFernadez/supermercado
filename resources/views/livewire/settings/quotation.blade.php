@@ -3,8 +3,8 @@
         
         <!-- Section: Header -->
         <div class="mb-6">
-            <h3 class="text-lg font-medium leading-6 text-gray-900">Cotizaciones de Moneda</h3>
-            <p class="mt-1 text-sm text-gray-600">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Cotizaciones de Moneda</h3>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Defina el valor de cambio en Guaraníes (PYG) para las monedas extranjeras aceptadas.
                 <br>
                 <strong>Nota:</strong> Estos valores se utilizarán para calcular pagos en moneda extranjera en el POS.
@@ -14,19 +14,19 @@
         <div class="mt-2 text-center">
             <form wire:submit.prevent="save">
                 <div class="shadow overflow-hidden sm:rounded-md">
-                    <div class="px-4 py-5 bg-white sm:p-6 text-left">
+                    <div class="px-4 py-5 bg-white sm:p-6 text-left dark:bg-gray-800">
                         <div class="grid grid-cols-6 gap-6">
                             
                             <!-- USD -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="usd" class="block text-sm font-medium text-gray-700">Dólar Americano (USD)</label>
-                                <div class="mt-1 relative rounded-md shadow-sm">
+                                <label for="usd" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dólar Americano (USD)</label>
+                                <div class="mt-1 relative rounded-md shadow-sm dark:shadow-none">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">U$</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">U$</span>
                                     </div>
-                                    <input type="number" step="any" wire:model="usd" id="usd" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                                    <input type="number" step="any" wire:model="usd" id="usd" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="0">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">PYG</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">PYG</span>
                                     </div>
                                 </div>
                                 @error('usd') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -34,14 +34,14 @@
 
                             <!-- BRL -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="brl" class="block text-sm font-medium text-gray-700">Real Brasileño (BRL)</label>
-                                <div class="mt-1 relative rounded-md shadow-sm">
+                                <label for="brl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Real Brasileño (BRL)</label>
+                                <div class="mt-1 relative rounded-md shadow-sm dark:shadow-none">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">R$</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">R$</span>
                                     </div>
-                                    <input type="number" step="any" wire:model="brl" id="brl" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                                    <input type="number" step="any" wire:model="brl" id="brl" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="0">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">PYG</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">PYG</span>
                                     </div>
                                 </div>
                                 @error('brl') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -49,14 +49,14 @@
 
                             <!-- ARS -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="ars" class="block text-sm font-medium text-gray-700">Peso Argentino (ARS)</label>
-                                <div class="mt-1 relative rounded-md shadow-sm">
+                                <label for="ars" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Peso Argentino (ARS)</label>
+                                <div class="mt-1 relative rounded-md shadow-sm dark:shadow-none">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">$</span>
                                     </div>
-                                    <input type="number" step="any" wire:model="ars" id="ars" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                                    <input type="number" step="any" wire:model="ars" id="ars" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="0">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">PYG</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">PYG</span>
                                     </div>
                                 </div>
                                 @error('ars') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -64,14 +64,14 @@
 
                             <!-- EUR -->
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="eur" class="block text-sm font-medium text-gray-700">Euro (EUR)</label>
-                                <div class="mt-1 relative rounded-md shadow-sm">
+                                <label for="eur" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Euro (EUR)</label>
+                                <div class="mt-1 relative rounded-md shadow-sm dark:shadow-none">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">€</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">€</span>
                                     </div>
-                                    <input type="number" step="any" wire:model="eur" id="eur" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0">
+                                    <input type="number" step="any" wire:model="eur" id="eur" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="0">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm">PYG</span>
+                                        <span class="text-gray-500 sm:text-sm dark:text-gray-400">PYG</span>
                                     </div>
                                 </div>
                                 @error('eur') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -79,8 +79,8 @@
 
                         </div>
                     </div>
-                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 dark:bg-gray-900">
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:shadow-none">
                             Guardar Cotizaciones
                         </button>
                     </div>
@@ -88,7 +88,7 @@
             </form>
 
              @if (session()->has('message'))
-                <div class="mt-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                <div class="mt-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 dark:bg-green-900/40 dark:text-green-400" role="alert">
                     <p class="font-bold">Guardado</p>
                     <p>{{ session('message') }}</p>
                 </div>

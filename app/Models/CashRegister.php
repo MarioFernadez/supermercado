@@ -14,6 +14,7 @@ class CashRegister extends Model
         'name',
         'active',
         'description',
+        'branch_id',
     ];
 
     public function sessions()
@@ -28,5 +29,10 @@ class CashRegister extends Model
             ->whereHas('user', function($query) {
                 $query->whereNull('deleted_at');
             });
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

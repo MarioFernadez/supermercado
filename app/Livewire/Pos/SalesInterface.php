@@ -189,7 +189,15 @@ class SalesInterface extends Component
         $name = $product->name . ($variation ? ' (' . $variation->name . ')' : '');
         $price = $variation ? $variation->price_sale : $product->price_sale;
         $sku = $variation ? $variation->sku : $product->sku;
-        $stock = $variation ? $variation->stock : $product->stock;
+        $stock = $variation ? $variation->stock : $product->stock; // Fallback to total stock
+
+        $currentSession = \App\Models\CashSession::with('register')->where('user_id', auth()->id())->where('status', 'open')->first();
+        if ($currentSession && $currentSession->register && $currentSession->register->branch_id) {
+            $branchId = $currentSession->register->branch_id;
+            $stockable = $variation ? $variation : $product;
+            $branchStock = $stockable->branchStocks()->where('branch_id', $branchId)->first();
+            $stock = $branchStock ? $branchStock->stock : 0;
+        }
 
         // Stock Validation
         if ($product->manage_stock) {
@@ -233,6 +241,17 @@ class SalesInterface extends Component
         $variation = $item['variation_id'] ? \App\Models\ProductVariation::find($item['variation_id']) : null;
         
         $stock = $variation ? $variation->stock : ($product ? $product->stock : 0);
+        
+        $currentSession = \App\Models\CashSession::with('register')->where('user_id', auth()->id())->where('status', 'open')->first();
+        if ($currentSession && $currentSession->register && $currentSession->register->branch_id) {
+            $branchId = $currentSession->register->branch_id;
+            $stockable = $variation ? $variation : $product;
+            if ($stockable) {
+                $branchStock = $stockable->branchStocks()->where('branch_id', $branchId)->first();
+                $stock = $branchStock ? $branchStock->stock : 0;
+            }
+        }
+        
         $newQty = $item['quantity'] + $change;
 
         // Stock Validation on Increase
@@ -723,6 +742,7 @@ class SalesInterface extends Component
 
     public function processSale()
     {
+        \Illuminate\Support\Facades\Log::info("processSale called. Cart empty? " . empty($this->cart));
         if(empty($this->cart)) return;
 
         // Double check session
@@ -732,6 +752,16 @@ class SalesInterface extends Component
 
         if (!$hasOpenSession) {
             return redirect()->route('cash.index')->with('message', 'La caja se ha cerrado. Abrela para continuar.');
+        }
+
+        $currentSession = \App\Models\CashSession::with('register')->where('user_id', auth()->id())
+            ->where('status', 'open')
+            ->first();
+
+        $branchId = $currentSession->register->branch_id ?? null;
+        if (!$branchId) {
+             $this->addError('paymentMethod', 'La caja actual no tiene sucursal asignada.');
+             return;
         }
 
         // Validate Payment (Only if Contado)
@@ -776,6 +806,7 @@ class SalesInterface extends Component
                 // 1. Create Sale
                 $sale = \App\Models\Sale::create([
                     'user_id'                  => auth()->id(),
+                    'branch_id'                => $branchId,
                     'seller_id'                => $this->sellerId ?: null,
                     'customer_id'              => $this->selectedCustomer ? $this->selectedCustomer['id'] : null,
                     'subtotal_before_discount' => $this->subtotalBeforeDiscount,
@@ -799,17 +830,21 @@ class SalesInterface extends Component
                     }
 
                     if ($product->manage_stock) {
-                        $stockToCheck = $variation ? $variation->stock : $product->stock;
+                        $stockable = $variation ? $variation : $product;
+                        $branchStock = $stockable->branchStocks()->where('branch_id', $branchId)->first();
+                        
+                        $stockToCheck = $branchStock ? $branchStock->stock : 0;
                         
                         if ($stockToCheck < $item['quantity']) {
-                            throw new \Exception("Stock insuficiente para: " . $item['name']);
+                            throw new \Exception("Stock insuficiente en esta sucursal para: " . $item['name']);
                         }
 
-                        if ($variation) {
-                            $variation->decrement('stock', $item['quantity']);
-                        } else {
-                            $product->decrement('stock', $item['quantity']);
+                        if ($branchStock) {
+                            $branchStock->decrement('stock', $item['quantity']);
                         }
+                        
+                        // We also need to update the total stock in the parent table for quick access
+                        $stockable->decrement('stock', $item['quantity']);
                     }
                     
                     \App\Models\SaleItem::create([
@@ -931,10 +966,24 @@ class SalesInterface extends Component
         }
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($sale) {
+            // We need the branch_id that the sale was made on.
+            // Since sale has branch_id now (or at least user has branch_id)
+            $branchId = $sale->branch_id ?? $sale->user->branch_id;
+
             // Restore stock
             foreach ($sale->items as $item) {
                 if ($item->product && $item->product->manage_stock) {
-                    $item->product->increment('stock', $item->quantity);
+                    $stockable = $item->product_variation_id ? $item->product->variations()->find($item->product_variation_id) : $item->product;
+                    if ($stockable) {
+                        $stockable->increment('stock', $item->quantity);
+                        if ($branchId) {
+                            $branchStock = $stockable->branchStocks()->firstOrCreate(
+                                ['branch_id' => $branchId],
+                                ['stock' => 0]
+                            );
+                            $branchStock->increment('stock', $item->quantity);
+                        }
+                    }
                 }
             }
             // Mark as voided

@@ -13,17 +13,23 @@ class Index extends BaseCrudComponent
     #[Rule('required|min:3')]
     public $name;
 
+    #[Rule('required|exists:branches,id', message: 'Debes seleccionar una sucursal válida.')]
+    public $branch_id;
+
     public $description;
     public $active = true;
 
     public function render()
     {
-        $registers = CashRegister::search($this->search, ['name'])
+        $registers = CashRegister::with('branch')->search($this->search, ['name'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
             
+        $branches = \App\Models\Branch::where('active', true)->get();
+
         return view('livewire.cash-registers.index', [
             'registers' => $registers,
+            'branches' => $branches,
         ])->layout('layouts.app');
     }
 
@@ -33,6 +39,7 @@ class Index extends BaseCrudComponent
         $this->description = '';
         $this->active = true;
         $this->registerId = null;
+        $this->branch_id = null;
         $this->resetValidation();
     }
 
@@ -50,6 +57,7 @@ class Index extends BaseCrudComponent
             'name' => $this->name,
             'description' => $this->description,
             'active' => $this->active,
+            'branch_id' => $this->branch_id,
         ]);
 
         session()->flash('message', $this->registerId ? 'Caja actualizada correctamente.' : 'Caja creada correctamente.');
@@ -64,6 +72,7 @@ class Index extends BaseCrudComponent
         $this->name = $register->name;
         $this->description = $register->description;
         $this->active = $register->active;
+        $this->branch_id = $register->branch_id;
 
         $this->openModal();
     }

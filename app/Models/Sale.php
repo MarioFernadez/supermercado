@@ -24,6 +24,7 @@ class Sale extends Model
         'status',
         'payment_condition',
         'web_order_id',
+        'branch_id',
     ];
 
     /**
@@ -39,6 +40,11 @@ class Sale extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class)->withTrashed();
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function user()

@@ -28,12 +28,26 @@ class Sales extends Component
     {
         $this->dateFrom = Carbon::today()->format('Y-m-d');
         $this->dateTo = Carbon::today()->format('Y-m-d');
+        $this->updateCharts();
     }
 
     public function filterWeek()
     {
         $this->dateFrom = Carbon::now()->startOfWeek()->format('Y-m-d');
         $this->dateTo = Carbon::now()->endOfWeek()->format('Y-m-d');
+        $this->updateCharts();
+    }
+
+    public function updatedDateFrom() { $this->updateCharts(); }
+    public function updatedDateTo() { $this->updateCharts(); }
+    public function updatedChannel() { $this->updateCharts(); }
+
+    public function updateCharts()
+    {
+        $this->dispatch('update-charts', [
+            'branches' => $this->salesByBranch,
+            'sellers' => $this->salesBySeller
+        ]);
     }
 
     public function getSoldProductsProperty()
@@ -100,6 +114,38 @@ class Sales extends Component
                 COUNT(sale_items.id) as items_count
             ')
             ->groupBy('supplier_name')
+            ->orderByDesc('total_sales')
+            ->get();
+    }
+
+    public function getSalesByBranchProperty()
+    {
+        return \App\Models\Sale::whereDate('sales.created_at', '>=', $this->dateFrom)
+            ->whereDate('sales.created_at', '<=', $this->dateTo)
+            ->where('sales.status', '!=', 'voided')
+            ->leftJoin('branches', 'sales.branch_id', '=', 'branches.id')
+            ->selectRaw('
+                COALESCE(branches.name, \'Venta Global\') as branch_name,
+                SUM(sales.total) as total_sales,
+                COUNT(sales.id) as sales_count
+            ')
+            ->groupBy('branch_name')
+            ->orderByDesc('total_sales')
+            ->get();
+    }
+
+    public function getSalesBySellerProperty()
+    {
+        return \App\Models\Sale::whereDate('sales.created_at', '>=', $this->dateFrom)
+            ->whereDate('sales.created_at', '<=', $this->dateTo)
+            ->where('sales.status', '!=', 'voided')
+            ->leftJoin('users', 'sales.user_id', '=', 'users.id')
+            ->selectRaw('
+                COALESCE(users.name, \'Desconocido\') as seller_name,
+                SUM(sales.total) as total_sales,
+                COUNT(sales.id) as sales_count
+            ')
+            ->groupBy('seller_name')
             ->orderByDesc('total_sales')
             ->get();
     }
