@@ -63,7 +63,7 @@ class Dashboard extends Component
         }
 
         // 5. Pending Web Orders
-        $pendingWebOrdersCount = \App\Models\WebOrder::where('status', 'pending')->count();
+        $pendingWebOrdersCount = \App\Models\WebOrder::where('status', 'Pendiente WhatsApp')->count();
 
         // 6. Total Active Customers
         $totalCustomers = \App\Models\Customer::where('is_active', true)->count();
