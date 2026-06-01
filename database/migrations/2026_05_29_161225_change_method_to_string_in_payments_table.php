@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE payments MODIFY COLUMN method VARCHAR(50) DEFAULT 'efectivo'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE payments MODIFY COLUMN method VARCHAR(50) DEFAULT 'efectivo'");
+        }
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE payments MODIFY COLUMN method ENUM('efectivo', 'tarjeta', 'transferencia', 'qr') DEFAULT 'efectivo'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE payments MODIFY COLUMN method ENUM('efectivo', 'tarjeta', 'transferencia', 'qr') DEFAULT 'efectivo'");
+        }
     }
 };

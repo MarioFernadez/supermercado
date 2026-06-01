@@ -68,7 +68,7 @@
                     @if($product->has_variations && $product->variations->count() > 0)
                     <!-- Variation Selector -->
                     <div class="mb-8">
-                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 dark:text-gray-500">Seleccionar Opción</h3>
+                        <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 dark:text-gray-500">Seleccionar Opción</h3>
                         <div class="flex flex-wrap gap-2">
                             @foreach($product->variations as $var)
                                 <button 
@@ -104,7 +104,7 @@
                             @endif
                             <div class="flex items-baseline gap-2">
                                 <span class="text-xl font-bold text-gray-900 dark:text-white">Gs.</span>
-                                <span class="text-2xl sm:text-4xl font-black tracking-tighter text-gray-900 dark:text-white">{{ number_format($displayEffectivePrice, 0, ',', '.') }}</span>
+                                <span class="text-2xl sm:text-4xl font-bold tracking-tighter text-gray-900 dark:text-white">{{ number_format($displayEffectivePrice, 0, ',', '.') }}</span>
                             </div>
                         </div>
 

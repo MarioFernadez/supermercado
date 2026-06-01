@@ -42,6 +42,12 @@ class Index extends BaseCrudComponent
     {
         $this->validate();
 
+        if (!$this->branchId && !\App\Services\LicenseService::canAddBranch()) {
+            session()->flash('error', 'Límite de sucursales alcanzado para tu plan (' . \App\Services\LicenseService::getMaxBranches() . ').');
+            $this->closeModal();
+            return;
+        }
+
         Branch::updateOrCreate(['id' => $this->branchId], [
             'name' => $this->name,
             'address' => $this->address,

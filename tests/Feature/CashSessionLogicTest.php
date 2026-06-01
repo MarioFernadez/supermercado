@@ -63,7 +63,7 @@ class CashSessionLogicTest extends TestCase
         $component
             ->assertSet('totalSales', 250) // Total Revenue
             ->assertSet('totalCashSales', 50) // Only Cash
-            ->assertSeeHtml('Total Esperado en Caja')
+            ->assertSeeHtml('Balance Esperado en Caja')
             ->assertSeeHtml('150'); // 100 (Opening) + 50 (Cash Sale)
     }
 }

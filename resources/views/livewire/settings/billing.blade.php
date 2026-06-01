@@ -115,6 +115,70 @@
                 </div>
             </div>
 
+            <!-- Límites y Uso de Licencia -->
+            <div class="mb-10">
+                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-4 bg-amber-500 rounded-full"></span>
+                    Límites de Uso y Licencias Contratadas
+                </h3>
+                @php $stats = \App\Services\LicenseService::getUsageStats(); @endphp
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Usuarios -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center justify-between group hover:border-indigo-200 transition duration-300">
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Usuarios Habilitados</p>
+                            <h4 class="text-3xl font-black text-gray-900 tracking-tight">
+                                {{ $stats['users']['current'] }} <span class="text-gray-300 font-medium">/</span> {{ $stats['users']['max'] }}
+                            </h4>
+                            <p class="text-[10px] font-bold {{ $stats['users']['available'] > 0 ? 'text-emerald-600' : 'text-red-500' }} uppercase">
+                                {{ $stats['users']['available'] }} cupos libres
+                            </p>
+                        </div>
+                        <div class="bg-indigo-50 text-indigo-600 p-4 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Cajas Registradoras -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center justify-between group hover:border-purple-200 transition duration-300">
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">Cajas Registradoras (POS)</p>
+                            <h4 class="text-3xl font-black text-gray-900 tracking-tight">
+                                {{ $stats['cash_registers']['current'] }} <span class="text-gray-300 font-medium">/</span> {{ $stats['cash_registers']['max'] }}
+                            </h4>
+                            <p class="text-[10px] font-bold {{ $stats['cash_registers']['available'] > 0 ? 'text-emerald-600' : 'text-red-500' }} uppercase">
+                                {{ $stats['cash_registers']['available'] }} disponibles
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 text-purple-600 p-4 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Sucursales -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center justify-between group hover:border-amber-200 transition duration-300">
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest">Sucursales Autorizadas</p>
+                            <h4 class="text-3xl font-black text-gray-900 tracking-tight">
+                                {{ $stats['branches']['current'] }} <span class="text-gray-300 font-medium">/</span> {{ $stats['branches']['max'] }}
+                            </h4>
+                            <p class="text-[10px] font-bold {{ $stats['branches']['available'] > 0 ? 'text-emerald-600' : 'text-red-500' }} uppercase">
+                                {{ $stats['branches']['available'] }} sucursales libres
+                            </p>
+                        </div>
+                        <div class="bg-amber-50 text-amber-600 p-4 rounded-2xl group-hover:bg-amber-600 group-hover:text-white transition duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
                 <!-- Historial de Pagos (Auditoría del Cliente) -->

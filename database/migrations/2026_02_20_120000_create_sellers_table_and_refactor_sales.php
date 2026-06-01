@@ -26,7 +26,9 @@ return new class extends Migration
         // Drop old salesperson FK + column (if exists)
         Schema::table('sales', function (Blueprint $table) {
             if (Schema::hasColumn('sales', 'salesperson_id')) {
-                $table->dropForeign(['salesperson_id']);
+                if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+                    $table->dropForeign(['salesperson_id']);
+                }
                 $table->dropColumn('salesperson_id');
             }
         });

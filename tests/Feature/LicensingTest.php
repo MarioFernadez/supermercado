@@ -159,4 +159,103 @@ class LicensingTest extends TestCase
         $this->assertFalse(LicenseService::isGracePeriodUsed());
         $this->assertFalse(LicenseService::isExpired());
     }
+
+    public function test_license_restricts_branch_creation_when_limit_is_reached()
+    {
+        // Set maximum branches to 1
+        StoreSetting::updateOrCreate(['key' => 'license_max_branches'], ['value' => '1']);
+        $this->assertEquals(1, LicenseService::getMaxBranches());
+
+        // Create an existing branch
+        \App\Models\Branch::create([
+            'name' => 'Sucursal Principal',
+            'address' => 'Av. Mariscal López 123',
+            'phone' => '0981123456',
+            'is_active' => true,
+        ]);
+
+        $this->assertEquals(1, \App\Models\Branch::count());
+        $this->assertFalse(LicenseService::canAddBranch());
+
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'admin@test.com',
+        ]);
+        $this->actingAs($user);
+
+        // Try to create another branch via Livewire
+        Livewire::test(\App\Livewire\Branches\Index::class)
+            ->set('name', 'Segunda Sucursal')
+            ->set('address', 'Calle Palma 456')
+            ->set('phone', '0981654321')
+            ->set('is_active', true)
+            ->call('store')
+            ->assertHasNoErrors();
+
+        // Verify the second branch was NOT created
+        $this->assertEquals(1, \App\Models\Branch::count());
+    }
+
+    public function test_license_allows_updating_existing_branch_even_when_limit_is_reached()
+    {
+        // Set maximum branches to 1
+        StoreSetting::updateOrCreate(['key' => 'license_max_branches'], ['value' => '1']);
+
+        // Create an existing branch
+        $branch = \App\Models\Branch::create([
+            'name' => 'Sucursal Principal',
+            'address' => 'Av. Mariscal López 123',
+            'phone' => '0981123456',
+            'is_active' => true,
+        ]);
+
+        $this->assertEquals(1, \App\Models\Branch::count());
+        $this->assertFalse(LicenseService::canAddBranch());
+
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'admin@test.com',
+        ]);
+        $this->actingAs($user);
+
+        // Update the existing branch via Livewire
+        Livewire::test(\App\Livewire\Branches\Index::class)
+            ->call('edit', $branch->id)
+            ->set('name', 'Sucursal Principal Modificada')
+            ->call('store')
+            ->assertHasNoErrors();
+
+        // Verify the branch was updated successfully
+        $this->assertEquals(1, \App\Models\Branch::count());
+        $this->assertEquals('Sucursal Principal Modificada', $branch->refresh()->name);
+    }
+
+    public function test_master_panel_can_update_branch_limit()
+    {
+        $developer = User::factory()->create([
+            'role' => 'developer',
+            'email' => config('services.developer.email') ?: 'soteweb@gmail.com',
+        ]);
+
+        $this->actingAs($developer);
+
+        // Update license branch limit via Livewire
+        Livewire::test(LicenseManager::class)
+            ->set('maxBranches', 3)
+            ->set('maxUsers', 10)
+            ->set('maxCashRegisters', 4)
+            ->set('tierName', 'Plan Gold')
+            ->set('ecommerceEnabled', true)
+            ->set('enabledAt', Carbon::now()->format('Y-m-d'))
+            ->set('expiresAt', Carbon::now()->addMonths(2)->format('Y-m-d'))
+            ->call('updateLicense')
+            ->assertHasNoErrors();
+
+        // Verify values in DB
+        $this->assertEquals(3, LicenseService::getMaxBranches());
+        $this->assertEquals(10, LicenseService::getMaxUsers());
+        $this->assertEquals(4, LicenseService::getMaxCashRegisters());
+        $this->assertEquals('Plan Gold', LicenseService::getTierName());
+        $this->assertTrue(LicenseService::isEcommerceEnabled());
+    }
 }

@@ -14,7 +14,11 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->char('id', 36)->primary();
             $table->char('sale_id', 36);
-            $table->enum('method', ['efectivo', 'tarjeta', 'transferencia', 'qr'])->default('efectivo');
+            if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
+                $table->string('method')->default('efectivo');
+            } else {
+                $table->enum('method', ['efectivo', 'tarjeta', 'transferencia', 'qr'])->default('efectivo');
+            }
             $table->bigInteger('amount');
             $table->timestamps();
             

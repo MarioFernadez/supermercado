@@ -21,6 +21,107 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
         <style>
+            :root {
+                --theme-primary: {{ $settings['shop_primary_color'] ?? '#4f46e5' }};
+                --theme-primary-hover: {{ $settings['shop_primary_color_hover'] ?? '#4338ca' }};
+            }
+
+            /* Sobrescribir colores Indigo nativos de Tailwind en el sitio */
+            .bg-indigo-600 {
+                background-color: var(--theme-primary) !important;
+            }
+            .bg-indigo-700 {
+                background-color: var(--theme-primary-hover) !important;
+            }
+            .hover\:bg-indigo-700:hover {
+                background-color: var(--theme-primary-hover) !important;
+            }
+            .hover\:bg-indigo-600:hover {
+                background-color: var(--theme-primary) !important;
+            }
+            .text-indigo-500 {
+                color: var(--theme-primary) !important;
+            }
+            .text-indigo-600 {
+                color: var(--theme-primary) !important;
+            }
+            .text-indigo-700 {
+                color: var(--theme-primary-hover) !important;
+            }
+            .hover\:text-indigo-600:hover {
+                color: var(--theme-primary) !important;
+            }
+            .hover\:text-indigo-700:hover {
+                color: var(--theme-primary-hover) !important;
+            }
+            .border-indigo-600 {
+                border-color: var(--theme-primary) !important;
+            }
+            .border-indigo-100 {
+                border-color: color-mix(in srgb, var(--theme-primary) 10%, transparent) !important;
+            }
+            .bg-indigo-50\/30 {
+                background-color: color-mix(in srgb, var(--theme-primary) 5%, transparent) !important;
+            }
+            .bg-indigo-50 {
+                background-color: color-mix(in srgb, var(--theme-primary) 8%, transparent) !important;
+            }
+            .bg-indigo-900\/20 {
+                background-color: color-mix(in srgb, var(--theme-primary) 20%, transparent) !important;
+            }
+            .bg-indigo-900\/30 {
+                background-color: color-mix(in srgb, var(--theme-primary) 30%, transparent) !important;
+            }
+            .from-indigo-100 {
+                --tw-gradient-from: color-mix(in srgb, var(--theme-primary) 15%, transparent) !important;
+                --tw-gradient-to: color-mix(in srgb, var(--theme-primary) 15%, transparent) !important;
+                --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+            }
+            .to-indigo-50 {
+                --tw-gradient-to: color-mix(in srgb, var(--theme-primary) 5%, transparent) !important;
+            }
+            .shadow-indigo-100\/50 {
+                --tw-shadow-color: color-mix(in srgb, var(--theme-primary) 15%, transparent) !important;
+                --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color) !important;
+            }
+            .shadow-indigo-100 {
+                --tw-shadow-color: color-mix(in srgb, var(--theme-primary) 15%, transparent) !important;
+                --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color) !important;
+            }
+            .group:hover .group-hover\:text-indigo-600 {
+                color: var(--theme-primary) !important;
+            }
+            .group:hover .group-hover\:text-indigo-400 {
+                color: var(--theme-primary) !important;
+            }
+            .group\/title:hover .group-hover\/title\:text-indigo-600 {
+                color: var(--theme-primary) !important;
+            }
+            .focus\:border-indigo-500:focus {
+                border-color: var(--theme-primary) !important;
+            }
+            .focus\:ring-indigo-500:focus {
+                --tw-ring-color: var(--theme-primary) !important;
+            }
+            .ring-indigo-500 {
+                --tw-ring-color: var(--theme-primary) !important;
+            }
+            .border-indigo-600 {
+                border-color: var(--theme-primary) !important;
+            }
+            .border-2.border-indigo-600 {
+                border-color: var(--theme-primary) !important;
+            }
+            .hover\:bg-indigo-600:hover {
+                background-color: var(--theme-primary) !important;
+            }
+            .hover\:text-white:hover {
+                color: #ffffff !important;
+            }
+            .hover\:border-indigo-600:hover {
+                border-color: var(--theme-primary) !important;
+            }
+
             body { font-family: 'Outfit', sans-serif; }
             [x-cloak] { display: none !important; }
             .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -71,11 +172,28 @@
           x-init="initCart()"
           style="transition: background-color 0.3s ease, color 0.3s ease;">
         
+        <!-- Top Bar -->
+        @if($settings['top_bar_enabled'] ?? false)
+            <div class="w-full text-center py-2.5 px-4 text-xs font-semibold relative transition-all duration-300 flex items-center justify-center gap-2" 
+                 style="background-color: {{ $settings['top_bar_bg_color'] ?? '#002f6c' }}; color: {{ $settings['top_bar_text_color'] ?? '#ffffff' }}; z-index: 51;">
+                <div class="max-w-7xl mx-auto flex items-center justify-center gap-2">
+                    {!! $settings['top_bar_text'] ?? '' !!}
+                </div>
+            </div>
+        @endif
+
         <!-- Header -->
         <header class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Main Header Content -->
                 <div class="flex justify-between items-center h-16 sm:h-20" x-show="!showMobileSearch">
+                    <!-- Mobile Hamburger Button -->
+                    <div class="flex items-center gap-2 md:hidden mr-2">
+                        <button @click="openMobileMenu = true" class="p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition" title="Ver Categorías">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    </div>
+
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('shop.index') }}" class="flex items-center gap-2">
@@ -86,15 +204,50 @@
                                     <div class="p-2 bg-indigo-600 rounded-xl text-white">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                     </div>
-                                    <span class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tighter">{{ $settings['store_name'] ?? 'ZONASHOP' }}</span>
+                                    <span class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tighter">{{ $settings['store_name'] ?? 'ZONASHOP' }}</span>
                                 </div>
                             @endif
                         </a>
                     </div>
 
-                    <!-- Search Bar (Desktop) -->
-                    <div class="hidden md:flex flex-1 max-w-lg mx-12">
-                        <livewire:shop.search />
+                    <!-- Search Bar & Categories Dropdown (Desktop) -->
+                    <div class="hidden md:flex items-center flex-1 max-w-xl mx-12 gap-3" x-data="{ openCatMenu: false }">
+                        <!-- Category Dropdown Button -->
+                        <div class="relative">
+                            <button @click="openCatMenu = !openCatMenu" 
+                                    class="flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-100 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-indigo-400 transition shadow-sm">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                <span>Categorías</span>
+                            </button>
+                            <!-- Dropdown List -->
+                            @php
+                                $globalCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
+                            @endphp
+                            <div x-show="openCatMenu" 
+                                 @click.away="openCatMenu = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                                 class="absolute left-0 mt-3 w-64 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl shadow-2xl p-3 z-50 overflow-hidden"
+                                 x-cloak>
+                                <div class="max-h-80 overflow-y-auto no-scrollbar space-y-1">
+                                    @foreach($globalCategories as $cat)
+                                    <a href="{{ route('shop.category', $cat) }}" 
+                                       class="flex items-center justify-between px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-700/50 dark:hover:text-indigo-400 transition">
+                                        <span>{{ $cat->name }}</span>
+                                        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                    </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-1">
+                            <livewire:shop.search />
+                        </div>
                     </div>
 
                     <!-- Nav Actions -->
@@ -164,6 +317,64 @@
                 </div>
             </div>
         </header>
+
+        <!-- Mobile Categories Slide-over -->
+        <div x-show="openMobileMenu" 
+             class="fixed inset-0 overflow-hidden z-[60]" 
+             x-cloak>
+            <div class="absolute inset-0 overflow-hidden">
+                <div @click="openMobileMenu = false" class="absolute inset-0 bg-gray-950/40 backdrop-blur-[2px] transition-opacity"></div>
+                
+                <section class="absolute inset-y-0 left-0 pr-10 max-w-full flex">
+                    <div class="w-screen max-w-xs" 
+                         x-show="openMobileMenu"
+                         x-transition:enter="transform transition ease-in-out duration-300"
+                         x-transition:enter-start="-translate-x-full"
+                         x-transition:enter-end="translate-x-0"
+                         x-transition:leave="transform transition ease-in-out duration-300"
+                         x-transition:leave-start="translate-x-0"
+                         x-transition:leave-end="-translate-x-full">
+                        
+                        <div class="h-full flex flex-col bg-white dark:bg-gray-900 shadow-2xl overflow-hidden">
+                            <!-- Header -->
+                            <div class="py-5 px-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="p-1.5 bg-indigo-600 rounded-lg text-white">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    </div>
+                                    <span class="text-sm font-bold uppercase tracking-widest text-gray-900 dark:text-white">Categorías</span>
+                                </div>
+                                <button @click="openMobileMenu = false" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+
+                            <!-- List -->
+                            <div class="flex-1 overflow-y-auto px-4 py-6 no-scrollbar space-y-1 bg-gray-50/50 dark:bg-gray-900/50">
+                                <a href="{{ route('shop.index') }}" 
+                                   class="flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest bg-indigo-600 text-white shadow-md shadow-indigo-600/10">
+                                    <span>Ver Todo</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </a>
+                                <div class="h-[1px] bg-gray-100 dark:bg-gray-800 my-4"></div>
+                                @foreach($globalCategories as $cat)
+                                <a href="{{ route('shop.category', $cat) }}" 
+                                   class="flex items-center justify-between px-4 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-800 transition">
+                                    <span>{{ $cat->name }}</span>
+                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </a>
+                                @endforeach
+                            </div>
+
+                            <!-- Footer Info -->
+                            <div class="p-6 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+                                <span class="block text-[9px] text-gray-400 font-bold uppercase tracking-widest text-center">{{ $settings['store_name'] ?? 'ZONASHOP' }} © 2026</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
 
         <!-- Cart Slide-over -->
         <div x-show="showCart" 
@@ -283,12 +494,12 @@
                                             <div class="grid grid-cols-2 gap-2">
                                                 <button @click="paymentMethod = 'efectivo'" 
                                                         :class="paymentMethod === 'efectivo' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800 text-gray-400'"
-                                                        class="px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition">
+                                                        class="px-4 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition">
                                                     Efectivo
                                                 </button>
                                                 <button @click="paymentMethod = 'transferencia'" 
                                                         :class="paymentMethod === 'transferencia' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800 text-gray-400'"
-                                                        class="px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition">
+                                                        class="px-4 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition">
                                                     Transferencia
                                                 </button>
                                             </div>
@@ -339,14 +550,14 @@
                             <div class="h-16 w-16 bg-indigo-50 dark:bg-indigo-900/20 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             </div>
-                            <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Confirmar Pedido</h3>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">Confirmar Pedido</h3>
                             <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">Revisa los detalles antes de finalizar</p>
                         </div>
 
                         <div class="space-y-6">
                             <!-- Items Summary -->
                             <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4">
-                                <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Detalle de Productos</p>
+                                <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Detalle de Productos</p>
                                 <div class="max-h-40 overflow-y-auto space-y-2 no-scrollbar">
                                     <template x-for="item in items" :key="item.cartKey">
                                         <div class="flex justify-between text-xs font-bold">
@@ -356,8 +567,8 @@
                                     </template>
                                 </div>
                                 <div class="mt-3 pt-3 border-t border-gray-200 flex justify-between">
-                                    <span class="text-xs font-black uppercase tracking-widest text-gray-900">Total</span>
-                                    <span class="text-lg font-black text-indigo-600 tabular-nums" x-text="'₲ ' + formatPrice(total)"></span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-gray-900">Total</span>
+                                    <span class="text-lg font-bold text-indigo-600 tabular-nums" x-text="'₲ ' + formatPrice(total)"></span>
                                 </div>
                             </div>
 
@@ -369,14 +580,14 @@
                                         <svg x-show="paymentMethod === 'efectivo'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Método de Pago</p>
-                                        <p class="text-sm font-black text-gray-900 uppercase" x-text="paymentMethod"></p>
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Método de Pago</p>
+                                        <p class="text-sm font-bold text-gray-900 uppercase" x-text="paymentMethod"></p>
                                     </div>
                                 </div>
 
                                 <template x-if="paymentMethod === 'transferencia'">
                                     <div class="mt-4 p-4 bg-white rounded-xl border border-indigo-100 shadow-sm">
-                                        <p class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2">Instrucciones de Pago:</p>
+                                        <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-2">Instrucciones de Pago:</p>
                                         <p class="text-xs text-gray-700 leading-relaxed font-bold whitespace-pre-line" x-text="paymentInstructions"></p>
                                     </div>
                                 </template>
@@ -426,6 +637,63 @@
                 </div>
             </div>
         </main>
+        <!-- Benefits Bar (Estilo Sport Style) -->
+        @if(isset($settings['benefits_enabled']) && $settings['benefits_enabled'] === '1')
+            <section class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 py-12 transition-colors duration-300">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        
+                        <!-- Benefit 1 -->
+                        <div class="flex flex-col items-center text-center p-4 group">
+                            <div class="h-16 w-16 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200 mb-4">
+                                <svg class="w-7 h-7 text-[var(--theme-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                                </svg>
+                            </div>
+                            <h4 class="font-bold text-gray-900 dark:text-white text-base tracking-tight">{{ $settings['benefit_1_title'] ?? 'Compra segura' }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[220px]">{{ $settings['benefit_1_subtitle'] ?? 'Pago protegido con encriptación SSL' }}</p>
+                        </div>
+
+                        <!-- Benefit 2 -->
+                        <div class="flex flex-col items-center text-center p-4 group">
+                            <div class="h-16 w-16 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200 mb-4">
+                                <svg class="w-7 h-7 text-[var(--theme-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25M3 14.25h12v5.25m0 0h3.75M18 14.25h3v1.5a1.5 1.5 0 0 1-3 0v-1.5Zm-10.5-6h.008v.008H7.5V8.25Zm2.25 0h.008v.008H9.75V8.25Zm2.25 0h.008v.008H12V8.25ZM3.75 6h16.5a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5H3.75A1.5 1.5 0 0 1 2.25 10.5v-3A1.5 1.5 0 0 1 3.75 6Z" />
+                                </svg>
+                            </div>
+                            <h4 class="font-bold text-gray-900 dark:text-white text-base tracking-tight">{{ $settings['benefit_2_title'] ?? 'Envío a todo el país' }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[220px]">{{ $settings['benefit_2_subtitle'] ?? 'Despachamos a todos los departamentos' }}</p>
+                        </div>
+
+                        <!-- Benefit 3 -->
+                        <div class="flex flex-col items-center text-center p-4 group">
+                            <div class="h-16 w-16 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200 mb-4">
+                                <svg class="w-7 h-7 text-[var(--theme-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                            </div>
+                            <h4 class="font-bold text-gray-900 dark:text-white text-base tracking-tight">{{ $settings['benefit_3_title'] ?? 'Cambios fáciles' }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[220px]">{{ $settings['benefit_3_subtitle'] ?? '15 días para cambiar' }}</p>
+                        </div>
+
+                        <!-- Benefit 4 -->
+                        <div class="flex flex-col items-center text-center p-4 group">
+                            <div class="h-16 w-16 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200 mb-4">
+                                <svg class="w-7 h-7 text-[var(--theme-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-6a9 9 0 0 1 18 0v6" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 19c-1.5 1.5-3 2.5-5 2" />
+                                </svg>
+                            </div>
+                            <h4 class="font-bold text-gray-900 dark:text-white text-base tracking-tight">{{ $settings['benefit_4_title'] ?? 'Atención al cliente' }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[220px]">{{ $settings['benefit_4_subtitle'] ?? 'Soporte por WhatsApp' }}</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        @endif
 
         <!-- Footer -->
         <footer class="bg-slate-900 dark:bg-gray-950 pt-16 pb-8 mt-20 transition-colors duration-300 text-slate-400">
@@ -565,7 +833,7 @@
                     items: [],
                     showCart: false,
                     showMobileSearch: false,
-                    showMobileSearch: false,
+                    openMobileMenu: false,
                     cartAnimate: false,
                     whatsappNumber: '{{ $settings['shop_whatsapp'] ?? '981123456' }}',
                     storeName: '{{ $settings['store_name'] ?? 'ZonaShop' }}',

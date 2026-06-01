@@ -27,8 +27,10 @@ return new class extends Migration
             // DB::statement("ALTER TABLE payments MODIFY COLUMN method ENUM('efectivo', 'tarjeta', 'transferencia', 'qr', 'cheque') NOT NULL DEFAULT 'efectivo'");
         });
 
-        // Use raw statement to update ENUM if using MySQL/MariaDB
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE payments MODIFY COLUMN method ENUM('efectivo', 'tarjeta', 'transferencia', 'qr', 'multiple', 'cheque') NOT NULL DEFAULT 'efectivo'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+            // Use raw statement to update ENUM if using MySQL/MariaDB
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE payments MODIFY COLUMN method ENUM('efectivo', 'tarjeta', 'transferencia', 'qr', 'multiple', 'cheque') NOT NULL DEFAULT 'efectivo'");
+        }
     }
 
     /**

@@ -7,6 +7,9 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\CashSession;
+use App\Models\CashRegister;
+use App\Models\Branch;
+use App\Models\BranchStock;
 use Livewire\Livewire;
 use App\Livewire\Pos\SalesInterface;
 use App\Models\Payment;
@@ -21,9 +24,23 @@ class ChequePaymentTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
+        // Setup Branch and Register
+        $branch = Branch::create([
+            'name' => 'Sucursal Central',
+            'address' => 'Asuncion',
+            'is_active' => true
+        ]);
+
+        $register = CashRegister::create([
+            'name' => 'Caja Central',
+            'branch_id' => $branch->id,
+            'active' => true
+        ]);
+
         // Open Session
         CashSession::create([
             'user_id' => $user->id,
+            'cash_register_id' => $register->id,
             'opened_at' => now(),
             'opening_amount' => 100000,
             'status' => 'open'
@@ -38,6 +55,14 @@ class ChequePaymentTest extends TestCase
             'min_stock' => 5,
             'manage_stock' => true,
             'is_active' => true
+        ]);
+
+        // Create BranchStock for the product
+        BranchStock::create([
+            'branch_id' => $branch->id,
+            'stockable_type' => Product::class,
+            'stockable_id' => $product->id,
+            'stock' => 10
         ]);
 
         Livewire::test(SalesInterface::class)
@@ -76,8 +101,22 @@ class ChequePaymentTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
+        // Setup Branch and Register
+        $branch = Branch::create([
+            'name' => 'Sucursal Central',
+            'address' => 'Asuncion',
+            'is_active' => true
+        ]);
+
+        $register = CashRegister::create([
+            'name' => 'Caja Central',
+            'branch_id' => $branch->id,
+            'active' => true
+        ]);
+
         CashSession::create([
             'user_id' => $user->id,
+            'cash_register_id' => $register->id,
             'opened_at' => now(),
             'opening_amount' => 100000,
             'status' => 'open'
@@ -92,6 +131,14 @@ class ChequePaymentTest extends TestCase
             'min_stock' => 5,
             'manage_stock' => true,
             'is_active' => true
+        ]);
+
+        // Create BranchStock for the product
+        BranchStock::create([
+            'branch_id' => $branch->id,
+            'stockable_type' => Product::class,
+            'stockable_id' => $product->id,
+            'stock' => 10
         ]);
 
         Livewire::test(SalesInterface::class)

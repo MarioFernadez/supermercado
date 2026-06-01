@@ -9,6 +9,18 @@ use App\Livewire\Categories\Index as CategoriesIndex;
 |--------------------------------------------------------------------------
 */
 
+if (app()->environment('local')) {
+    Route::get('/login-dev', function () {
+        $devEmail = config('services.developer.email') ?: 'developer@zonapos.com';
+        $user = \App\Models\User::where('email', $devEmail)->first();
+        if ($user) {
+            auth()->login($user);
+            return redirect()->route('pos.index')->with('success', 'Sesión de desarrollador iniciada automáticamente.');
+        }
+        return 'No se encontró el usuario desarrollador en la base de datos.';
+    });
+}
+
 Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {
     Route::get('/', \App\Livewire\Shop\Index::class)->name('shop.index');
     Route::get('/descargar-precios', [\App\Http\Controllers\PricelistController::class, 'download'])->name('shop.pricelist.download');
@@ -72,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/registers', \App\Livewire\CashRegisters\Index::class)->name('cash_registers.index');
         Route::get('/settings/general', \App\Livewire\Settings\General::class)->name('settings.general');
         Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {
-            Route::get('/settings/banners', \App\Livewire\Settings\BannerManager::class)->name('settings.banners');
+            Route::get('/settings/customization', \App\Livewire\Settings\WebCustomization::class)->name('settings.customization');
         });
         Route::get('/settings/units', \App\Livewire\Settings\Units::class)->name('settings.units');
         Route::get('/settings/payment-methods', \App\Livewire\Settings\PaymentMethods::class)->name('settings.payment-methods');

@@ -34,20 +34,18 @@
                 <span class="w-1.5 h-4 bg-indigo-600 rounded-full"></span>
                 <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest dark:text-white">Configuración de Límites y Vigencia</h3>
             </div>
-            
             <div class="p-8">
-
                 <form wire:submit.prevent="updateLicense" class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         
                         <!-- Plan Tier -->
-                        <div class="col-span-2">
+                        <div class="col-span-3">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2.5 dark:text-slate-500">Nombre del Plan / Tier de Licencia</label>
                             <input type="text" wire:model="tierName" placeholder="Ej: Plan Corporativo Pro"
                                    class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition duration-300 shadow-inner dark:bg-slate-950 dark:border-slate-800 dark:text-white">
                             @error('tierName') <span class="text-red-500 text-xs mt-1.5 block font-bold tracking-tight">{{ $message }}</span> @enderror
                         </div>
-
+ 
                         <!-- Max Users -->
                         <div class="bg-indigo-50/30 p-6 rounded-3xl border border-indigo-100/50 transition hover:shadow-md duration-300 dark:bg-indigo-950/20 dark:border-indigo-900/30">
                             <label class="block text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-4">Límite Máximo de Usuarios</label>
@@ -61,7 +59,7 @@
                             @error('maxUsers') <span class="text-red-500 text-xs mt-2 block font-bold tracking-tight">{{ $message }}</span> @enderror
                             <p class="text-[9px] text-indigo-400/80 mt-3.5 uppercase font-black tracking-wider dark:text-indigo-500/80">Afecta la creación de Administradores, Gerentes y Cajeros</p>
                         </div>
-
+ 
                         <!-- Max Registers -->
                         <div class="bg-purple-50/30 p-6 rounded-3xl border border-purple-100/50 transition hover:shadow-md duration-300 dark:bg-purple-950/20 dark:border-purple-900/30">
                             <label class="block text-[10px] font-black text-purple-500 uppercase tracking-widest mb-4">Límite Máximo de Cajas POS</label>
@@ -75,6 +73,20 @@
                             @error('maxCashRegisters') <span class="text-red-500 text-xs mt-2 block font-bold tracking-tight">{{ $message }}</span> @enderror
                             <p class="text-[9px] text-purple-400/80 mt-3.5 uppercase font-black tracking-wider dark:text-purple-500/80">Cajas activas que pueden operar simultáneamente</p>
                         </div>
+
+                        <!-- Max Branches -->
+                        <div class="bg-amber-50/30 p-6 rounded-3xl border border-amber-100/50 transition hover:shadow-md duration-300 dark:bg-amber-950/20 dark:border-amber-900/30">
+                            <label class="block text-[10px] font-black text-amber-500 uppercase tracking-widest mb-4">Límite Máximo de Sucursales</label>
+                            <div class="relative items-center flex">
+                                <div class="absolute left-4 text-amber-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                </div>
+                                <input type="number" wire:model="maxBranches" 
+                                       class="w-full pl-14 pr-5 py-4 bg-white border border-amber-100 rounded-2xl text-2xl font-black text-amber-700 focus:ring-4 focus:ring-amber-100 focus:border-amber-400 transition duration-300 shadow-sm dark:bg-slate-950 dark:border-slate-800 dark:text-amber-400">
+                            </div>
+                            @error('maxBranches') <span class="text-red-500 text-xs mt-2 block font-bold tracking-tight">{{ $message }}</span> @enderror
+                            <p class="text-[9px] text-amber-400/80 mt-3.5 uppercase font-black tracking-wider dark:text-amber-500/80">Límite de sucursales físicas que el comercio puede configurar</p>
+                        </div>       </div>
 
                         <!-- Subscription Dates -->
                         <div>

@@ -18,6 +18,11 @@ class LicenseService
         return (int) StoreSetting::where('key', 'license_max_cash_registers')->first()?->value ?: 1;
     }
 
+    public static function getMaxBranches(): int
+    {
+        return (int) StoreSetting::where('key', 'license_max_branches')->first()?->value ?: 1;
+    }
+
     public static function getTierName(): string
     {
         return StoreSetting::where('key', 'license_tier_name')->first()?->value ?: 'Básico';
@@ -39,6 +44,11 @@ class LicenseService
         return CashRegister::count();
     }
 
+    public static function getCurrentBranchCount(): int
+    {
+        return \App\Models\Branch::count();
+    }
+
     public static function canAddUser(): bool
     {
         return self::getCurrentUserCount() < self::getMaxUsers();
@@ -47,6 +57,11 @@ class LicenseService
     public static function canAddCashRegister(): bool
     {
         return self::getCurrentCashRegisterCount() < self::getMaxCashRegisters();
+    }
+
+    public static function canAddBranch(): bool
+    {
+        return self::getCurrentBranchCount() < self::getMaxBranches();
     }
 
     public static function getUsageStats(): array
@@ -62,6 +77,11 @@ class LicenseService
                 'current' => self::getCurrentCashRegisterCount(),
                 'max' => self::getMaxCashRegisters(),
                 'available' => max(0, self::getMaxCashRegisters() - self::getCurrentCashRegisterCount()),
+            ],
+            'branches' => [
+                'current' => self::getCurrentBranchCount(),
+                'max' => self::getMaxBranches(),
+                'available' => max(0, self::getMaxBranches() - self::getCurrentBranchCount()),
             ],
         ];
     }

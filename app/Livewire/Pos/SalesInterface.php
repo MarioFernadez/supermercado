@@ -414,7 +414,10 @@ class SalesInterface extends Component
         
         // Calculate amount that actually entered as CASH
         $cashSales = \App\Models\Payment::whereIn('sale_id', $sales->pluck('id'))
-            ->where('method', 'efectivo')
+            ->where(function($query) {
+                $query->where('method', 'like', 'efectivo%')
+                      ->orWhere('method', 'like', 'Efectivo%');
+            })
             ->sum('amount');
         
         $totalIn = $session->movements()->where('type', 'in')->sum('amount');
@@ -633,6 +636,7 @@ class SalesInterface extends Component
     public $change = 0;
     public $paymentCondition = 'contado'; // contado, credito
     public $multiplePayments = []; // Stores amounts for split payments
+    public $activeCurrencies = []; // Dynamic visible currency inputs
     public $chequeDetails = [
         'bank_name' => '',
         'cheque_number' => '',
@@ -663,9 +667,15 @@ class SalesInterface extends Component
         $this->receivedAmount = ''; // Start empty so user can type
         $this->change = -$this->total; // Initial change is effectively negative whole amount
         $this->showPaymentModal = true;
+        $this->activeCurrencies = []; // Reset active currencies
         
         // Initialize multiple payments
-        $this->multiplePayments = ['efectivo' => 0];
+        $this->multiplePayments = [
+            'efectivo' => 0,
+            'efectivo_usd' => 0,
+            'efectivo_brl' => 0,
+            'efectivo_ars' => 0,
+        ];
         foreach($this->paymentMethods as $pm) {
             $this->multiplePayments[$pm->name] = 0;
         }
@@ -694,8 +704,14 @@ class SalesInterface extends Component
     {
         if ($this->paymentMethod === 'multiple') {
             $this->receivedAmount = 0;
+            $this->activeCurrencies = []; // Reset active currencies
             // Maybe initialize with total in cash?
-            $this->multiplePayments = ['efectivo' => $this->total]; 
+            $this->multiplePayments = [
+                'efectivo' => $this->total,
+                'efectivo_usd' => 0,
+                'efectivo_brl' => 0,
+                'efectivo_ars' => 0,
+            ]; 
             foreach($this->paymentMethods as $pm) {
                 $this->multiplePayments[$pm->name] = 0;
             }
@@ -714,6 +730,17 @@ class SalesInterface extends Component
         $this->calculateChange();
     }
 
+    public function toggleCurrency($currency)
+    {
+        if (in_array($currency, $this->activeCurrencies)) {
+            $this->activeCurrencies = array_diff($this->activeCurrencies, [$currency]);
+            $this->multiplePayments['efectivo_' . $currency] = 0;
+        } else {
+            $this->activeCurrencies[] = $currency;
+        }
+        $this->calculateChange();
+    }
+
     public function updatedPaymentCondition()
     {
         if ($this->paymentCondition === 'credito') {
@@ -726,9 +753,23 @@ class SalesInterface extends Component
     public function calculateChange()
     {
         if ($this->paymentMethod === 'multiple') {
-            $totalPaid = array_sum($this->multiplePayments);
-            $this->receivedAmount = $totalPaid;
-            $this->change = $totalPaid - $this->total;
+            $totalPaid = 0;
+            foreach ($this->multiplePayments as $method => $amount) {
+                $val = (float) $amount;
+                if ($val <= 0) continue;
+
+                if ($method === 'efectivo_usd') {
+                    $totalPaid += $val * ($this->rates['usd'] ?: 1);
+                } elseif ($method === 'efectivo_brl') {
+                    $totalPaid += $val * ($this->rates['brl'] ?: 1);
+                } elseif ($method === 'efectivo_ars') {
+                    $totalPaid += $val * ($this->rates['ars'] ?: 1);
+                } else {
+                    $totalPaid += $val;
+                }
+            }
+            $this->receivedAmount = (int) round($totalPaid);
+            $this->change = $this->receivedAmount - $this->total;
         } elseif ($this->paymentMethod === 'efectivo') {
             // Cast to float to safely do math, then subtract
             $received = (float) $this->receivedAmount;
@@ -746,7 +787,6 @@ class SalesInterface extends Component
 
     public function processSale()
     {
-        \Illuminate\Support\Facades\Log::info("processSale called. Cart empty? " . empty($this->cart));
         if(empty($this->cart)) return;
 
         // Double check session
@@ -866,11 +906,26 @@ class SalesInterface extends Component
                 if ($this->paymentCondition === 'contado') {
                     if ($this->paymentMethod === 'multiple') {
                         foreach ($this->multiplePayments as $method => $amount) {
+                            $amount = (float) $amount;
                             if ($amount > 0) {
+                                $finalAmount = $amount;
+                                $displayName = $method;
+
+                                if ($method === 'efectivo_usd') {
+                                    $finalAmount = (int) round($amount * ($this->rates['usd'] ?: 1));
+                                    $displayName = 'Efectivo USD';
+                                } elseif ($method === 'efectivo_brl') {
+                                    $finalAmount = (int) round($amount * ($this->rates['brl'] ?: 1));
+                                    $displayName = 'Efectivo BRL';
+                                } elseif ($method === 'efectivo_ars') {
+                                    $finalAmount = (int) round($amount * ($this->rates['ars'] ?: 1));
+                                    $displayName = 'Efectivo ARS';
+                                }
+
                                 \App\Models\Payment::create([
                                     'sale_id' => $sale->id,
-                                    'method' => $method,
-                                    'amount' => $amount,
+                                    'method' => $displayName,
+                                    'amount' => $finalAmount,
                                 ]);
                             }
                         }

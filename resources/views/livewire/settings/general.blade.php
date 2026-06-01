@@ -1,288 +1,238 @@
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         
+        <!-- Section: Header -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
+                ⚙️ Ajustes Generales del Sistema
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Configura la información comercial, opciones de facturación, descuentos y copias de seguridad de la tienda.</p>
+        </div>
+
+        @if (session()->has('message'))
+            <div class="mb-6 bg-green-500/10 border-l-4 border-green-500 text-green-700 dark:text-green-300 p-4 rounded-xl shadow-sm flex items-center gap-3" role="alert">
+                <svg class="h-6 w-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="text-sm font-semibold">
+                    {{ session('message') }}
+                </div>
+            </div>
+        @endif
+
         <!-- Section: Datos del Comercio -->
         <div class="mb-6">
-            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Datos del Comercio</h3>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Esta información se utilizará en los tickets, reportes y cabeceras del sistema.
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">🏢 Datos del Comercio</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Esta información se utiliza de forma global en tus tickets de facturación, reportes y comprobantes del sistema.
             </p>
         </div>
 
         <div class="mt-2 mb-10">
             <form wire:submit.prevent="save">
-                <div class="shadow overflow-hidden sm:rounded-md">
-                    <div class="px-4 py-5 bg-white sm:p-6 dark:bg-gray-800">
+                <div class="shadow-md rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+                    <div class="p-6 space-y-6">
                         <div class="grid grid-cols-6 gap-6">
                             
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="store_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del Comercio</label>
-                                <input type="text" wire:model="store_name" id="store_name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                @error('store_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <label for="store_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Nombre del Comercio</label>
+                                <input type="text" wire:model="store_name" id="store_name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                @error('store_name') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="store_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dirección</label>
-                                <input type="text" wire:model="store_address" id="store_address" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                @error('store_address') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <label for="store_ruc" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">RUC / Identificación Tributaria</label>
+                                <input type="text" wire:model="store_ruc" id="store_ruc" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                @error('store_ruc') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="store_ruc" class="block text-sm font-medium text-gray-700 dark:text-gray-300">RUC / Razón Social</label>
-                                <input type="text" wire:model="store_ruc" id="store_ruc" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                @error('store_ruc') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <label for="store_address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Dirección Física</label>
+                                <input type="text" wire:model="store_address" id="store_address" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                @error('store_address') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="store_phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
-                                <input type="text" wire:model="store_phone" id="store_phone" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                @error('store_phone') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <label for="store_phone" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Teléfono Comercial</label>
+                                <input type="text" wire:model="store_phone" id="store_phone" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                @error('store_phone') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="store_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email (Visible en tickets)</label>
-                                <input type="email" wire:model="store_email" id="store_email" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                @error('store_email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <label for="store_email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Email del Comercio</label>
+                                <input type="email" wire:model="store_email" id="store_email" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                @error('store_email') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="ticket_footer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mensaje Pie de Ticket</label>
-                                <input type="text" wire:model="ticket_footer" id="ticket_footer" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="Gracias por su compra">
-                                @error('ticket_footer') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <label for="ticket_footer" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Mensaje al Pie del Ticket</label>
+                                <input type="text" wire:model="ticket_footer" id="ticket_footer" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="Gracias por su compra">
+                                @error('ticket_footer') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Descuentos -->
-                            <div class="col-span-6 border-t pt-4 mt-2">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-3 dark:text-white">🏷️ Funcionalidades de Descuento</h4>
-                                <div class="space-y-3">
-                                    <label class="flex items-start gap-3 cursor-pointer">
+                            <div class="col-span-6 border-t border-gray-100 dark:border-gray-700 pt-5 mt-2">
+                                <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">🏷️ Funcionalidades de Descuento</h4>
+                                <div class="space-y-4 bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                                    <label class="flex items-start gap-3 cursor-pointer select-none">
                                         <input type="checkbox" wire:model="discount_product_enabled" id="discount_product_enabled"
-                                            class="mt-0.5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400 dark:shadow-none dark:bg-gray-900">
+                                            class="mt-0.5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4.5 w-4.5 dark:border-gray-600 dark:bg-gray-900">
                                         <div>
-                                            <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descuento por producto</span>
-                                            <span class="block text-xs text-gray-400 dark:text-gray-500">Permite asignar un % de descuento fijo a cada producto desde el catálogo.</span>
+                                            <span class="block text-sm font-bold text-gray-700 dark:text-gray-300">Descuento por Producto</span>
+                                            <span class="block text-xs text-gray-400 dark:text-gray-500">Permite establecer un porcentaje de descuento predefinido y permanente para cada producto desde su ficha en el catálogo.</span>
                                         </div>
                                     </label>
-                                    <label class="flex items-start gap-3 cursor-pointer">
+                                    <label class="flex items-start gap-3 cursor-pointer select-none border-t border-gray-100 dark:border-gray-700/50 pt-3">
                                         <input type="checkbox" wire:model="discount_manual_enabled" id="discount_manual_enabled"
-                                            class="mt-0.5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400 dark:shadow-none dark:bg-gray-900">
+                                            class="mt-0.5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4.5 w-4.5 dark:border-gray-600 dark:bg-gray-900">
                                         <div>
-                                            <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descuento manual en el POS</span>
-                                            <span class="block text-xs text-gray-400 dark:text-gray-500">Permite al cajero aplicar un % de descuento al total de la venta en el momento.</span>
+                                            <span class="block text-sm font-bold text-gray-700 dark:text-gray-300">Descuento Manual en POS</span>
+                                            <span class="block text-xs text-gray-400 dark:text-gray-500">Habilita al cajero a aplicar un porcentaje de descuento personalizado directamente al total de la compra antes de cobrar.</span>
                                         </div>
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Configuración Ecommerce -->
-                            @if(\App\Services\LicenseService::isEcommerceEnabled())
-                            <div class="col-span-6 border-t pt-4 mt-2">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-3 dark:text-white">🛒 Configuración E-commerce (ZonaShop)</h4>
-                                <div class="grid grid-cols-6 gap-6">
-                                    <!-- WhatsApp pedidos -->
-                                    <div class="col-span-6 sm:col-span-3">
-                                        <label for="shop_whatsapp" class="block text-sm font-medium text-gray-700 dark:text-gray-300">WhatsApp para Ventas</label>
-                                        <div class="mt-1 flex rounded-md shadow-sm dark:shadow-none">
-                                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-gray-400">
-                                                +595
-                                            </span>
-                                            <input type="text" wire:model="shop_whatsapp" id="shop_whatsapp" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="981123456">
-                                        </div>
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Sin el código de país. Ej: 981123456</p>
-                                        @error('shop_whatsapp') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-
-
-                                    <!-- Social Media -->
-                                    <div class="col-span-6 sm:col-span-2">
-                                        <label for="shop_facebook" class="block text-sm font-medium text-gray-700 dark:text-gray-300">📘 Facebook URL</label>
-                                        <input type="text" wire:model="shop_facebook" id="shop_facebook" placeholder="https://facebook.com/..." class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                        @error('shop_facebook') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6 sm:col-span-2">
-                                        <label for="shop_instagram" class="block text-sm font-medium text-gray-700 dark:text-gray-300">📸 Instagram URL</label>
-                                        <input type="text" wire:model="shop_instagram" id="shop_instagram" placeholder="https://instagram.com/..." class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                        @error('shop_instagram') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6 sm:col-span-2">
-                                        <label for="shop_tiktok" class="block text-sm font-medium text-gray-700 dark:text-gray-300">🎵 TikTok URL</label>
-                                        <input type="text" wire:model="shop_tiktok" id="shop_tiktok" placeholder="https://tiktok.com/@..." class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                        @error('shop_tiktok') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6 sm:col-span-3">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Logo de la Tienda</label>
-                                        <div class="mt-1 flex items-center gap-4">
-                                            @if ($shop_logo)
-                                                <img src="{{ $shop_logo->temporaryUrl() }}" class="h-12 w-auto rounded border shadow-sm dark:shadow-none">
-                                            @elseif ($shop_logo_path)
-                                                <img src="{{ Storage::url($shop_logo_path) }}" class="h-12 w-auto rounded border shadow-sm dark:shadow-none">
-                                            @else
-                                                <div class="h-12 w-12 rounded border border-dashed border-gray-300 flex items-center justify-center text-gray-400 dark:border-gray-600 dark:text-gray-500">
-                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                </div>
-                                            @endif
-                                            
-                                            <input type="file" wire:model="shop_logo" id="shop_logo" class="hidden dark:bg-gray-900 dark:text-gray-300">
-                                            <div class="flex gap-2">
-                                                <label for="shop_logo" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:shadow-none dark:text-gray-300 dark:hover:bg-gray-700">
-                                                    Seleccionar Logo
-                                                </label>
-                                                @if ($shop_logo || $shop_logo_path)
-                                                    <button type="button" wire:click="deleteLogo" class="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:shadow-none dark:text-red-400 dark:bg-gray-800">
-                                                        Eliminar
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div wire:loading wire:target="shop_logo" class="text-xs text-indigo-600 mt-1 dark:text-indigo-400">Cargando...</div>
-                                        @error('shop_logo') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6 sm:col-span-3">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Favicon (Ícono de pestaña)</label>
-                                        <p class="text-[10px] text-gray-400 mb-2 dark:text-gray-500">Recomendado: PNG o ICO (32x32px), fondo transparente.</p>
-                                        <div class="mt-1 flex items-center gap-4">
-                                            @if ($shop_favicon)
-                                                <img src="{{ $shop_favicon->temporaryUrl() }}" class="h-8 w-8 rounded border shadow-sm dark:shadow-none">
-                                            @elseif ($shop_favicon_path)
-                                                <img src="{{ Storage::url($shop_favicon_path) }}" class="h-8 w-8 rounded border shadow-sm dark:shadow-none">
-                                            @else
-                                                <div class="h-8 w-8 rounded border border-dashed border-gray-300 flex items-center justify-center text-gray-400 dark:border-gray-600 dark:text-gray-500">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                </div>
-                                            @endif
-                                            
-                                            <input type="file" wire:model="shop_favicon" id="shop_favicon" class="hidden dark:bg-gray-900 dark:text-gray-300">
-                                            <div class="flex gap-2">
-                                                <label for="shop_favicon" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:shadow-none dark:text-gray-300 dark:hover:bg-gray-700">
-                                                    Seleccionar Ícono
-                                                </label>
-                                                @if ($shop_favicon || $shop_favicon_path)
-                                                    <button type="button" wire:click="deleteFavicon" class="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:shadow-none dark:text-red-400 dark:bg-gray-800">
-                                                        Eliminar
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div wire:loading wire:target="shop_favicon" class="text-xs text-indigo-600 mt-1 dark:text-indigo-400">Cargando...</div>
-                                        @error('shop_favicon') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6">
-                                        <label class="inline-flex items-center">
-                                            <input type="checkbox" wire:model="shop_show_pricelist" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:border-gray-600 dark:text-indigo-400 dark:shadow-none dark:bg-gray-900">
-                                            <span class="ml-2 text-sm text-gray-700 font-bold uppercase tracking-widest dark:text-gray-300">Habilitar descarga de lista de precios (TXT)</span>
-                                        </label>
-                                        <p class="text-[10px] text-gray-400 ml-7 dark:text-gray-500">Si se activa, aparecerá un botón en la tienda para bajar los precios en formato texto.</p>
-                                    </div>
-
-                                    <div class="col-span-6 sm:col-span-3">
-                                        <label for="shop_schedule" class="block text-sm font-medium text-gray-700 dark:text-gray-300">🕒 Horario de Atención (Multilínea)</label>
-                                        <textarea wire:model="shop_schedule" id="shop_schedule" rows="2" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="Lun a Vie 07:00 - 12:00&#10;Sáb 08:00 - 15:00"></textarea>
-                                        @error('shop_schedule') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6 sm:col-span-3">
-                                        <label for="shop_banner_limit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">🖼️ Máximo de Banners en Carrusel</label>
-                                        <input type="number" wire:model="shop_banner_limit" id="shop_banner_limit" min="1" max="10" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                        <p class="text-[10px] text-gray-400 mt-1 dark:text-gray-500">Límite recomendado: 3 a 5 para mejor velocidad.</p>
-                                        @error('shop_banner_limit') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6">
-                                        <label for="shop_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">📝 Descripción de la Tienda (Aparece en el footer)</label>
-                                        <textarea wire:model="shop_description" id="shop_description" rows="2" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="Somos una tienda líder en tecnología en Ciudad del Este..."></textarea>
-                                        @error('shop_description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6">
-                                        <label for="shop_payment_instructions" class="block text-sm font-medium text-gray-700 dark:text-gray-300">💳 Instrucciones de Pago (Aparecen al confirmar pedido)</label>
-                                        <textarea wire:model="shop_payment_instructions" id="shop_payment_instructions" rows="4" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="Transferencia Bancaria:&#10;Banco: Itau&#10;Cuenta: 1234567&#10;Nombre: ZonaShop S.A."></textarea>
-                                        <p class="text-[10px] text-gray-400 mt-1 dark:text-gray-500">Escribe aquí los datos de tus cuentas bancarias, números de giros, etc. Se mostrarán al cliente al elegir 'Transferencia'.</p>
-                                        @error('shop_payment_instructions') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <div class="col-span-6">
-                                        <label for="shop_maps_iframe" class="block text-sm font-medium text-gray-700 dark:text-gray-300">🗺️ Código Iframe de Google Maps</label>
-                                        <textarea wire:model="shop_maps_iframe" id="shop_maps_iframe" rows="3" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder='<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'></textarea>
-                                        <p class="text-[10px] text-gray-400 mt-1 dark:text-gray-500">Pega aquí el código "Insertar mapa" que te da Google Maps.</p>
-                                        @error('shop_maps_iframe') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
                         </div>
                     </div>
-                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 dark:bg-gray-900">
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:shadow-none">
-                            Guardar Cambios
+                    <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-900/50 text-right">
+                        <button type="submit" class="inline-flex justify-center py-2.5 px-6 border border-transparent shadow-md text-sm font-black rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                            Guardar Ajustes Comerciales
                         </button>
                     </div>
                 </div>
             </form>
-
-            @if (session()->has('message'))
-                <div class="mt-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm flex items-center dark:bg-green-900/40 dark:text-green-400 dark:shadow-none" role="alert">
-                    <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    <div>
-                        <p class="font-bold">Guardado</p>
-                        <p>{{ session('message') }}</p>
-                    </div>
-                </div>
-            @endif
         </div>
 
-        <div class="border-t border-gray-200 mb-10 dark:border-gray-700"></div>
+        <div class="border-t border-gray-200 dark:border-gray-700 mb-10"></div>
 
-        <!-- Section: Métodos de Pago Dinámicos -->
-        <div class="mb-6 flex justify-between items-end">
-            <div>
-                <h3 class="text-lg font-medium leading-6 text-gray-900 uppercase tracking-tight font-black dark:text-white">Métodos de Pago</h3>
-                <p class="mt-1 text-sm text-gray-600 font-medium dark:text-gray-400">
-                    Gestiona las opciones de pago disponibles en el POS y Gastos.
-                </p>
-            </div>
-            <a href="{{ route('settings.payment-methods') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-lg text-xs uppercase tracking-widest flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                Configurar Métodos
-            </a>
-        </div>
-
-        <div class="border-t border-gray-200 mb-10 dark:border-gray-700"></div>
-
-        <!-- Section: Respaldo del Sistema -->
+        <!-- Section: Parámetros del Sistema -->
         <div class="mb-6">
-            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Respaldo del Sistema</h3>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Descarga una copia completa de la base de datos y archivos del sistema.
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">🛠️ Parámetros Avanzados</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Ajusta las configuraciones secundarias de facturación, pasarelas de pago, unidades de medida y flujo de caja.
             </p>
         </div>
 
-        <div class="mt-2 mb-10">
-            <div class="shadow overflow-hidden sm:rounded-md bg-white dark:bg-gray-800">
-                <div class="px-4 py-5 sm:p-6">
-                    <div class="text-sm text-gray-500 mb-4 dark:text-gray-400">
-                        Al pulsar el botón, el sistema generará un archivo ZIP con todos los datos. Esto puede tardar unos segundos.
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            
+            <!-- Card: Métodos de Pago -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300">
+                <div>
+                    <div class="h-10 w-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                     </div>
-                    @if (session()->has('error'))
-                        <div class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-sm dark:bg-red-900/40 dark:text-red-400 dark:shadow-none">
-                            <p class="font-bold">Error</p>
-                            <p>{{ session('error') }}</p>
-                        </div>
-                    @endif
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">💳 Métodos de Pago</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Administra las formas de pago aceptadas (Efectivo, Tarjetas, Bancos) en tu caja POS y compras.
+                    </p>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('settings.payment-methods') }}" class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+                        Configurar
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card: Unidades de Medida -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300">
+                <div>
+                    <div class="h-10 w-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">📏 Unidades de Medida</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Crea y edita unidades (Unidad, Caja, Kg, Litros) asociadas a tus productos para control de inventario exacto.
+                    </p>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('settings.units') }}" class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+                        Configurar
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card: Conceptos de Caja -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300">
+                <div>
+                    <div class="h-10 w-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    </div>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">💸 Conceptos de Caja</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Gestiona los motivos para movimientos manuales de caja (ej: Retiro para depósito, Sencillo, etc.).
+                    </p>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('settings.cash-movement-categories') }}" class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+                        Configurar
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card: Cotizaciones de Moneda -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300">
+                <div>
+                    <div class="h-10 w-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">📈 Cotizaciones de Moneda</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Establece el tipo de cambio del Guaraní frente al Dólar, Real, Peso para cobros multidivisa en POS.
+                    </p>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('settings.quotation') }}" class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+                        Configurar
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card: Licencia & Soporte -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300">
+                <div>
+                    <div class="h-10 w-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">🛡️ Licencia & Facturación</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Verifica el estado actual de tu licencia comercial del software, planes contratados y fecha de vencimiento.
+                    </p>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('settings.billing') }}" class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
+                        Ver Estado
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card: Copia de Respaldo -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300">
+                <div>
+                    <div class="h-10 w-10 bg-green-50 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400 mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    </div>
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">💾 Respaldo de Base de Datos</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Genera y descarga al instante un archivo de respaldo completo SQL de tu negocio para mayor seguridad.
+                    </p>
+                </div>
+                <div class="mt-5">
                     <form action="{{ route('settings.backup.run') }}" method="POST">
                         @csrf
-                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:shadow-none">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            Generar y Descargar Respaldo
+                        <button type="submit" class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition">
+                            Descargar SQL
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         </button>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

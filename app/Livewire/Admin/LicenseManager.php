@@ -12,6 +12,7 @@ class LicenseManager extends Component
 {
     public $maxUsers;
     public $maxCashRegisters;
+    public $maxBranches;
     public $tierName;
     public $ecommerceEnabled;
 
@@ -31,6 +32,7 @@ class LicenseManager extends Component
 
         $this->maxUsers = LicenseService::getMaxUsers();
         $this->maxCashRegisters = LicenseService::getMaxCashRegisters();
+        $this->maxBranches = LicenseService::getMaxBranches();
         $this->tierName = LicenseService::getTierName();
         $this->ecommerceEnabled = LicenseService::isEcommerceEnabled();
 
@@ -46,6 +48,7 @@ class LicenseManager extends Component
         $this->validate([
             'maxUsers' => 'required|integer|min:1',
             'maxCashRegisters' => 'required|integer|min:1',
+            'maxBranches' => 'required|integer|min:1',
             'tierName' => 'required|string|min:2',
             'ecommerceEnabled' => 'boolean',
             'enabledAt' => 'required|date',
@@ -55,6 +58,7 @@ class LicenseManager extends Component
         Artisan::call('licensing:set', [
             '--users' => $this->maxUsers,
             '--registers' => $this->maxCashRegisters,
+            '--branches' => $this->maxBranches,
             '--tier' => $this->tierName,
             '--ecommerce' => $this->ecommerceEnabled ? '1' : '0',
         ]);

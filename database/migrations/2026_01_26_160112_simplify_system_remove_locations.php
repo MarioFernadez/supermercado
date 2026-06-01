@@ -14,7 +14,9 @@ return new class extends Migration
         // 1. Drop FK if exists
         if (Schema::hasColumn('cash_registers', 'location_id')) {
             Schema::table('cash_registers', function (Blueprint $table) {
-                $table->dropForeign(['location_id']);
+                if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+                    $table->dropForeign(['location_id']);
+                }
                 $table->dropColumn('location_id');
             });
         }

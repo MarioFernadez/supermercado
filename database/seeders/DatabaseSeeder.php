@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             StoreSettingsSeeder::class,
             DefaultCashRegisterSeeder::class,
+            PaymentMethodSeeder::class,
         ]);
     }
 }

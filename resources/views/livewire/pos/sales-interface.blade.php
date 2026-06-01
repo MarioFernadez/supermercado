@@ -757,21 +757,50 @@
     
     <!-- Payment Processing Modal -->
     @if($showPaymentModal)
-        <div class="fixed z-[60] inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full dark:bg-gray-800">
-                    <div class="bg-white px-4 pt-4 pb-4 sm:p-4 dark:bg-gray-800">
-                        <div class="text-center mb-4">
+        <div class="fixed z-[60] inset-0 overflow-y-auto flex items-center justify-center p-4 pointer-events-none" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Fondo Oscuro Backdrop (Click afuera cierra modal) -->
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity pointer-events-auto" aria-hidden="true" wire:click="$set('showPaymentModal', false)"></div>
+            
+            <!-- Caja del Modal (relative z-50 para sobresalir y pointer-events-auto para interactuar) -->
+            <div class="relative z-50 bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all w-full max-w-md dark:bg-gray-800 flex flex-col max-h-[85vh] sm:max-h-[90vh] pointer-events-auto">
+                    <!-- Cabecera Fija -->
+                    <div class="bg-white px-4 pt-4 pb-2 border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700 shrink-0">
+                        <div class="text-center">
                             <h3 class="text-lg leading-6 font-bold text-gray-900 dark:text-white" id="modal-title">Confirmar Pago</h3>
                             <div class="mt-2">
                                 <p class="text-xs text-gray-500 dark:text-gray-400">Total a Pagar</p>
                                 <p class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">₲ {{ format_pyg($total) }}</p>
                             </div>
+                            
+                            @if($total > 0)
+                            <div class="mt-3 flex items-center justify-center gap-3 text-xs bg-gray-50 dark:bg-gray-700/50 p-2 rounded-lg border border-gray-100 dark:border-gray-700/50">
+                                @if(isset($rates['usd']) && $rates['usd'] > 0)
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-[9px] text-gray-400 dark:text-gray-400 font-medium">Equiv. USD</span>
+                                        <span class="font-bold text-gray-700 dark:text-gray-200">U$ {{ number_format($total / $rates['usd'], 2, '.', ',') }}</span>
+                                    </div>
+                                @endif
+                                @if(isset($rates['brl']) && $rates['brl'] > 0)
+                                    <div class="border-l border-gray-200 dark:border-gray-600 h-6"></div>
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-[9px] text-gray-400 dark:text-gray-400 font-medium">Equiv. BRL</span>
+                                        <span class="font-bold text-gray-700 dark:text-gray-200">R$ {{ number_format($total / $rates['brl'], 2, '.', ',') }}</span>
+                                    </div>
+                                @endif
+                                @if(isset($rates['ars']) && $rates['ars'] > 0)
+                                    <div class="border-l border-gray-200 dark:border-gray-600 h-6"></div>
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-[9px] text-gray-400 dark:text-gray-400 font-medium">Equiv. ARS</span>
+                                        <span class="font-bold text-gray-700 dark:text-gray-200">A$ {{ number_format($total / $rates['ars'], 0, '', '.') }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                            @endif
                         </div>
+                    </div>
 
+                    <!-- Cuerpo Desplazable del Modal -->
+                    <div class="bg-white px-4 py-4 dark:bg-gray-800 overflow-y-auto flex-1 scrollbar-thin">
                         <!-- Condition Selection -->
                         <div class="mb-4">
                             <label class="block text-xs font-medium text-gray-700 mb-2 dark:text-gray-300">Condición de Venta</label>
@@ -864,23 +893,79 @@
                                     </div>
                                 </div>
                             @elseif($paymentMethod === 'multiple')
-                                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-2 dark:bg-gray-900 dark:border-gray-700">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label class="block text-[10px] font-bold text-gray-500 mb-1 dark:text-gray-400">Efectivo 💵</label>
-                                            <input type="number" wire:model.live.debounce.300ms="multiplePayments.efectivo" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300" placeholder="0">
+                                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-3 dark:bg-gray-900 dark:border-gray-700">
+                                    <!-- Badges Seleccionables de Monedas -->
+                                    <div>
+                                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 dark:text-gray-500">¿Recibir Moneda Extranjera?</label>
+                                        <div class="flex flex-wrap gap-1.5">
+                                            @if(isset($rates['usd']) && $rates['usd'] > 0)
+                                                <button type="button" wire:click="toggleCurrency('usd')" 
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all active:scale-95 {{ in_array('usd', $activeCurrencies) ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300' }}">
+                                                    💵 USD ($)
+                                                </button>
+                                            @endif
+                                            @if(isset($rates['brl']) && $rates['brl'] > 0)
+                                                <button type="button" wire:click="toggleCurrency('brl')" 
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all active:scale-95 {{ in_array('brl', $activeCurrencies) ? 'bg-green-600 border-green-600 text-white shadow-sm' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300' }}">
+                                                    💵 BRL (R$)
+                                                </button>
+                                            @endif
+                                            @if(isset($rates['ars']) && $rates['ars'] > 0)
+                                                <button type="button" wire:click="toggleCurrency('ars')" 
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all active:scale-95 {{ in_array('ars', $activeCurrencies) ? 'bg-red-600 border-red-600 text-white shadow-sm' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300' }}">
+                                                    💵 ARS (A$)
+                                                </button>
+                                            @endif
                                         </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-3 pt-1">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-500 mb-0.5 dark:text-gray-400">Efectivo ₲ (PYG)</label>
+                                            <input type="number" wire:model.live.debounce.300ms="multiplePayments.efectivo" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 font-bold" placeholder="0">
+                                        </div>
+                                        
+                                        @if(isset($rates['usd']) && $rates['usd'] > 0 && in_array('usd', $activeCurrencies))
+                                        <div class="transition-all duration-300">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <label class="block text-[10px] font-bold text-indigo-600 dark:text-indigo-400">Efectivo $ (USD)</label>
+                                                <span class="text-[8px] font-medium text-gray-400">Cotiz: {{ number_format($rates['usd'], 0, '', '.') }}</span>
+                                            </div>
+                                            <input type="number" step="any" wire:model.live.debounce.300ms="multiplePayments.efectivo_usd" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-indigo-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600 dark:bg-gray-900 font-bold text-indigo-600" placeholder="0.00">
+                                        </div>
+                                        @endif
+
+                                        @if(isset($rates['brl']) && $rates['brl'] > 0 && in_array('brl', $activeCurrencies))
+                                        <div class="transition-all duration-300">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <label class="block text-[10px] font-bold text-green-600 dark:text-green-400">Efectivo R$ (BRL)</label>
+                                                <span class="text-[8px] font-medium text-gray-400">Cotiz: {{ number_format($rates['brl'], 0, '', '.') }}</span>
+                                            </div>
+                                            <input type="number" step="any" wire:model.live.debounce.300ms="multiplePayments.efectivo_brl" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-green-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600 dark:bg-gray-900 font-bold text-green-600" placeholder="0.00">
+                                        </div>
+                                        @endif
+
+                                        @if(isset($rates['ars']) && $rates['ars'] > 0 && in_array('ars', $activeCurrencies))
+                                        <div class="transition-all duration-300">
+                                            <div class="flex justify-between items-center mb-0.5">
+                                                <label class="block text-[10px] font-bold text-red-500">Efectivo A$ (ARS)</label>
+                                                <span class="text-[8px] font-medium text-gray-400">Cotiz: {{ number_format($rates['ars'], 0, '', '.') }}</span>
+                                            </div>
+                                            <input type="number" step="any" wire:model.live.debounce.300ms="multiplePayments.efectivo_ars" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-red-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600 dark:bg-gray-900 font-bold text-red-500" placeholder="0">
+                                        </div>
+                                        @endif
+
                                         @foreach($paymentMethods as $pm)
                                             <div>
-                                                <label class="block text-[10px] font-bold text-gray-500 mb-1 dark:text-gray-400">{{ $pm->name }} {{ $pm->type === 'card' ? '💳' : ($pm->type === 'qr' ? '📱' : '🏦') }}</label>
-                                                <input type="number" wire:model.live.debounce.300ms="multiplePayments.{{ $pm->name }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600" placeholder="0">
+                                                <label class="block text-[10px] font-bold text-gray-500 mb-0.5 dark:text-gray-400">{{ $pm->name }} {{ $pm->type === 'card' ? '💳' : ($pm->type === 'qr' ? '📱' : '🏦') }}</label>
+                                                <input type="number" wire:model.live.debounce.300ms="multiplePayments.{{ $pm->name }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-xs border-gray-300 rounded-md py-1.5 text-right dark:shadow-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 font-bold" placeholder="0">
                                             </div>
                                         @endforeach
                                     </div>
 
                                     <div class="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                                         <span class="text-gray-600 font-bold text-xs dark:text-gray-400">Total Pagado:</span>
-                                        <span class="text-sm font-bold text-gray-800 dark:text-white">₲ {{ format_pyg(array_sum($multiplePayments)) }}</span>
+                                        <span class="text-sm font-bold text-gray-800 dark:text-white">₲ {{ format_pyg($receivedAmount) }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 font-bold text-xs dark:text-gray-400">Faltante / Vuelto:</span>
@@ -920,23 +1005,24 @@
                         @endif
 
                     </div>
-                    <div class="bg-gray-50 px-4 py-2 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-900">
+
+                    <!-- Botones Fijos Abajo -->
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 shrink-0 shadow-inner">
                         <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto dark:shadow-none">
                             <button wire:click="processSale" type="button" 
-                                class="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 text-sm leading-6 font-bold text-white shadow-sm focus:outline-none focus:shadow-outline-indigo transition ease-in-out duration-150 {{ $paymentCondition === 'contado' ? 'bg-green-600 hover:bg-green-500 focus:border-green-700' : 'bg-orange-600 hover:bg-orange-500 focus:border-orange-700' }} {{ ($paymentCondition === 'contado' && (($paymentMethod === 'efectivo' && $change < 0) || ($paymentMethod === 'multiple' && $change < 0))) ? 'opacity-50 cursor-not-allowed' : '' }} dark:shadow-none"
+                                class="inline-flex justify-center w-full rounded-md border border-transparent px-5 py-2.5 text-sm leading-6 font-bold text-white shadow-sm focus:outline-none focus:shadow-outline-indigo transition ease-in-out duration-150 {{ $paymentCondition === 'contado' ? 'bg-green-600 hover:bg-green-500 focus:border-green-700' : 'bg-orange-600 hover:bg-orange-500 focus:border-orange-700' }} {{ ($paymentCondition === 'contado' && (($paymentMethod === 'efectivo' && $change < 0) || ($paymentMethod === 'multiple' && $change < 0))) ? 'opacity-50 cursor-not-allowed' : '' }} dark:shadow-none"
                                 @if($paymentCondition === 'contado' && (($paymentMethod === 'efectivo' && $change < 0) || ($paymentMethod === 'multiple' && $change < 0))) disabled @endif
                             >
                                 {{ $paymentCondition === 'contado' ? 'CONFIRMAR PAGO' : 'CONFIRMAR CRÉDITO' }}
                             </button>
                         </span>
                         <span class="mt-2 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto dark:shadow-none">
-                            <button wire:click="$set('showPaymentModal', false)" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:shadow-none">
+                            <button wire:click="$set('showPaymentModal', false)" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-5 py-2.5 bg-white text-sm leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:shadow-none">
                                 Cancelar
                             </button>
                         </span>
                     </div>
                 </div>
-            </div>
         </div>
     @endif
     <!-- Mobile Cart FAB -->

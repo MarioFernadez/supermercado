@@ -69,7 +69,9 @@ class SessionManager extends Component
             
             // Calculate total cash sales from payments
             $this->totalCashSales = $sales->flatMap->payments
-                ->where('method', 'efectivo')
+                ->filter(function($payment) {
+                    return str_starts_with(strtolower($payment->method), 'efectivo');
+                })
                 ->sum('amount');
                 
             $this->salesCount = $sales->count();

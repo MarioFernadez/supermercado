@@ -8,13 +8,22 @@
             <div class="swiper main-swiper sm:rounded-3xl overflow-hidden shadow-2xl shadow-indigo-100/50">
                 <div class="swiper-wrapper">
                     @foreach($banners as $banner)
-                    <div class="swiper-slide relative aspect-[1903/560] overflow-hidden">
-                        <img src="{{ Storage::url($banner->image_path) }}" class="w-full h-full object-cover transform transition duration-[10s] group-hover:scale-110">
+                    <div class="swiper-slide relative aspect-[2/1] md:aspect-[1903/560] overflow-hidden">
+                        @if($banner->mobile_image_path)
+                            <!-- Mobile Image -->
+                            <img src="{{ Storage::url($banner->mobile_image_path) }}" class="block md:hidden w-full h-full object-cover transform transition duration-[10s] group-hover:scale-110">
+                            <!-- Desktop Image -->
+                            <img src="{{ Storage::url($banner->image_path) }}" class="hidden md:block w-full h-full object-cover transform transition duration-[10s] group-hover:scale-110">
+                        @else
+                            <!-- Fallback Single Image -->
+                            <img src="{{ Storage::url($banner->image_path) }}" class="w-full h-full object-cover object-center transform transition duration-[10s] group-hover:scale-110">
+                        @endif
+
                         @if($banner->title || $banner->subtitle)
-                        <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex flex-col justify-center p-8 sm:p-20">
+                        <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex flex-col justify-center p-6 md:p-20">
                             <div class="max-w-2xl" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
-                                <h2 x-show="show" x-transition:enter="transition ease-out duration-700 delay-300" x-transition:enter-start="opacity-0 translate-y-8" class="text-3xl sm:text-6xl font-black text-white leading-tight uppercase tracking-tighter">{{ $banner->title }}</h2>
-                                <p x-show="show" x-transition:enter="transition ease-out duration-700 delay-500" x-transition:enter-start="opacity-0 translate-y-8" class="text-lg sm:text-2xl text-white/90 mt-4 font-medium uppercase tracking-widest">{{ $banner->subtitle }}</p>
+                                <h2 x-show="show" x-transition:enter="transition ease-out duration-700 delay-300" x-transition:enter-start="opacity-0 translate-y-8" class="text-2xl md:text-6xl font-bold text-white leading-tight uppercase tracking-tighter">{{ $banner->title }}</h2>
+                                <p x-show="show" x-transition:enter="transition ease-out duration-700 delay-500" x-transition:enter-start="opacity-0 translate-y-8" class="text-xs md:text-2xl text-white/90 mt-2 md:mt-4 font-medium uppercase tracking-widest">{{ $banner->subtitle }}</p>
                             </div>
                         </div>
                         @endif
@@ -43,8 +52,7 @@
     <section class="max-w-7xl mx-auto px-4 mt-12 relative">
         <div class="flex items-center justify-between mb-8">
             <div>
-                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">Navegar por</p>
-                <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Explorar Categorías</h3>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">Explorar Categorías</h3>
             </div>
             <div class="flex gap-2">
                 <div class="cat-prev cursor-pointer p-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition shadow-md dark:shadow-none">
@@ -71,7 +79,7 @@
                                 </div>
                             @endif
                         </div>
-                        <h3 class="text-xs sm:text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition truncate w-full">{{ $category->name }}</h3>
+                        <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tighter group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition truncate w-full">{{ $category->name }}</h3>
                         <p class="text-[10px] font-bold text-indigo-400 dark:text-gray-500 mt-1 uppercase tracking-widest">{{ $category->products_count }} productos</p>
                     </a>
                 </div>
@@ -99,8 +107,7 @@
         
         <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6 border-b border-gray-100 dark:border-gray-800 pb-8">
             <div>
-                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">Recién llegados</p>
-                <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
                     <span x-text="onlyFavs ? 'Mis Favoritos' : 'Nuevos Ingresos'"></span>
                     <span x-show="onlyFavs" class="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse" x-text="favorites.length"></span>
                 </h3>
@@ -256,6 +263,33 @@
             </div>
         @endif
     </section>
+
+    <!-- Promotional Double Banners Section (Cellshop Style) -->
+    @if(($settings['promo_banner_1_path'] ?? false) || ($settings['promo_banner_2_path'] ?? false))
+    <section class="max-w-7xl mx-auto px-4 mt-8 mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Promo Banner (2/3 Width) -->
+            @if($settings['promo_banner_1_path'] ?? false)
+            <div class="lg:col-span-2">
+                <a href="{{ $settings['promo_banner_1_link'] ?? '#' }}" class="block relative overflow-hidden rounded-3xl group shadow-lg hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-500 aspect-[2/1] lg:aspect-[2.3/1]">
+                    <img src="{{ Storage::url($settings['promo_banner_1_path']) }}" class="w-full h-full object-cover transform transition duration-[6s] group-hover:scale-105" alt="Promoción Izquierda">
+                    <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition duration-500"></div>
+                </a>
+            </div>
+            @endif
+
+            <!-- Right Promo Banner (1/3 Width) -->
+            @if($settings['promo_banner_2_path'] ?? false)
+            <div class="lg:col-span-1">
+                <a href="{{ $settings['promo_banner_2_link'] ?? '#' }}" class="block relative overflow-hidden rounded-3xl group shadow-lg hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-500 aspect-[2/1] lg:aspect-[1.15/1]">
+                    <img src="{{ Storage::url($settings['promo_banner_2_path']) }}" class="w-full h-full object-cover transform transition duration-[6s] group-hover:scale-105" alt="Promoción Derecha">
+                    <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition duration-500"></div>
+                </a>
+            </div>
+            @endif
+        </div>
+    </section>
+    @endif
 
     <!-- Swiper Initialization -->
     <script>
