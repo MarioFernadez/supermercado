@@ -45,6 +45,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customers/{customer}/statement', [\App\Http\Controllers\ReportsController::class, 'printAccountStatement'])->name('customers.statement');
     Route::get('/sales/{sale}/ticket', [\App\Http\Controllers\TicketController::class, 'show'])->name('sales.ticket');
     Route::get('/settings/billing', \App\Livewire\Settings\Billing::class)->name('settings.billing');
+    Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {
+        Route::get('/web-orders', \App\Livewire\Admin\WebOrders\Index::class)->name('admin.web-orders.index');
+    });
 
     // Gerente + Admin Routes (store management)
     Route::middleware(['can:gerente'])->group(function () {
@@ -54,9 +57,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/products/export', [\App\Http\Controllers\ProductImportExportController::class, 'export'])->name('products.export');
         Route::post('/products/import', [\App\Http\Controllers\ProductImportExportController::class, 'import'])->name('products.import');
         Route::get('/products/template', [\App\Http\Controllers\ProductImportExportController::class, 'template'])->name('products.template');
-        Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {
-            Route::get('/web-orders', \App\Livewire\Admin\WebOrders\Index::class)->name('admin.web-orders.index');
-        });
         Route::get('/sellers', \App\Livewire\Sellers\Index::class)->name('sellers.index');
         
         // Purchases
@@ -72,9 +72,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/inventario', \App\Livewire\Reports\Inventory::class)->name('reports.inventory');
         Route::get('/reports/inventario/print', [\App\Http\Controllers\ReportsController::class, 'printInventory'])->name('reports.inventory.print');
         Route::get('/reports/saldos-clientes', \App\Livewire\Reports\Debtors::class)->name('reports.debtors');
-        Route::get('/reports/utilidad-real', \App\Livewire\Reports\Profit::class)->name('reports.profit');
         Route::get('/expenses', \App\Livewire\Expenses\Index::class)->name('expenses.index');
         Route::get('/expenses/categories', \App\Livewire\Expenses\Categories::class)->name('expenses.categories.index');
+        Route::get('/collections', \App\Livewire\Admin\Collections::class)->name('admin.collections');
     });
 
     // Admin-Only Routes (system config)
@@ -89,7 +89,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/units', \App\Livewire\Settings\Units::class)->name('settings.units');
         Route::get('/settings/payment-methods', \App\Livewire\Settings\PaymentMethods::class)->name('settings.payment-methods');
         Route::get('/settings/cash-movement-categories', \App\Livewire\Settings\CashMovementCategories::class)->name('settings.cash-movement-categories');
-        Route::get('/collections', \App\Livewire\Admin\Collections::class)->name('admin.collections');
         Route::post('/settings/backup', [\App\Http\Controllers\BackupController::class, 'run'])->name('settings.backup.run');
         Route::get('/settings/quotation', \App\Livewire\Settings\Quotation::class)->name('settings.quotation');
     });

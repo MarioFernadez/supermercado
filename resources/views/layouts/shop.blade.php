@@ -853,6 +853,18 @@
                         this.customerName = localStorage.getItem('zonashop_customer_name') || '';
                         this.customerPhone = localStorage.getItem('zonashop_customer_phone') || '';
                         this.customerAddress = localStorage.getItem('zonashop_customer_address') || '';
+
+                        // Lock background scroll when drawers are open to prevent double scrollbars
+                        this.$watch('showCart', value => {
+                            this.updateBodyScroll();
+                        });
+                        this.$watch('openMobileMenu', value => {
+                            this.updateBodyScroll();
+                        });
+                    },
+
+                    updateBodyScroll() {
+                        document.body.style.overflow = (this.showCart || this.openMobileMenu) ? 'hidden' : '';
                     },
 
                     saveCart() {
