@@ -185,15 +185,74 @@
         <!-- Header -->
         <header class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Main Header Content -->
-                <div class="flex justify-between items-center h-16 sm:h-20" x-show="!showMobileSearch">
-                    <!-- Mobile Hamburger Button -->
-                    <div class="flex items-center gap-2 md:hidden mr-2">
-                        <button @click="openMobileMenu = true" class="p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition" title="Ver Categorías">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                        </button>
-                    </div>
 
+                <!-- ===== MOBILE HEADER ROW: Hamburger | Logo | [spacer] | DarkToggle | Favorites | Cart ===== -->
+                <div class="flex items-center h-14 md:hidden">
+                    <!-- Hamburger -->
+                    <button @click="openMobileMenu = true"
+                            class="p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition -ml-1 mr-1"
+                            title="Ver Categorías">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+
+                    <!-- Logo -->
+                    <a href="{{ route('shop.index') }}" class="flex items-center gap-2 shrink-0">
+                        @if($settings['shop_logo_path'] ?? false)
+                            <img src="{{ Storage::url($settings['shop_logo_path']) }}" alt="Logo" class="h-9 w-auto">
+                        @else
+                            <div class="flex items-center gap-1.5">
+                                <div class="p-1.5 bg-indigo-600 rounded-lg text-white">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                </div>
+                                <span class="text-lg font-bold text-gray-900 dark:text-white tracking-tighter">{{ $settings['store_name'] ?? 'ZONASHOP' }}</span>
+                            </div>
+                        @endif
+                    </a>
+
+                    <!-- Spacer -->
+                    <div class="flex-1"></div>
+
+                    <!-- Dark Mode Toggle (Mobile) -->
+                    <button onclick="toggleShopDark()"
+                            class="p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition rounded-xl"
+                            title="Cambiar tema">
+                        <svg id="shopIconSunMobile" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <svg id="shopIconMoonMobile" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Favorites (Mobile) -->
+                    <a href="{{ route('shop.index') }}" class="p-2 text-gray-400 dark:text-gray-500 hover:text-rose-500 dark:hover:text-rose-400 transition" title="Favoritos">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Cart (Mobile) -->
+                    <button @click="showCart = true"
+                            class="relative p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                            :class="{ 'cart-ready-animation': cartAnimate }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span x-show="itemsCount > 0"
+                              x-text="itemsCount"
+                              class="absolute top-0.5 right-0.5 bg-red-500 text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900"></span>
+                    </button>
+                </div>
+
+                <!-- ===== MOBILE SEARCH ROW (below icon row, visible on mobile only) ===== -->
+                <div class="block md:hidden pb-2.5">
+                    <livewire:shop.search />
+                </div>
+
+                <!-- ===== DESKTOP HEADER ROW ===== -->
+                <div class="hidden md:flex justify-between items-center h-20">
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('shop.index') }}" class="flex items-center gap-2">
@@ -204,14 +263,14 @@
                                     <div class="p-2 bg-indigo-600 rounded-xl text-white">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                     </div>
-                                    <span class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tighter">{{ $settings['store_name'] ?? 'ZONASHOP' }}</span>
+                                    <span class="text-2xl font-bold text-gray-900 dark:text-white tracking-tighter">{{ $settings['store_name'] ?? 'ZONASHOP' }}</span>
                                 </div>
                             @endif
                         </a>
                     </div>
 
                     <!-- Search Bar & Categories Dropdown (Desktop) -->
-                    <div class="hidden md:flex items-center flex-1 max-w-xl mx-12 gap-3" x-data="{ openCatMenu: false }">
+                    <div class="flex items-center flex-1 max-w-xl mx-12 gap-3" x-data="{ openCatMenu: false }">
                         <!-- Category Dropdown Button -->
                         <div class="relative">
                             <button @click="openCatMenu = !openCatMenu" 
@@ -250,14 +309,10 @@
                         </div>
                     </div>
 
-                    <!-- Nav Actions -->
+                    <!-- Desktop Nav Actions -->
                     <div class="flex items-center gap-2">
-                        <!-- Mobile Search Toggle -->
-                        <button @click="showMobileSearch = true" class="md:hidden p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
                         <!-- Social Media Icons -->
-                        <div class="hidden sm:flex items-center gap-2 border-r border-gray-100 dark:border-gray-700 pr-3 mr-1">
+                        <div class="flex items-center gap-2 border-r border-gray-100 dark:border-gray-700 pr-3 mr-1">
                             @if($settings['shop_facebook'] ?? false)
                                 <a href="{{ $settings['shop_facebook'] }}" target="_blank" class="p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 transition">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -275,7 +330,7 @@
                             @endif
                         </div>
 
-                        <!-- Dark Mode Toggle -->
+                        <!-- Dark Mode Toggle (Desktop) -->
                         <button
                             id="shopDarkToggle"
                             onclick="toggleShopDark()"
@@ -290,11 +345,12 @@
                         </button>
 
                         @if($settings['shop_show_pricelist'] ?? false)
-                        <a href="{{ route('shop.pricelist.download') }}" class="p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition" title="Descargar Lista de Precios">
+                        <a href="{{ route('shop.pricelist.download') }}" class="hidden md:inline-flex p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition" title="Descargar Lista de Precios">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         </a>
                         @endif
-                        <!-- Cart Trigger -->
+
+                        <!-- Cart Trigger (Desktop) -->
                         <button @click="showCart = true" 
                                 class="relative p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
                                 :class="{ 'cart-ready-animation': cartAnimate }">
@@ -306,15 +362,6 @@
                     </div>
                 </div>
 
-                <!-- Mobile Search Container -->
-                <div class="flex items-center h-16 sm:h-20 gap-4" x-show="showMobileSearch" x-cloak x-transition>
-                    <div class="flex-1">
-                        <livewire:shop.search />
-                    </div>
-                    <button @click="showMobileSearch = false" class="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition font-bold text-sm uppercase">
-                        Cerrar
-                    </button>
-                </div>
             </div>
         </header>
 
@@ -731,6 +778,11 @@
                             <a href="{{ route('login') }}" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition shadow-sm border border-slate-700" title="Panel de Administración">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                             </a>
+                            @if($settings['shop_show_pricelist'] ?? false)
+                            <a href="{{ route('shop.pricelist.download') }}" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition shadow-sm border border-slate-700" title="Descargar Lista de Precios">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            </a>
+                            @endif
                         </div>
                     </div>
 
@@ -974,8 +1026,12 @@
             function updateShopDarkIcons(isDark) {
                 const sun  = document.getElementById('shopIconSun');
                 const moon = document.getElementById('shopIconMoon');
-                if (sun)  sun.classList.toggle('hidden', isDark);  // sun visible in LIGHT mode
-                if (moon) moon.classList.toggle('hidden', !isDark); // moon visible in DARK mode
+                const sunM  = document.getElementById('shopIconSunMobile');
+                const moonM = document.getElementById('shopIconMoonMobile');
+                if (sun)  sun.classList.toggle('hidden', isDark);   // sun visible in LIGHT
+                if (moon) moon.classList.toggle('hidden', !isDark); // moon visible in DARK
+                if (sunM)  sunM.classList.toggle('hidden', isDark);
+                if (moonM) moonM.classList.toggle('hidden', !isDark);
             }
 
             document.addEventListener('DOMContentLoaded', function() {

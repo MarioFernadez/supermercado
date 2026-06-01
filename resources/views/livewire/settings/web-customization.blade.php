@@ -550,7 +550,7 @@
             </div>
 
             <!-- Banner Modal (CRUD) -->
-            <x-dialog-modal wire:model="isOpen">
+            <x-dialog-modal wire:model.live="isOpen">
                 <x-slot name="title">
                     <span class="font-black text-gray-900 dark:text-white">{{ $bannerId ? '✏️ Editar Banner del Carrusel' : '✨ Nuevo Banner del Carrusel' }}</span>
                 </x-slot>
