@@ -530,9 +530,20 @@
                     </div>
 
                     @if(count($banners) == 0)
-                        <div class="text-center py-12 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-dashed">
-                            <svg class="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <p class="text-gray-400 font-semibold dark:text-gray-500">No hay banners configurados para el carrusel de la tienda.</p>
+                        <div class="text-center py-12 bg-slate-50 dark:bg-slate-900/40 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 p-8 max-w-lg mx-auto mt-6">
+                            <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-inner">
+                                <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-slate-600 font-black dark:text-slate-300 text-lg uppercase tracking-tight">No hay banners configurados</p>
+                            <p class="text-slate-400 text-sm mt-1 max-w-sm mx-auto dark:text-slate-500">Comienza agregando tu primer banner para el carrusel interactivo de la tienda online.</p>
+                            <button wire:click="create()" class="mt-6 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold py-2.5 px-6 rounded-xl transition shadow-lg shadow-indigo-600/30 text-sm uppercase tracking-wider">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Agregar Primer Banner
+                            </button>
                         </div>
                     @endif
                 </div>
@@ -577,8 +588,8 @@
                                     <div class="space-y-1 text-center">
                                         @if ($image)
                                             <img src="{{ $image->temporaryUrl() }}" class="mx-auto h-24 w-auto rounded border p-1 bg-white">
-                                        @elseif ($bannerId && Banner::find($bannerId)->image_path)
-                                            <img src="{{ Storage::url(Banner::find($bannerId)->image_path) }}" class="mx-auto h-24 w-auto rounded border p-1 bg-white">
+                                        @elseif ($image_path)
+                                            <img src="{{ Storage::url($image_path) }}" class="mx-auto h-24 w-auto rounded border p-1 bg-white">
                                         @else
                                             <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4-4m4-44h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />

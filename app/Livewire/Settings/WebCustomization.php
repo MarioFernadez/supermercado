@@ -58,7 +58,7 @@ class WebCustomization extends Component
     public $benefit_4_subtitle;
 
     // Main Swiper Carousel (Tab 3)
-    public $title, $subtitle, $link, $order = 0, $image, $mobile_image, $mobile_image_path;
+    public $title, $subtitle, $link, $order = 0, $image, $image_path, $mobile_image, $mobile_image_path;
     public $bannerId;
     public $isOpen = false;
 
@@ -304,6 +304,7 @@ class WebCustomization extends Component
         $this->link = '';
         $this->order = 0;
         $this->image = null;
+        $this->image_path = null;
         $this->mobile_image = null;
         $this->mobile_image_path = null;
         $this->bannerId = null;
@@ -350,7 +351,12 @@ class WebCustomization extends Component
             $bannerSyncRequired = true;
         }
 
-        Banner::updateOrCreate(['id' => $this->bannerId], $data);
+        if ($this->bannerId) {
+            $banner = Banner::findOrFail($this->bannerId);
+            $banner->update($data);
+        } else {
+            $banner = Banner::create($data);
+        }
 
         // Sync carousel image directory to public on Windows
         if ($bannerSyncRequired) {
@@ -372,6 +378,7 @@ class WebCustomization extends Component
         $this->subtitle = $banner->subtitle;
         $this->link = $banner->link;
         $this->order = $banner->order;
+        $this->image_path = $banner->image_path;
         $this->mobile_image_path = $banner->mobile_image_path;
         $this->openModal();
     }
