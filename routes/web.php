@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/categories', CategoriesIndex::class)->name('categories.index');
         Route::get('/suppliers', \App\Livewire\Suppliers\Index::class)->name('suppliers.index');
         Route::get('/products', \App\Livewire\Products\Index::class)->name('products.index');
+        Route::get('/products/create', \App\Livewire\Products\Form::class)->name('products.create');
+        Route::get('/products/{product}/edit', \App\Livewire\Products\Form::class)->name('products.edit');
         Route::get('/products/export', [\App\Http\Controllers\ProductImportExportController::class, 'export'])->name('products.export');
         Route::post('/products/import', [\App\Http\Controllers\ProductImportExportController::class, 'import'])->name('products.import');
         Route::get('/products/template', [\App\Http\Controllers\ProductImportExportController::class, 'template'])->name('products.template');
