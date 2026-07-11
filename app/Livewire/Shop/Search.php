@@ -32,21 +32,23 @@ class Search extends Component
         }
     }
 
+    public function updatedQuery()
+    {
+        $this->showDropdown = strlen($this->query) >= 2;
+    }
+
     public function render()
     {
         $results = [];
         
         if (strlen($this->query) >= 2) {
-            $results = Product::where('is_active', true)
+            $results = Product::with('category')->where('is_active', true)
                 ->where(function($q) {
                     $q->where('name', 'like', '%' . $this->query . '%')
                       ->orWhere('sku', 'like', '%' . $this->query . '%');
                 })
                 ->take(6)
                 ->get();
-            $this->showDropdown = true;
-        } else {
-            $this->showDropdown = false;
         }
 
         return view('livewire.shop.search', [

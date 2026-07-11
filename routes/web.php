@@ -87,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/general', \App\Livewire\Settings\General::class)->name('settings.general');
         Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {
             Route::get('/settings/customization', \App\Livewire\Settings\WebCustomization::class)->name('settings.customization');
+            Route::get('/settings/menus', \App\Livewire\Settings\Menus::class)->name('settings.menus');
         });
         Route::get('/settings/units', \App\Livewire\Settings\Units::class)->name('settings.units');
         Route::get('/settings/payment-methods', \App\Livewire\Settings\PaymentMethods::class)->name('settings.payment-methods');

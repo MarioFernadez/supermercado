@@ -29,7 +29,7 @@ class SearchShow extends Component
     {
         $settings = StoreSetting::all()->pluck('value', 'key');
         
-        $productsQuery = Product::where('is_active', true)
+        $productsQuery = Product::with('category')->where('is_active', true)
             ->where(function($q) {
                 $q->where('name', 'like', '%' . $this->query . '%')
                   ->orWhere('sku', 'like', '%' . $this->query . '%');

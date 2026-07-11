@@ -8,6 +8,20 @@
         <title>@yield('title', $settings['store_name'] ?? config('app.name', 'ZonaShop'))</title>
         <meta name="description" content="@yield('meta_description', 'Descubre los mejores productos en ' . ($settings['store_name'] ?? 'nuestra tienda') . '. Calidad y mejores precios.')">
 
+        <!-- OpenGraph / Facebook / WhatsApp -->
+        <meta property="og:type" content="@yield('og_type', 'website')">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="@yield('title', $settings['store_name'] ?? config('app.name', 'ZonaShop'))">
+        <meta property="og:description" content="@yield('meta_description', 'Descubre los mejores productos en ' . ($settings['store_name'] ?? 'nuestra tienda') . '.')">
+        <meta property="og:image" content="@yield('og_image', isset($settings['shop_logo_path']) ? url(Storage::url($settings['shop_logo_path'])) : asset('default-og.png'))">
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:url" content="{{ url()->current() }}">
+        <meta name="twitter:title" content="@yield('title', $settings['store_name'] ?? config('app.name', 'ZonaShop'))">
+        <meta name="twitter:description" content="@yield('meta_description', 'Descubre los mejores productos en ' . ($settings['store_name'] ?? 'nuestra tienda') . '.')">
+        <meta name="twitter:image" content="@yield('og_image', isset($settings['shop_logo_path']) ? url(Storage::url($settings['shop_logo_path'])) : asset('default-og.png'))">
+
         @if(isset($settings['shop_favicon_path']) && $settings['shop_favicon_path'])
             <link rel="icon" type="image/x-icon" href="{{ Storage::url($settings['shop_favicon_path']) }}">
         @endif
@@ -172,18 +186,50 @@
           x-init="initCart()"
           style="transition: background-color 0.3s ease, color 0.3s ease;">
         
+        @php 
+            $menuItems = \App\Models\MenuItem::where('is_active', true)->whereNull('parent_id')->orderBy('order')->get(); 
+        @endphp
+        
         <!-- Top Bar -->
         @if($settings['top_bar_enabled'] ?? false)
-            <div class="w-full text-center py-2.5 px-4 text-xs font-semibold relative transition-all duration-300 flex items-center justify-center gap-2" 
+            <div class="w-full py-1.5 px-4 relative transition-all duration-300" 
                  style="background-color: {{ $settings['top_bar_bg_color'] ?? '#002f6c' }}; color: {{ $settings['top_bar_text_color'] ?? '#ffffff' }}; z-index: 51;">
-                <div class="max-w-7xl mx-auto flex items-center justify-center gap-2">
-                    {!! $settings['top_bar_text'] ?? '' !!}
+                <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 h-full">
+                    <!-- Left spacer for perfect centering on desktop -->
+                    <div class="hidden md:flex flex-1"></div>
+                    
+                    <!-- Center (Announcement) -->
+                    <div class="flex-1 flex justify-center text-center text-xs font-semibold">
+                        {!! $settings['top_bar_text'] ?? '' !!}
+                    </div>
+                    
+                    <!-- Right (Menus - Desktop Only) -->
+                    <div class="hidden md:flex flex-1 justify-end items-center gap-6">
+                        @foreach($menuItems as $item)
+                            <div class="relative group">
+                                <a href="{{ $item->url }}" class="hover:opacity-70 transition text-[10px] font-bold uppercase tracking-[0.1em] flex items-center">
+                                    {{ $item->name }}
+                                    @if($item->children->count() > 0)
+                                        <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                    @endif
+                                </a>
+                                @if($item->children->count() > 0)
+                                    <!-- Submenu -->
+                                    <div class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 rounded-xl overflow-hidden text-gray-900 dark:text-gray-100">
+                                        @foreach($item->children->where('is_active', true) as $child)
+                                            <a href="{{ $child->url }}" class="block px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition border-b border-gray-50 dark:border-gray-700 last:border-b-0">{{ $child->name }}</a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         @endif
 
         <!-- Header -->
-        <header class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
+        <header x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 50)" class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <!-- ===== MOBILE HEADER ROW: Hamburger | Logo | [spacer] | DarkToggle | Favorites | Cart ===== -->
@@ -227,10 +273,11 @@
                     </button>
 
                     <!-- Favorites (Mobile) -->
-                    <a href="{{ route('shop.index') }}" class="p-2 text-gray-400 dark:text-gray-500 hover:text-rose-500 dark:hover:text-rose-400 transition" title="Favoritos">
+                    <button @click="showWishlist = true" class="relative p-2 text-gray-400 dark:text-gray-500 hover:text-rose-500 dark:hover:text-rose-400 transition" title="Favoritos">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
+                        <span x-show="favorites.length > 0" x-text="favorites.length" class="absolute top-0.5 right-0.5 bg-rose-500 text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900"></span>
                     </a>
 
                     <!-- Cart (Mobile) -->
@@ -350,6 +397,12 @@
                         </a>
                         @endif
 
+                        <!-- Favorites (Desktop) -->
+                        <button @click="showWishlist = true" class="relative hidden md:inline-flex p-2 text-gray-400 dark:text-gray-500 hover:text-rose-500 dark:hover:text-rose-400 transition" title="Favoritos">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <span x-show="favorites.length > 0" x-text="favorites.length" class="absolute top-1 right-1 bg-rose-500 text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900"></span>
+                        </a>
+
                         <!-- Cart Trigger (Desktop) -->
                         <button @click="showCart = true" 
                                 class="relative p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
@@ -361,7 +414,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </header>
 
@@ -398,12 +450,37 @@
 
                             <!-- List -->
                             <div class="flex-1 overflow-y-auto px-4 py-6 no-scrollbar space-y-1 bg-gray-50/50 dark:bg-gray-900/50">
+                                @if($menuItems->count() > 0)
+                                    <!-- Dynamic Menus -->
+                                    @foreach($menuItems as $item)
+                                        <a href="{{ $item->url }}" 
+                                           class="flex items-center justify-between px-4 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                                            <span>{{ $item->name }}</span>
+                                            @if($item->children->count() == 0)
+                                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                            @endif
+                                        </a>
+                                        @if($item->children->count() > 0)
+                                            <div class="pl-6 space-y-1 mt-1 mb-2 border-l-2 border-gray-200 dark:border-gray-700 ml-6">
+                                                @foreach($item->children->where('is_active', true) as $child)
+                                                    <a href="{{ $child->url }}" class="flex items-center px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-indigo-600 transition">
+                                                        {{ $child->name }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                    <div class="h-[1px] bg-gray-200 dark:bg-gray-800 my-5 mx-2"></div>
+                                @endif
+
+                                <!-- Category Title -->
+                                <div class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Catálogo de Productos</div>
+
                                 <a href="{{ route('shop.index') }}" 
-                                   class="flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest bg-indigo-600 text-white shadow-md shadow-indigo-600/10">
+                                   class="flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest bg-indigo-600 text-white shadow-md shadow-indigo-600/10 mt-2">
                                     <span>Ver Todo</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
-                                <div class="h-[1px] bg-gray-100 dark:bg-gray-800 my-4"></div>
                                 @foreach($globalCategories as $cat)
                                 <a href="{{ route('shop.category', $cat) }}" 
                                    class="flex items-center justify-between px-4 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-800 transition">
@@ -416,6 +493,85 @@
                             <!-- Footer Info -->
                             <div class="p-6 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
                                 <span class="block text-[9px] text-gray-400 font-bold uppercase tracking-widest text-center">{{ $settings['store_name'] ?? 'ZONASHOP' }} © 2026</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <!-- Favorites Slide-over -->
+        <div x-show="showWishlist" 
+             class="fixed inset-0 overflow-hidden z-[60]" 
+             x-cloak>
+            <div class="absolute inset-0 overflow-hidden">
+                <div @click="showWishlist = false" class="absolute inset-0 bg-gray-900 bg-opacity-50 transition-opacity"></div>
+                
+                <section class="absolute inset-y-0 right-0 pl-10 max-w-full flex">
+                    <div class="w-screen max-w-md" 
+                         x-show="showWishlist"
+                         x-transition:enter="transform transition ease-in-out duration-300"
+                         x-transition:enter-start="translate-x-full"
+                         x-transition:enter-end="translate-x-0"
+                         x-transition:leave="transform transition ease-in-out duration-300"
+                         x-transition:leave-start="translate-x-0"
+                         x-transition:leave-end="translate-x-full">
+                        
+                        <div class="h-full flex flex-col bg-white dark:bg-gray-900 shadow-2xl overflow-hidden">
+                            <!-- Fixed Header -->
+                            <div class="py-6 px-4 sm:px-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-gray-900 z-10">
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">Mis Favoritos</h2>
+                                <button @click="showWishlist = false" class="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-300 p-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+
+                            <!-- Scrollable Body -->
+                            <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-6 custom-scrollbar">
+                                <template x-if="favorites.length === 0">
+                                    <div class="text-center py-20">
+                                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 text-gray-300 dark:text-gray-600">
+                                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                        </div>
+                                        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No tienes favoritos aún</p>
+                                    </div>
+                                </template>
+
+                                <div class="flow-root">
+                                    <ul role="list" class="-my-6 divide-y divide-gray-100 dark:divide-gray-800">
+                                        <template x-for="item in favorites" :key="item.id">
+                                            <li class="py-6 flex gap-4">
+                                                <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 relative">
+                                                    <img :src="item.image" class="h-full w-full object-cover">
+                                                </div>
+                                                
+                                                <div class="flex flex-1 flex-col justify-center">
+                                                    <div>
+                                                        <div class="flex justify-between text-base font-bold text-gray-900 dark:text-gray-100">
+                                                            <h3 x-text="item.name" class="line-clamp-2 text-sm"></h3>
+                                                        </div>
+                                                        <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-400" x-text="item.category"></p>
+                                                    </div>
+                                                    <div class="mt-2 flex items-center justify-between">
+                                                        <p class="text-sm font-bold dark:text-gray-300">₲ <span x-text="new Intl.NumberFormat('es-PY').format(item.price)"></span></p>
+                                                        <div class="flex items-center gap-2">
+                                                            <button @click="addItem({id: item.id, name: item.name, price_sale: item.price, image_url: item.image, category: item.category}); toggleFavorite(item); showWishlist = false; showCart = true" 
+                                                                    title="Mover al carrito"
+                                                                    class="w-8 h-8 flex items-center justify-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full hover:bg-indigo-600 hover:text-white transition shadow-md">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                            </button>
+                                                            
+                                                            <button @click="toggleFavorite(item)" 
+                                                                    title="Eliminar de favoritos"
+                                                                    class="w-8 h-8 flex items-center justify-center bg-white dark:bg-gray-800 text-gray-400 hover:text-red-500 rounded-full border border-gray-100 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 transition shadow-sm">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -485,7 +641,11 @@
                                                                 <span class="font-bold w-4 text-center text-xs tabular-nums text-gray-900 dark:text-white" x-text="item.quantity"></span>
                                                                 <button @click="updateQty(item.cartKey, 1)" class="p-1 hover:bg-white dark:hover:bg-gray-700 rounded-lg transition text-gray-400 hover:text-indigo-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
                                                             </div>
-                                                            <button @click="removeItem(item.cartKey)" class="text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 transition">Eliminar</button>
+                                                            <button @click="removeItem(item.cartKey)" 
+                                                                    title="Eliminar del carrito" 
+                                                                    class="w-8 h-8 flex items-center justify-center bg-white dark:bg-gray-800 text-gray-400 hover:text-red-500 rounded-full border border-gray-100 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 transition shadow-sm">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -573,9 +733,10 @@
                                 </div>
                                 
                                 <button @click="openReviewModal()" 
-                                        class="w-full group relative flex items-center justify-center gap-3 px-6 py-5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-xl shadow-indigo-100 dark:shadow-none transition-all transform active:scale-95 overflow-hidden">
+                                        class="w-full group relative flex items-center justify-center gap-3 px-6 py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl shadow-xl shadow-emerald-100 dark:shadow-none transition-all transform active:scale-95 overflow-hidden">
                                     <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                                    <span class="relative z-10 text-base font-bold uppercase tracking-widest">Revisar Pedido</span>
+                                    <svg class="w-6 h-6 relative z-10" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.24-.581-.487-.503-.669-.512-.174-.01-.373-.012-.572-.012-.199 0-.523.074-.797.371-.273.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                                    <span class="relative z-10 text-base font-bold uppercase tracking-widest">Confirmar</span>
                                 </button>
                             </div>
                         </div>
@@ -883,7 +1044,9 @@
             document.addEventListener('alpine:init', () => {
                 Alpine.data('cartManager', () => ({
                     items: [],
+                    favorites: [],
                     showCart: false,
+                    showWishlist: false,
                     showMobileSearch: false,
                     openMobileMenu: false,
                     cartAnimate: false,
@@ -902,6 +1065,19 @@
                         if (saved) {
                             this.items = JSON.parse(saved);
                         }
+                        const savedFavs = localStorage.getItem('zonashop_favs');
+                        if (savedFavs) {
+                            try {
+                                let parsedFavs = JSON.parse(savedFavs);
+                                if (parsedFavs.length > 0 && typeof parsedFavs[0] !== 'object') {
+                                    parsedFavs = [];
+                                    localStorage.setItem('zonashop_favs', JSON.stringify(parsedFavs));
+                                }
+                                this.favorites = parsedFavs;
+                            } catch(e) {
+                                this.favorites = [];
+                            }
+                        }
                         this.customerName = localStorage.getItem('zonashop_customer_name') || '';
                         this.customerPhone = localStorage.getItem('zonashop_customer_phone') || '';
                         this.customerAddress = localStorage.getItem('zonashop_customer_address') || '';
@@ -916,7 +1092,27 @@
                     },
 
                     updateBodyScroll() {
-                        document.body.style.overflow = (this.showCart || this.openMobileMenu) ? 'hidden' : '';
+                        document.body.style.overflow = (this.showCart || this.openMobileMenu || this.showWishlist) ? 'hidden' : '';
+                    },
+
+                    toggleFavorite(product) {
+                        const existingIndex = this.favorites.findIndex(i => i.id == product.id);
+                        if (existingIndex > -1) {
+                            this.favorites.splice(existingIndex, 1);
+                        } else {
+                            this.favorites.push({
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                image: product.image,
+                                category: product.category
+                            });
+                        }
+                        localStorage.setItem('zonashop_favs', JSON.stringify(this.favorites));
+                    },
+
+                    isInFavorites(id) {
+                        return this.favorites.findIndex(i => i.id == id) > -1;
                     },
 
                     saveCart() {
@@ -1012,6 +1208,10 @@
                         cart.showCart = false;
                     }
                     window.open(url, '_blank');
+                });
+
+                window.addEventListener('checkout-error', (event) => {
+                    alert('Atención: ' + event.detail.message);
                 });
             });
 

@@ -77,6 +77,30 @@ class Index extends Component
     #[On('request-cart-checkout')]
     public function checkoutFromCart($items, $customerName, $customerPhone, $customerAddress, $paymentMethod)
     {
+        // 1. Validate Stock
+        foreach ($items as $item) {
+            $product = \App\Models\Product::find($item['id']);
+            if (!$product || !$product->is_active) {
+                $this->dispatch('checkout-error', message: "El producto '{$item['name']}' ya no está disponible.");
+                return;
+            }
+
+            if ($product->manage_stock) {
+                if (!empty($item['variation_id'])) {
+                    $variation = \App\Models\ProductVariation::find($item['variation_id']);
+                    if (!$variation || $variation->stock < $item['quantity']) {
+                        $this->dispatch('checkout-error', message: "No hay stock suficiente para '{$item['name']}'. (Requerido: {$item['quantity']})");
+                        return;
+                    }
+                } else {
+                    if ($product->stock < $item['quantity']) {
+                        $this->dispatch('checkout-error', message: "No hay stock suficiente para '{$item['name']}'. (Requerido: {$item['quantity']})");
+                        return;
+                    }
+                }
+            }
+        }
+
         $this->customer_name = $customerName;
         $this->customer_phone = $customerPhone;
         $this->customer_address = $customerAddress;
@@ -108,7 +132,7 @@ class Index extends Component
             }])
             ->get();
 
-        $query = Product::where('is_active', true)
+        $query = Product::with('category')->where('is_active', true)
             ->when($this->search, function($q) {
                 $q->where(function($sub) {
                     $sub->where('name', 'like', '%' . $this->search . '%')

@@ -1,5 +1,9 @@
 @section('title', $product->name . ' | ' . ($settings['store_name'] ?? 'ZonaShop'))
 @section('meta_description', Str::limit(strip_tags($product->description), 160) ?: 'Compra ' . $product->name . ' al mejor precio en ' . ($settings['store_name'] ?? 'nuestra tienda') . '.')
+@section('og_type', 'product')
+@if($product->image_path)
+    @section('og_image', url(Storage::url($product->image_path)))
+@endif
 
 <div class="min-h-screen bg-gray-50 pb-20 dark:bg-gray-900">
     <!-- Breadcrumbs -->

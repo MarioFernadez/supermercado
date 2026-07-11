@@ -33,7 +33,7 @@ class CategoryShow extends Component
     {
         $settings = StoreSetting::all()->pluck('value', 'key');
 
-        $query = Product::where('category_id', $this->category->id)
+        $query = Product::with('category')->where('category_id', $this->category->id)
             ->where('is_active', true)
             ->when($this->search, function($q) {
                 $q->where('name', 'like', '%' . $this->search . '%');

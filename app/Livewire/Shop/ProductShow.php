@@ -30,7 +30,7 @@ class ProductShow extends Component
         $settings = StoreSetting::all()->pluck('value', 'key');
         
         // Fetch related products from the same category
-        $relatedProducts = Product::where('category_id', $this->product->category_id)
+        $relatedProducts = Product::with('category')->where('category_id', $this->product->category_id)
             ->where('id', '!=', $this->product->id)
             ->where('is_active', true)
             ->take(4)

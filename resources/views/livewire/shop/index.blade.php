@@ -1,4 +1,5 @@
 @section('title', ($settings['store_name'] ?? 'ZonaShop') . ' - Tienda Online')
+@section('og_type', 'website')
 <div>
     
     <!-- Hero Carousel -->
@@ -91,18 +92,9 @@
     </section>
 
     <!-- Recently Added -->
-    <section class="max-w-7xl mx-auto px-4 mt-20 pb-20"
-             x-data="{ 
-                favorites: JSON.parse(localStorage.getItem('zonashop_favs') || '[]'),
-                onlyFavs: false,
-                toggleFav(id) {
-                    if (this.favorites.includes(id)) {
-                        this.favorites = this.favorites.filter(f => f !== id);
-                    } else {
-                        this.favorites.push(id);
-                    }
-                    localStorage.setItem('zonashop_favs', JSON.stringify(this.favorites));
-                }
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-24"
+         x-data="{ 
+                 onlyFavs: false
              }">
         
         <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6 border-b border-gray-100 dark:border-gray-800 pb-8">
@@ -124,7 +116,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             @foreach($recentProducts as $product)
-            <div x-show="!onlyFavs || favorites.includes('{{ $product->id }}')"
+            <div x-show="!onlyFavs || isInFavorites('{{ $product->id }}')"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"
                  x-transition:enter-end="opacity-100 scale-100"
@@ -164,10 +156,16 @@
                     <!-- Hover Actions Overlay -->
                     <div class="absolute inset-0 flex items-center justify-center gap-2 bg-white/40 dark:bg-gray-900/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
                         <!-- Favorites -->
-                        <button @click="toggleFav('{{ $product->id }}')" 
-                                :class="favorites.includes('{{ $product->id }}') ? 'bg-red-500 text-white scale-110' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100'"
-                                class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white transition transform active:scale-95 border border-gray-100 dark:border-gray-600">
-                            <svg class="w-5 h-5" :fill="favorites.includes('{{ $product->id }}') ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        <button @click="toggleFavorite({
+                                     id: '{{ $product->id }}',
+                                     name: '{{ addslashes($product->name) }}',
+                                     price: {{ $product->effective_price }},
+                                     image: '{{ $product->image_path ? Storage::url($product->image_path) : '' }}',
+                                     category: '{{ addslashes($product->category->name ?? 'Catálogo') }}'
+                                 })" 
+                                 :class="isInFavorites('{{ $product->id }}') ? 'bg-red-500 text-white scale-110' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100'"
+                                 class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white transition transform active:scale-95 border border-gray-100 dark:border-gray-600">
+                            <svg class="w-5 h-5" :fill="isInFavorites('{{ $product->id }}') ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         </button>
 
                         <!-- Add to Cart / View Options -->
@@ -287,6 +285,31 @@
                 </a>
             </div>
             @endif
+        </div>
+    </section>
+    @endif
+
+    <!-- Features/Benefits Bar -->
+    @php
+        $features = [];
+        if(!empty($settings['shop_feature_1_title'])) $features[] = ['title' => $settings['shop_feature_1_title'], 'subtitle' => $settings['shop_feature_1_subtitle'] ?? '', 'icon' => '<svg class="w-6 h-6 mx-auto text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>'];
+        if(!empty($settings['shop_feature_2_title'])) $features[] = ['title' => $settings['shop_feature_2_title'], 'subtitle' => $settings['shop_feature_2_subtitle'] ?? '', 'icon' => '<svg class="w-6 h-6 mx-auto text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>'];
+        if(!empty($settings['shop_feature_3_title'])) $features[] = ['title' => $settings['shop_feature_3_title'], 'subtitle' => $settings['shop_feature_3_subtitle'] ?? '', 'icon' => '<svg class="w-6 h-6 mx-auto text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>'];
+        if(!empty($settings['shop_feature_4_title'])) $features[] = ['title' => $settings['shop_feature_4_title'], 'subtitle' => $settings['shop_feature_4_subtitle'] ?? '', 'icon' => '<svg class="w-6 h-6 mx-auto text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>'];
+    @endphp
+
+    @if(count($features) > 0)
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-20">
+        <div class="grid grid-cols-2 md:grid-cols-{{ count($features) }} gap-6 sm:gap-8">
+            @foreach($features as $feature)
+                <div class="text-center group bg-white/50 dark:bg-gray-800/30 backdrop-blur-sm border border-gray-100 dark:border-gray-800 rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1 transition duration-300">
+                    <div class="w-14 h-14 mx-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:shadow-md">
+                        {!! $feature['icon'] !!}
+                    </div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white leading-tight mb-1">{{ $feature['title'] }}</h3>
+                    <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mx-auto">{{ $feature['subtitle'] }}</p>
+                </div>
+            @endforeach
         </div>
     </section>
     @endif

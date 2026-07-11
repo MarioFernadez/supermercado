@@ -1,5 +1,9 @@
 @section('title', $category->name . ' | ' . ($settings['store_name'] ?? 'ZonaShop'))
 @section('meta_description', 'Explora nuestra colección de ' . $category->name . ' en ' . ($settings['store_name'] ?? 'nuestra tienda') . '. Encuentra los mejores precios y ofertas.')
+@section('og_type', 'website')
+@if($category->image_path)
+    @section('og_image', url(Storage::url($category->image_path)))
+@endif
 
 <div class="min-h-screen bg-gray-50 pb-20 dark:bg-gray-900">
     <!-- Category Header -->
