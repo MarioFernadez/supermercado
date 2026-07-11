@@ -164,6 +164,7 @@
                         @if(\App\Services\LicenseService::isEcommerceEnabled())
                         <a href="{{ route('settings.customization') }}" class="px-3 py-1.5 rounded text-[14px] transition-all duration-150 {{ request()->routeIs('settings.customization') ? 'text-white font-bold bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">Personalización Web</a>
                         <a href="{{ route('settings.menus') }}" class="px-3 py-1.5 rounded text-[14px] transition-all duration-150 {{ request()->routeIs('settings.menus') ? 'text-white font-bold bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">Menús Web</a>
+                        <a href="{{ route('pages.index') }}" class="px-3 py-1.5 rounded text-[14px] transition-all duration-150 {{ request()->routeIs('pages.*') ? 'text-white font-bold bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">Páginas (CMS)</a>
                         @endif
                         
                         <a href="{{ route('branches.index') }}" class="px-3 py-1.5 rounded text-[14px] transition-all duration-150 {{ request()->routeIs('branches.*') ? 'text-white font-bold bg-slate-800/50' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}">Sucursales</a>

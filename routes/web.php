@@ -26,6 +26,7 @@ Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(
     Route::get('/descargar-precios', [\App\Http\Controllers\PricelistController::class, 'download'])->name('shop.pricelist.download');
     Route::get('/c/{category}', \App\Livewire\Shop\CategoryShow::class)->name('shop.category');
     Route::get('/p/{product}', \App\Livewire\Shop\ProductShow::class)->name('shop.product');
+    Route::get('/pagina/{slug}', \App\Livewire\Shop\PageShow::class)->name('shop.page');
     Route::get('/buscar', \App\Livewire\Shop\SearchShow::class)->name('shop.search');
 });
 
@@ -88,6 +89,9 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware([\App\Http\Middleware\RequireEcommerceLicense::class])->group(function () {
             Route::get('/settings/customization', \App\Livewire\Settings\WebCustomization::class)->name('settings.customization');
             Route::get('/settings/menus', \App\Livewire\Settings\Menus::class)->name('settings.menus');
+            Route::get('/settings/pages', \App\Livewire\Admin\Pages\Index::class)->name('pages.index');
+            Route::get('/settings/pages/create', \App\Livewire\Admin\Pages\Form::class)->name('pages.create');
+            Route::get('/settings/pages/{page}/edit', \App\Livewire\Admin\Pages\Form::class)->name('pages.edit');
         });
         Route::get('/settings/units', \App\Livewire\Settings\Units::class)->name('settings.units');
         Route::get('/settings/payment-methods', \App\Livewire\Settings\PaymentMethods::class)->name('settings.payment-methods');
