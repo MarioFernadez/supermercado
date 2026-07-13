@@ -105,11 +105,11 @@
     <div class="totals">
         <div style="display: flex; justify-content: space-between;">
             <span>Subtotal:</span>
-            <span>{{ format_pyg($sale->total - $sale->tax_amount) }}</span>
+            <span>{{ format_pyg($sale->total - ($sale->tax_10 + $sale->tax_5)) }}</span>
         </div>
         <div style="display: flex; justify-content: space-between;">
             <span>IVA:</span>
-            <span>{{ format_pyg($sale->tax_amount) }}</span>
+            <span>{{ format_pyg($sale->tax_10 + $sale->tax_5) }}</span>
         </div>
         <div class="total-row">
             <span>TOTAL:</span>
