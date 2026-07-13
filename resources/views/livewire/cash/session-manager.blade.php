@@ -233,11 +233,30 @@
                     {{-- Total Ventas --}}
                     <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                         <div>
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1 dark:text-gray-500">Volumen de Ventas</span>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1 dark:text-gray-500" title="Todas las ventas sin importar el método de pago">Total Vendido (Todos los medios)</span>
                             <h4 class="text-2xl font-black text-gray-900 font-mono tracking-tighter dark:text-white">₲ {{ format_pyg($totalSales) }}</h4>
                         </div>
-                        <div class="mt-4 flex items-center justify-between">
-                            <span class="text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg uppercase tracking-wide dark:text-gray-400 dark:bg-gray-900">{{ $salesCount }} Transacciones</span>
+                        <div class="mt-4 flex items-center justify-between relative group">
+                            <div class="cursor-help flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg uppercase tracking-wide dark:text-gray-400 dark:bg-gray-900">
+                                <span>{{ $salesCount }} Transacciones</span>
+                                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
+                            
+                            <!-- Tooltip Desglose -->
+                            <div class="absolute left-0 top-8 mt-2 hidden group-hover:block w-48 bg-gray-800 text-white text-xs rounded-xl shadow-xl z-50 overflow-hidden dark:bg-gray-700 dark:border dark:border-gray-600">
+                                <div class="px-3 py-2 bg-gray-900 font-bold uppercase text-[9px] tracking-widest dark:bg-gray-800">Desglose de Cobros</div>
+                                <ul class="p-2 space-y-1">
+                                    @forelse($salesByPaymentMethod as $method => $amount)
+                                    <li class="flex justify-between items-center py-1 border-b border-gray-700/50 last:border-0">
+                                        <span class="capitalize text-gray-300 font-medium">{{ $method }}</span>
+                                        <span class="font-bold tracking-tight">₲ {{ format_pyg($amount) }}</span>
+                                    </li>
+                                    @empty
+                                    <li class="text-gray-400 text-center py-2 text-[10px]">Sin ventas registradas</li>
+                                    @endforelse
+                                </ul>
+                            </div>
+
                             <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             </div>
@@ -247,7 +266,7 @@
                     {{-- Efectivo --}}
                     <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                         <div>
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1 dark:text-gray-500">Ventas en Efectivo</span>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1 dark:text-gray-500" title="Dinero físico que debería estar en el cajón">Efectivo Recibido (Afecta Caja)</span>
                             <h4 class="text-2xl font-black text-emerald-600 font-mono tracking-tighter">₲ {{ format_pyg($totalCashSales) }}</h4>
                         </div>
                         <div class="mt-4 flex items-center justify-between">

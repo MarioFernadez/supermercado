@@ -32,6 +32,7 @@ class SessionManager extends Component
     public $totalIn = 0;
     public $totalOut = 0;
     public $salesCount = 0;
+    public $salesByPaymentMethod = [];
 
     public function mount()
     {
@@ -74,6 +75,13 @@ class SessionManager extends Component
                 })
                 ->sum('amount');
                 
+            // Calculate sales by payment method for breakdown
+            $this->salesByPaymentMethod = $sales->flatMap->payments
+                ->groupBy('method')
+                ->map(function($payments) {
+                    return $payments->sum('amount');
+                })->toArray();
+
             $this->salesCount = $sales->count();
 
             // Calculate movements
