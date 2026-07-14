@@ -53,7 +53,13 @@
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('pages.edit', $page->id) }}" class="text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400">
+                                    <a href="{{ url('/pagina/' . $page->slug) }}" target="_blank" class="text-slate-400 hover:text-indigo-500 dark:text-slate-500 dark:hover:text-indigo-400" title="Ver Página">
+                                        <span class="sr-only">Ver</span>
+                                        <svg class="w-8 h-8 fill-current p-1.5" viewBox="0 0 24 24">
+                                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="{{ route('pages.edit', $page->id) }}" class="text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400" title="Editar">
                                         <span class="sr-only">Editar</span>
                                         <svg class="w-8 h-8 fill-current" viewBox="0 0 32 32">
                                             <path d="M19.7 8.3c-.4-.4-1-.4-1.4 0l-10 10c-.2.2-.3.4-.3.7v4c0 .6.4 1 1 1h4c.3 0 .5-.1.7-.3l10-10c.4-.4.4-1 0-1.4l-4-4zM12.6 22H10v-2.6l6-6 2.6 2.6-6 6zm7.4-7.4L17.4 12l1.6-1.6 2.6 2.6-1.6 1.6z" />
