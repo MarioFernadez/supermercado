@@ -186,51 +186,59 @@
                     <div 
                         wire:key="{{ $product->id }}"
                         wire:click="addToCart('{{ $product->id }}')" 
-                        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden border dark:border-gray-700 h-full flex flex-col relative group cursor-pointer hover:-translate-y-1 {{ $isLowStock ? 'border-orange-400 ring-1 ring-orange-200' : ($isOutOfStock ? 'border-red-300 ring-red-100' : 'border-gray-100 dark:border-gray-700') }} dark:shadow-none"
+                        class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all border flex flex-col justify-between cursor-pointer hover:-translate-y-0.5 {{ $isLowStock ? 'border-orange-300 dark:border-orange-500/60' : ($isOutOfStock ? 'border-red-300' : 'border-gray-200 dark:border-gray-700') }}"
                     >
-                        @if($isOutOfStock)
-                            <div class="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
-                                <span class="bg-red-600/90 text-white text-xs font-bold px-2 py-1 rounded shadow-lg transform rotate-[-12deg] border border-white">SIN STOCK</span>
-                            </div>
-                        @elseif($isLowStock)
-                            <div class="absolute top-2 right-2 z-10">
-                                <span class="bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm animate-pulse dark:shadow-none">BAJO STOCK</span>
-                            </div>
-                        @endif
-
-                        <div class="p-3.5 flex-1 flex flex-col justify-between h-full">
-                            <div>
-                                <div class="mb-1.5 flex items-center gap-1">
-                                    <span class="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-600 tracking-wider">
-                                        {{ $product->sku ?? 'S/SKU' }}
-                                    </span>
-                                </div>
-                                <h3 class="font-bold text-gray-800 dark:text-white leading-snug text-[13px] mb-1 line-clamp-2">{{ $product->name }}</h3>
-                            </div>
-                            <div class="mt-2.5 flex justify-between items-end border-t border-gray-100 dark:border-gray-700/80 pt-2">
-                                @if($discountProductEnabled && $product->discount_percentage > 0)
-                                    <div>
-                                        <div class="flex items-center gap-1">
-                                            <span class="line-through text-gray-400 text-[11px] dark:text-gray-500 tabular-nums">₲ {{ number_format($product->price_sale, 0, ',', '.') }}</span>
-                                            <span class="bg-red-500 text-white text-[9px] font-black px-1 rounded">-{{ $product->discount_percentage }}%</span>
-                                        </div>
-                                        <span class="text-[#16a34a] dark:text-[#22c55e] font-black text-lg leading-tight tabular-nums tracking-tight">₲ {{ number_format($product->effective_price, 0, ',', '.') }}</span>
-                                    </div>
-                                @else
-                                    <span class="text-[#16a34a] dark:text-[#22c55e] font-black text-lg leading-tight tabular-nums tracking-tight">₲ {{ number_format($product->price_sale, 0, ',', '.') }}</span>
+                        <div>
+                            {{-- Top row: SKU left, BAJO STOCK right --}}
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <span class="text-xs font-mono text-gray-500 dark:text-gray-400 tracking-wider">
+                                    {{ $product->sku ?? '---' }}
+                                </span>
+                                @if($isOutOfStock)
+                                    <span class="text-[10.5px] font-black text-red-600 uppercase tracking-wider">SIN STOCK</span>
+                                @elseif($isLowStock)
+                                    <span class="text-[10.5px] font-black text-gray-900 dark:text-orange-300 uppercase tracking-wider">BAJO STOCK</span>
                                 @endif
-                                <div class="flex flex-col items-end">
-                                    <div class="text-[10px] px-1.5 py-0.5 rounded {{ $isLowStock ? 'bg-orange-100 text-orange-800 font-bold' : ($isOutOfStock ? 'bg-red-100 text-red-800 font-bold' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-200') }}">
-                                        @if($product->manage_stock)
-                                            Stock: {{ $currentStock }}
-                                        @else
-                                            ∞
-                                        @endif
+                            </div>
+
+                            {{-- Product Name --}}
+                            <h3 class="font-bold text-gray-900 dark:text-white text-base leading-snug line-clamp-2">
+                                {{ $product->name }}
+                            </h3>
+                        </div>
+
+                        {{-- Bottom row: Price left, Stock pill right --}}
+                        <div class="mt-4 flex items-center justify-between gap-2">
+                            <div>
+                                @if($discountProductEnabled && $product->discount_percentage > 0)
+                                    <div class="flex items-center gap-1">
+                                        <span class="line-through text-gray-400 text-xs tabular-nums">₲ {{ number_format($product->price_sale, 0, ',', '.') }}</span>
+                                        <span class="bg-red-500 text-white text-[9px] font-bold px-1 rounded">-{{ $product->discount_percentage }}%</span>
                                     </div>
-                                    @if($product->manage_stock && $currentStock <= 0 && $otherStock > 0)
-                                        <div class="text-[9px] text-blue-500 mt-1 font-bold">Otras suc: {{ $otherStock }}</div>
-                                    @endif
-                                </div>
+                                    <span class="text-[#00875a] dark:text-emerald-400 font-bold text-xl tabular-nums tracking-tight">
+                                        ₲ {{ number_format($product->effective_price, 0, ',', '.') }}
+                                    </span>
+                                @else
+                                    <span class="text-[#00875a] dark:text-emerald-400 font-bold text-xl tabular-nums tracking-tight">
+                                        ₲ {{ number_format($product->price_sale, 0, ',', '.') }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div>
+                                @if(!$product->manage_stock)
+                                    <span class="inline-flex items-center justify-center w-8 h-7 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-base font-semibold border border-gray-200 dark:border-gray-600">
+                                        ∞
+                                    </span>
+                                @elseif($isLowStock || $isOutOfStock)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 text-xs font-semibold border border-orange-200 dark:border-orange-800">
+                                        Stock: {{ $currentStock }}
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold border border-gray-200 dark:border-gray-600">
+                                        Stock: {{ $currentStock }}
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -332,17 +340,13 @@
                     @foreach($cart as $cartKey => $item)
                         <div class="flex justify-between items-start pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0" wire:key="cart-{{ $cartKey }}">
                             <div class="flex-1">
-                                <h4 class="font-bold text-gray-800 dark:text-gray-100 text-sm line-clamp-2 leading-snug">{{ $item['name'] }}</h4>
-                                <div class="mt-1">
-                                    <span class="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-600">
-                                        {{ $item['sku'] ?? '---' }}
-                                    </span>
-                                </div>
-                                <div class="text-[#16a34a] dark:text-[#22c55e] font-bold text-xs mt-1 tabular-nums">₲ {{ format_pyg($item['price']) }}</div>
+                                <h4 class="font-medium text-gray-800 dark:text-gray-100 text-sm line-clamp-2">{{ $item['name'] }}</h4>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ref: {{ $item['sku'] }}</div>
+                                <div class="text-indigo-600 dark:text-indigo-400 font-bold mt-1">₲ {{ format_pyg($item['price']) }}</div>
                             </div>
                             <div class="flex flex-col items-end">
                                 <div class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
-                                    <button wire:click="updateQuantity('{{ $cartKey }}', -1)" class="w-7 h-7 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600 hover:shadow-sm rounded transition font-bold">-</button>
+                                    <button wire:click="updateQuantity('{{ $cartKey }}', -1)" class="w-7 h-7 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600 hover:shadow-sm rounded transition">-</button>
                                     
                                     @if(isset($item['unit_type']) && $item['unit_type'] !== 'unit')
                                         <input 
@@ -350,18 +354,18 @@
                                             step="0.001"
                                             value="{{ $item['quantity'] }}"
                                             wire:blur="setQuantity('{{ $cartKey }}', $event.target.value)"
-                                            class="w-16 text-center text-sm font-black bg-transparent text-gray-800 dark:text-gray-100 border-0 focus:ring-0 p-0 appearance-none dark:bg-gray-900"
+                                            class="w-16 text-center text-sm font-bold bg-transparent text-gray-800 dark:text-gray-100 border-0 focus:ring-0 p-0 appearance-none dark:bg-gray-900"
                                         >
                                     @else
-                                        <span class="w-8 text-center text-sm font-black dark:text-white">{{ $item['quantity'] }}</span>
+                                        <span class="w-8 text-center text-sm font-bold dark:text-white">{{ $item['quantity'] }}</span>
                                     @endif
                                     
-                                    <button wire:click="updateQuantity('{{ $cartKey }}', 1)" class="w-7 h-7 flex items-center justify-center text-green-600 dark:text-green-400 hover:bg-white dark:hover:bg-gray-600 hover:shadow-sm rounded transition font-bold">+</button>
+                                    <button wire:click="updateQuantity('{{ $cartKey }}', 1)" class="w-7 h-7 flex items-center justify-center text-green-600 dark:text-green-400 hover:bg-white dark:hover:bg-gray-600 hover:shadow-sm rounded transition">+</button>
                                 </div>
                                 @if(isset($item['unit_type']) && $item['unit_type'] !== 'unit')
-                                    <div class="text-[10px] text-gray-400 mt-0.5 text-right pr-1 dark:text-gray-500 font-bold">{{ $item['unit_type'] }}</div>
+                                    <div class="text-[10px] text-gray-400 mt-0.5 text-right pr-1 dark:text-gray-500">{{ $item['unit_type'] }}</div>
                                 @endif
-                                <div class="mt-1.5 font-black text-sm text-[#16a34a] dark:text-[#22c55e] tabular-nums">
+                                <div class="mt-2 font-bold text-gray-900 dark:text-white">
                                     ₲ {{ format_pyg($item['price'] * $item['quantity']) }}
                                 </div>
                                 <button wire:click="removeFromCart('{{ $cartKey }}')" class="text-[10px] text-red-500 hover:underline mt-1 uppercase font-bold">Quitar</button>
@@ -390,29 +394,30 @@
                     <span class="absolute right-1.5 top-1 text-orange-500 text-xs font-bold">%</span>
                 </div>
                 @if($discountAmount > 0)
-                <span class="text-xs text-orange-600 font-medium">- ₲ {{ number_format($discountAmount, 0, ',', '.') }}</span>
+                <span class="text-xs text-orange-600 font-medium">- &#8370; {{ number_format($discountAmount, 0, ',', '.') }}</span>
                 @endif
             </div>
             @endif
 
             <div class="space-y-2 mb-4">
-                <div class="flex justify-between text-gray-600 dark:text-gray-400 text-sm font-medium">
+                <div class="flex justify-between text-gray-600 dark:text-gray-400 text-sm">
                     <span>Subtotal</span>
-                    <span class="tabular-nums font-bold">₲ {{ number_format($subtotalBeforeDiscount ?: $total, 0, ',', '.') }}</span>
+                    <span>&#8370; {{ number_format($subtotalBeforeDiscount ?: $total, 0, ',', '.') }}</span>
                 </div>
                 @if($discountAmount > 0)
-                <div class="flex justify-between text-red-600 text-sm font-bold">
+                <div class="flex justify-between text-red-600 text-sm font-medium">
                     <span>Descuento @if($manualDiscountPct > 0)({{ $manualDiscountPct }}%)@endif</span>
-                    <span class="tabular-nums">- ₲ {{ number_format($discountAmount, 0, ',', '.') }}</span>
+                    <span>- &#8370; {{ number_format($discountAmount, 0, ',', '.') }}</span>
                 </div>
                 @endif
-                <div class="flex justify-between text-gray-600 dark:text-gray-400 text-xs">
-                    <span>IVA (10% Incluido)</span>
-                    <span class="tabular-nums">₲ {{ number_format($total / 11, 0, ',', '.') }}</span>
+                <div class="flex justify-between text-gray-600 dark:text-gray-400 text-sm">
+                    <span>IVA (10%)</span>
+                    <!-- Simplified tax calc for display -->
+                    <span>&#8370; {{ number_format($total / 11, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between items-center pt-2.5 border-t border-dashed border-gray-300 dark:border-gray-600">
-                    <span class="text-lg font-black text-gray-800 dark:text-white uppercase tracking-tight">Total a Cobrar</span>
-                    <span class="text-3xl font-black text-[#16a34a] dark:text-[#22c55e] tracking-tight tabular-nums">₲ {{ number_format($total, 0, ',', '.') }}</span>
+                <div class="flex justify-between items-center pt-2 border-t border-dashed border-gray-300 dark:border-gray-600">
+                    <span class="text-lg font-bold text-gray-800 dark:text-white">Total</span>
+                    <span class="text-2xl font-bold text-indigo-700 dark:text-indigo-400">&#8370; {{ number_format($total, 0, ',', '.') }}</span>
                 </div>
 
                 <!-- Multi-Currency Display -->
