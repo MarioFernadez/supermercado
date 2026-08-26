@@ -101,6 +101,21 @@
 
         @livewireScripts
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+        {{-- Interceptor de Sesión Expirada (419) para Livewire 3 --}}
+        <script>
+            document.addEventListener('livewire:init', () => {
+                Livewire.hook('request', ({ fail }) => {
+                    fail(({ status, preventDefault }) => {
+                        if (status === 419) {
+                            preventDefault();
+                            window.location.href = "{{ route('login', ['expired' => 1]) }}";
+                        }
+                    });
+                });
+            });
+        </script>
+
         @stack('scripts')
     </body>
 </html>
