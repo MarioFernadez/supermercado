@@ -1,25 +1,78 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
-    <div class="px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 shadow-sm">
+    <div class="px-4 sm:px-6">
+        <div class="flex justify-between h-12 items-center">
 
-            {{-- Left: Hamburger (mobile) --}}
+            {{-- Left: Hamburger (mobile) + Breadcrumb --}}
             <div class="flex items-center gap-3">
-                {{-- Mobile hamburger to open sidebar --}}
+                {{-- Mobile hamburger --}}
                 <button @click="sidebarOpen = !sidebarOpen"
-                        class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        class="lg:hidden inline-flex items-center justify-center p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition">
+                    <svg class="h-5 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
 
-                {{-- Page title slot (optional) --}}
-                <span class="hidden lg:block text-sm font-semibold text-gray-500 dark:text-gray-400">
-                    {{ config('app.name', 'ZonaShop') }}
-                </span>
+                {{-- Breadcrumb dinámico --}}
+                @php
+                    $breadcrumbs = [];
+
+                    $routeName = request()->route()?->getName() ?? '';
+
+                    $sectionMap = [
+                        'dashboard'              => ['', 'Dashboard'],
+                        'pos.'                   => ['Ventas', 'Caja POS'],
+                        'admin.web-orders.'      => ['Ventas', 'Pedidos Online'],
+                        'admin.collections'      => ['Ventas', 'Cobranzas'],
+                        'customers.'             => ['Ventas', 'Clientes'],
+                        'products.'              => ['Tienda', 'Productos'],
+                        'categories.'            => ['Tienda', 'Categorías'],
+                        'purchases.'             => ['Tienda', 'Compras / Entradas'],
+                        'suppliers.'             => ['Tienda', 'Proveedores'],
+                        'admin.deboning.'        => ['Tienda', 'Taller de Desposte'],
+                        'expenses.'              => ['Finanzas', 'Gastos'],
+                        'reports.cash'           => ['Finanzas', 'Sesiones de Caja'],
+                        'reports.cash-movements' => ['Finanzas', 'Sesiones de Caja'],
+                        'reports.sales'          => ['Reportes', 'Detalle de Ventas'],
+                        'reports.salesperson'    => ['Reportes', 'Ranking Vendedores'],
+                        'reports.inventory'      => ['Reportes', 'Estado de Inventario'],
+                        'reports.debtors'        => ['Reportes', 'Saldos de Clientes'],
+                        'settings.'              => ['Configuración', 'Ajustes'],
+                        'branches.'              => ['Configuración', 'Sucursales'],
+                        'cash_registers.'        => ['Configuración', 'Puntos de Venta'],
+                        'users.'                 => ['Configuración', 'Usuarios'],
+                        'sellers.'               => ['Configuración', 'Vendedores'],
+                        'pages.'                 => ['Configuración', 'Páginas (CMS)'],
+                        'admin.media'            => ['Configuración', 'Gestor de Medios'],
+                        'profile.'               => ['', 'Mi Perfil'],
+                        'cash.'                  => ['', 'Mi Caja'],
+                        'master.'                => ['', 'Master Control'],
+                    ];
+
+                    $section = '';
+                    $page = config('app.name', 'ZonaShop');
+
+                    foreach ($sectionMap as $prefix => [$sec, $pag]) {
+                        if (str_starts_with($routeName, $prefix) || $routeName === $prefix) {
+                            $section = $sec;
+                            $page = $pag;
+                            break;
+                        }
+                    }
+                @endphp
+
+                <div class="hidden lg:flex items-center gap-1.5 text-sm" style="font-family: 'Inter', sans-serif;">
+                    @if($section)
+                        <span class="text-gray-400 dark:text-gray-500 font-medium">{{ $section }}</span>
+                        <svg class="w-3.5 h-3.5 text-gray-300 dark:text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    @endif
+                    <span class="text-gray-700 dark:text-gray-200 font-semibold">{{ $page }}</span>
+                </div>
             </div>
 
             {{-- Right: Actions --}}
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
 
                 {{-- Dark Mode Toggle --}}
                 <button
@@ -28,12 +81,10 @@
                     class="dark-mode-toggle p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                     title="Cambiar tema"
                     aria-label="Modo oscuro">
-                    <!-- Sun icon (visible in dark mode) -->
-                    <svg id="iconSun" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg id="iconSun" class="hidden w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
-                    <!-- Moon icon (visible in light mode) -->
-                    <svg id="iconMoon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg id="iconMoon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                     </svg>
                 </button>
@@ -47,17 +98,19 @@
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                                 <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                                    <img class="h-7 w-7 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                                 </button>
                             @else
-                                <span class="inline-flex rounded-md">
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                        {{ Auth::user()->name }}
-                                        <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                    </button>
-                                </span>
+                                <button type="button"
+                                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                    <div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white font-black text-[10px]">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
+                                    <span class="hidden sm:block max-w-[120px] truncate">{{ Auth::user()->name }}</span>
+                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
                             @endif
                         </x-slot>
 
@@ -93,7 +146,6 @@
 
                             <div class="border-t border-gray-200 dark:border-gray-600"></div>
 
-                            <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}" x-data>
                                 @csrf
                                 <x-dropdown-link href="{{ route('logout') }}" @click.prevent="$root.submit();">
@@ -107,6 +159,7 @@
         </div>
     </div>
 </nav>
+
 
 <script>
     function toggleDarkMode() {

@@ -1,4 +1,80 @@
 <div class="flex h-screen w-full bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+
+    {{-- ══════════════════════════════════════════════════════════════ --}}
+    {{-- RESTAURANT: TABLE MAP (shown instead of normal POS when mode is restaurant + no table selected) --}}
+    {{-- ══════════════════════════════════════════════════════════════ --}}
+    @if($isRestaurantMode && $showTableMap)
+    <div class="flex-1 flex flex-col h-full bg-gray-100 dark:bg-gray-900 overflow-hidden">
+        {{-- Header --}}
+        <div class="bg-white dark:bg-gray-800 p-4 shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('dashboard') }}" class="text-green-500 font-bold text-xl flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    ZonaPOS
+                </a>
+                <span class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight ml-4">🍽️ Mapa de Mesas</span>
+            </div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+                {{ auth()->user()->name }} &nbsp;|&nbsp; {{ $currentRegisterName }} · desde {{ $sessionOpenedAt }}
+            </div>
+        </div>
+
+        {{-- Table Grid --}}
+        <div class="flex-1 overflow-y-auto p-6">
+            @if($restaurantTables->isEmpty())
+                <div class="flex flex-col items-center justify-center h-full gap-4 text-gray-400">
+                    <span class="text-6xl">🍽️</span>
+                    <p class="font-bold text-lg">No hay mesas configuradas.</p>
+                    <a href="{{ route('settings.restaurant') }}" class="bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl text-sm">Ir a Configuración de Restaurante</a>
+                </div>
+            @else
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    @foreach($restaurantTables as $table)
+                        <button wire:click="openTable({{ $table->id }})"
+                            class="aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 font-black text-lg shadow-md border-2 transition-all active:scale-95
+                            {{ $table->status === 'occupied'
+                                ? 'bg-red-500 border-red-600 text-white shadow-red-200 dark:shadow-none'
+                                : 'bg-white border-emerald-300 text-gray-900 shadow-gray-200 hover:border-indigo-400 hover:shadow-indigo-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:shadow-none' }}">
+                            <span class="text-3xl">{{ $table->status === 'occupied' ? '🔴' : '🟢' }}</span>
+                            <span>{{ $table->name }}</span>
+                            @if($table->status === 'occupied' && $table->currentSale)
+                                <span class="text-xs font-bold opacity-80">₲ {{ number_format($table->currentSale->total, 0, ',', '.') }}</span>
+                            @else
+                                <span class="text-xs font-bold opacity-60">Libre</span>
+                            @endif
+                        </button>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- WAITER SELECTION MODAL --}}
+    @if($showWaiterModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl w-full max-w-md">
+            <h2 class="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-6 text-center">¿Quién atiende esta mesa?</h2>
+            <div class="grid grid-cols-2 gap-3">
+                @foreach($waiters as $waiter)
+                    <button wire:click="selectWaiter({{ $waiter->id }})"
+                        class="bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-700 text-indigo-800 dark:text-indigo-300 font-black py-4 px-3 rounded-2xl text-sm uppercase transition active:scale-95">
+                        👤 {{ $waiter->name }}
+                    </button>
+                @endforeach
+                @if($waiters->isEmpty())
+                    <div class="col-span-2 text-center text-gray-400 py-4 text-sm">No hay mozos activos. <a href="{{ route('settings.restaurant') }}" class="text-indigo-600 font-bold">Agregar en Ajustes</a></div>
+                @endif
+            </div>
+            <button wire:click="selectWaiter(null)" class="mt-6 w-full text-center text-gray-400 text-sm hover:text-gray-600">Continuar sin asignar mozo</button>
+        </div>
+    </div>
+    @endif
+
+    @else
+    {{-- ══════════════════════════════════════════════════════════════ --}}
+    {{-- NORMAL POS (or restaurant with active table) --}}
+    {{-- ══════════════════════════════════════════════════════════════ --}}
+
     <!-- Left Section: Products -->
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Header / Search -->
@@ -20,14 +96,16 @@
                     @endif
 
                     <!-- Web Orders Button -->
+                    @if(\App\Services\LicenseService::isEcommerceEnabled())
                     <button type="button" wire:click="openWebOrdersModal" class="relative bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-lg transition-all flex items-center justify-center shadow-sm active:scale-95 dark:shadow-none" title="Pedidos Web Pendientes">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         @if($pendingWebOrdersCount > 0)
                             <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white animate-bounce shadow-md dark:shadow-none">
-                                {{ $pendingWebOrdersCount }}
+                                {{ $pendingWebOrdersCount > 9 ? '9+' : $pendingWebOrdersCount }}
                             </span>
                         @endif
                     </button>
+                    @endif
 
 
                     <button type="button" wire:click="openMovementModal('in')" wire:loading.attr="disabled" class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-lg text-sm font-bold border border-gray-300 dark:border-gray-600 transition-colors flex items-center justify-center" title="Registrar Movimientos">
@@ -60,6 +138,7 @@
                 <!-- Rest of search... -->
                 <div class="relative flex-1">
                     <input id="product-search-input" wire:model.live.debounce.150ms="search" type="text" 
+                        wire:keydown.enter="handleSearchSubmit"
                         class="w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm text-lg dark:shadow-none" 
                         placeholder="Buscar producto por nombre o código (SKU)..." autofocus>
                     <div class="absolute left-3 top-3.5 text-gray-400 dark:text-gray-500">
@@ -1383,7 +1462,7 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 px-6 py-4 flex justify-end dark:bg-gray-900">
-                        <button wire:click="$set('showVariationModal', false)" type="button" class="px-6 py-2 bg-white text-gray-500 font-bold text-[10px] uppercase tracking-widest rounded-xl hover:bg-gray-100 transition border border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:border-gray-700">
+                <button wire:click="$set('showVariationModal', false)" type="button" class="px-6 py-2 bg-white text-gray-500 font-bold text-[10px] uppercase tracking-widest rounded-xl hover:bg-gray-100 transition border border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:border-gray-700">
                             Cancelar
                         </button>
                     </div>
@@ -1391,4 +1470,15 @@
             </div>
         </div>
     @endif
+
+    @endif {{-- end @else (restaurant normal mode or non-restaurant mode) --}}
+
 </div>
+
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('openComanda', ({ url }) => {
+            window.open(url, '_blank');
+        });
+    });
+</script>

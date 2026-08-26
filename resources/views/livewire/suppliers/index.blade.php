@@ -1,48 +1,41 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4 dark:bg-gray-800">
-            
-            @if (session()->has('message'))
-                <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md my-3 dark:bg-green-900/40 dark:shadow-none" role="alert">
-                    <div class="flex">
-                        <div>
-                            <p class="text-sm">{{ session('message') }}</p>
+<div>
+    <x-page-header title="Proveedores" section="Tienda › Compras" :badge="$suppliers->total() . ' proveedores'">
+        <x-slot name="actions">
+            @if(count($selected) > 0)
+                <button wire:click="deleteSelected" 
+                        onclick="confirm('¿Estás seguro?') || event.stopImmediatePropagation()"
+                        class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2 px-3.5 rounded-xl text-xs transition flex items-center gap-1 dark:bg-red-900/30">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Borrar ({{ count($selected) }})
+                </button>
+            @endif
+            <button wire:click="create()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                Nuevo Proveedor
+            </button>
+        </x-slot>
+    </x-page-header>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-200/80 px-5 py-5 dark:bg-gray-800 dark:border-gray-700">
+                
+                @if (session()->has('message'))
+                    <div class="bg-green-50 border-l-4 border-green-500 text-green-800 px-4 py-3 rounded-lg text-sm mb-4 dark:bg-green-900/30 dark:text-green-300" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                    <div class="w-full md:w-1/2 font-sans">
+                        <div class="relative group">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition dark:text-gray-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </span>
+                            <input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar por Nombre, Contacto..." autocomplete="off" class="pl-10 shadow-sm border border-gray-200 rounded-xl w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
                         </div>
                     </div>
                 </div>
-            @endif
-
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                <div class="w-full md:w-1/3 space-y-2 font-sans">
-                    <div class="flex items-center">
-                        <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-indigo-200 shadow-sm flex items-center gap-1 dark:text-indigo-400 dark:shadow-none">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                            {{ $suppliers->total() }} Proveedores
-                        </span>
-                    </div>
-                    <div class="relative group">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition dark:text-gray-500">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar por Nombre, Contacto..." autocomplete="off" class="pl-10 shadow-sm appearance-none border border-gray-200 rounded-xl w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:shadow-none dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
-                    </div>
-                </div>
-                
-                <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-                    @if(count($selected) > 0)
-                        <button wire:click="deleteSelected" 
-                                onclick="confirm('¿Estás seguro?') || event.stopImmediatePropagation()"
-                                class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2.5 px-4 rounded-xl transition flex items-center dark:bg-red-900/30">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            Borrar ({{ count($selected) }})
-                        </button>
-                    @endif
-                    <button wire:click="create()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2.5 px-6 rounded-xl transition shadow-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        Nuevo Proveedor
-                    </button>
-                </div>
-            </div>
 
             <!-- Create/Edit Modal -->
             <x-dialog-modal wire:model="isOpen">

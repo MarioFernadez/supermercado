@@ -3,6 +3,7 @@
 namespace App\Livewire\Pos;
 
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Validation\Rule;
@@ -81,6 +82,15 @@ class SalesInterface extends Component
     public $showWebOrdersModal = false;
     public $importingWebOrderId = null;
 
+    // Restaurant Module
+    public $isRestaurantMode = false;
+    public $showTableMap = true;         // true = show table map; false = active sale screen
+    public $activeTableId = null;        // the RestaurantTable the mozo selected
+    public $activeWaiterId = null;       // waiter assigned to this table
+    public $activeSaleId = null;         // persisted pending sale UUID
+    public $showWaiterModal = false;     // waiter selection modal
+    public $showSendComandaModal = false; // confirm send-to-production modal
+
     public function mount()
     {
         // Check Session
@@ -114,22 +124,161 @@ class SalesInterface extends Component
         $this->discountProductEnabled = $settings->get('discount_product_enabled', '0') === '1';
         $this->discountManualEnabled  = $settings->get('discount_manual_enabled', '0') === '1';
 
+        // Restaurant mode
+        $this->isRestaurantMode = hasModule('restaurant');
+
         $this->loadPaymentMethods();
     }
 
     public function loadPaymentMethods()
     {
-        $this->paymentMethods = \App\Models\PaymentMethod::where('is_active', true)
-            ->orderBy('name')
-            ->get();
+        $this->paymentMethods = \Illuminate\Support\Facades\Cache::remember('active_payment_methods', 3600, function () {
+            return \App\Models\PaymentMethod::where('is_active', true)
+                ->orderBy('name')
+                ->get();
+        });
     }
 
-    public function render()
-    {
-        $currentSession = \App\Models\CashSession::with('register')->where('user_id', auth()->id())->where('status', 'open')->first();
-        $branchId = $currentSession?->register?->branch_id;
+    // ─── Restaurant: Table Map ─────────────────────────────────────────────────
 
-        $products = Product::with(['branchStocks', 'variations.branchStocks'])->where('is_active', true)
+    public function openTable($tableId)
+    {
+        $table = \App\Models\RestaurantTable::findOrFail($tableId);
+
+        if ($table->status === 'occupied' && $table->current_sale_id) {
+            // Load the existing pending sale
+            $pendingSale = \App\Models\Sale::with('items.product')->find($table->current_sale_id);
+            if ($pendingSale) {
+                $this->activeSaleId  = $pendingSale->id;
+                $this->activeTableId = $tableId;
+                $this->activeWaiterId = $pendingSale->waiter_id;
+                $this->cart = $pendingSale->items->map(fn($item) => [
+                    'id'             => $item->product_id,
+                    'variation_id'   => $item->product_variation_id ?? null,
+                    'name'           => $item->product_name,
+                    'quantity'       => $item->quantity,
+                    'price'          => $item->price_unit,
+                    'original_price' => $item->price_unit,
+                    'subtotal'       => $item->subtotal,
+                    'unit_type'      => $item->product?->unit_type ?? 'unit',
+                    'sku'            => $item->product?->sku ?? '',
+                    'discount_pct'   => 0,
+                    'sale_item_id'   => $item->id,
+                ])->keyBy(fn($i) => $i['variation_id'] ? 'v'.$i['variation_id'] : 'p'.$i['id'])->toArray();
+                $this->calculateTotal();
+                $this->showTableMap = false;
+                return;
+            }
+        }
+
+        // New table: pick a waiter first
+        $this->activeTableId = $tableId;
+        $this->showWaiterModal = true;
+    }
+
+    public function selectWaiter($waiterId)
+    {
+        $this->activeWaiterId = $waiterId;
+        $this->showWaiterModal = false;
+        $this->showTableMap = false;
+        $this->cart = [];
+        $this->calculateTotal();
+    }
+
+    public function backToTableMap()
+    {
+        // Save current cart as pending sale before going back
+        if (!empty($this->cart) && $this->activeTableId) {
+            $this->saveAsPendingSale();
+        }
+        $this->showTableMap = true;
+        $this->activeTableId = null;
+        $this->activeWaiterId = null;
+        $this->activeSaleId = null;
+        $this->cart = [];
+        $this->total = 0;
+    }
+
+    public function saveAsPendingSale()
+    {
+        if (!$this->activeTableId) return;
+
+        $saleData = [
+            'user_id'             => auth()->id(),
+            'restaurant_table_id' => $this->activeTableId,
+            'waiter_id'           => $this->activeWaiterId,
+            'total'               => $this->total,
+            'status'              => 'pending',
+        ];
+
+        if ($this->activeSaleId) {
+            $sale = \App\Models\Sale::findOrFail($this->activeSaleId);
+            $sale->update($saleData);
+            $sale->items()->delete();
+        } else {
+            $sale = \App\Models\Sale::create($saleData);
+            $this->activeSaleId = $sale->id;
+
+            // Mark table as occupied
+            \App\Models\RestaurantTable::where('id', $this->activeTableId)->update([
+                'status'          => 'occupied',
+                'current_sale_id' => $sale->id,
+            ]);
+        }
+
+        // Re-insert all items (calculate subtotal if missing)
+        foreach ($this->cart as $item) {
+            $sale->items()->create([
+                'product_id'           => $item['id'] ?? null,
+                'product_variation_id' => $item['variation_id'] ?? null,
+                'product_name'         => $item['name'],
+                'quantity'             => $item['quantity'],
+                'price_unit'           => $item['price'],
+                'subtotal'             => $item['subtotal'] ?? ($item['price'] * $item['quantity']),
+            ]);
+        }
+    }
+
+    public function sendComanda()
+    {
+        if (empty($this->cart)) {
+            $this->dispatch('error-movement', 'El carrito está vacío.');
+            return;
+        }
+
+        // Persist if not yet saved
+        $this->saveAsPendingSale();
+
+        // Get items not yet sent to production
+        $sale = \App\Models\Sale::with(['items.product'])->find($this->activeSaleId);
+        $unsentItems = $sale->items->filter(fn($i) => !$i->is_sent_to_production);
+
+        if ($unsentItems->isEmpty()) {
+            $this->dispatch('error-movement', 'No hay nuevos platos para enviar. Todos ya fueron marchados.');
+            return;
+        }
+
+        // Mark items as sent
+        $sale->items()->whereIn('id', $unsentItems->pluck('id'))->update(['is_sent_to_production' => true]);
+
+        // Build payload and redirect to comanda print view
+        $payload = base64_encode(json_encode([
+            'table'  => \App\Models\RestaurantTable::find($this->activeTableId)?->name,
+            'waiter' => \App\Models\Waiter::find($this->activeWaiterId)?->name,
+            'items'  => $unsentItems->map(fn($i) => [
+                'name'     => $i->product_name,
+                'qty'      => $i->quantity,
+                'zone'     => $i->product?->production_zone ?? 'none',
+            ])->values()->toArray(),
+        ]));
+
+        $this->dispatch('openComanda', url: route('restaurant.comanda.print', ['payload' => $payload]));
+    }
+
+    #[Computed]
+    public function products()
+    {
+        return Product::with(['branchStocks', 'variations.branchStocks'])->where('is_active', true)
             ->where(function($query) {
                 // MySQL uses LIKE for case-insensitive search
                 $query->where('name', 'like', '%' . $this->search . '%')
@@ -140,26 +289,100 @@ class SalesInterface extends Component
             })
             ->take(20)
             ->get();
+    }
 
-        $categories = Category::where('is_active', true)->get();
+    public function render()
+    {
+        $currentSession = \App\Models\CashSession::with('register')->where('user_id', auth()->id())->where('status', 'open')->first();
+        $branchId = $currentSession?->register?->branch_id;
+
+        $categories = \Illuminate\Support\Facades\Cache::remember('active_categories', 3600, function () {
+            return Category::where('is_active', true)->get();
+        });
 
         return view('livewire.pos.sales-interface', [
-            'products' => $products,
-            'categories' => $categories,
-            'branchId' => $branchId,
-            'movementCategories' => \App\Models\CashMovementCategory::where('is_active', true)
+            'products'             => $this->products,
+            'categories'           => $categories,
+            'branchId'             => $branchId,
+            'movementCategories'   => \App\Models\CashMovementCategory::where('is_active', true)
                 ->where(function($q) {
                     $q->where('type', $this->movementType == 'in' ? 'income' : 'expense')
                       ->orWhere('type', 'both');
                 })
                 ->get(),
-            'pendingWebOrdersCount' => \App\Models\WebOrder::whereIn('status', ['Pendiente WhatsApp', 'Atendido'])->count()
+            'pendingWebOrdersCount' => \App\Models\WebOrder::whereIn('status', ['Pendiente WhatsApp', 'Atendido'])->count(),
+            // Restaurant
+            'restaurantTables'      => $this->isRestaurantMode ? \App\Models\RestaurantTable::with('currentSale')->get() : collect(),
+            'waiters'               => $this->isRestaurantMode ? \App\Models\Waiter::where('active', true)->get() : collect(),
+            'activeTable'           => $this->activeTableId ? \App\Models\RestaurantTable::find($this->activeTableId) : null,
         ])->layout('layouts.pos');
     }
 
     public function filterCategory($categoryId)
     {
         $this->selectedCategory = $categoryId === $this->selectedCategory ? null : $categoryId;
+    }
+
+    public function handleSearchSubmit()
+    {
+        $term = trim($this->search);
+        if (empty($term)) return;
+
+        // EAN-13 Scale Barcode Logic
+        // Prefixes for weight scales are usually 20, 21, 22...
+        // Format: [2 digits prefix][4-5 digits SKU][5 digits weight][1 check digit]
+        // Defaulting to prefix '20' for now.
+        if (strlen($term) === 13 && str_starts_with($term, '20')) {
+            // Usually 4 digits for item code in typical configs, let's try 4 digits first
+            $skuCode = substr($term, 2, 4); // "1234"
+            $weightString = substr($term, 6, 6); // Includes check digit at the end. Wait, actually weight is 5 digits and check digit is 1.
+            $weightString = substr($term, 6, 5); // "00250" = 250g
+            $weightInKg = (float)$weightString / 1000;
+            
+            // Try to find product by this exact SKU or padded
+            $product = Product::where('sku', ltrim($skuCode, '0'))->orWhere('sku', $skuCode)->first();
+            
+            // If not found with 4 digits, try 5 digits (some scales use 5 digits for item code and 4 for weight)
+            if (!$product) {
+                $skuCode5 = substr($term, 2, 5);
+                $weightString4 = substr($term, 7, 5); // wait, total is 13. Prefix(2) + SKU(5) + Weight(5) + Check(1) = 13
+                // Let's use 5 digits weight always:
+                $weightString5 = substr($term, 7, 5);
+                $weightInKg5 = (float)$weightString5 / 1000;
+                
+                $product = Product::where('sku', ltrim($skuCode5, '0'))->orWhere('sku', $skuCode5)->first();
+                if ($product) {
+                    $weightInKg = $weightInKg5;
+                }
+            }
+
+            if ($product) {
+                // Determine if it has variations (though meat cuts usually don't)
+                if ($product->has_variations) {
+                    $this->selectingProduct = $product;
+                    $this->showVariationModal = true;
+                    // Variation logic doesn't support automatic weight setting yet in this flow,
+                    // so we just show the modal.
+                } else {
+                    $this->addToCartInternal($product, null, $weightInKg);
+                }
+                
+                $this->search = ''; // Clear search
+                return;
+            }
+        }
+        
+        // If not a scale barcode, or product not found, try to find a direct exact match
+        $productExact = Product::where('sku', $term)->first();
+        if ($productExact) {
+            if ($productExact->has_variations) {
+                $this->selectingProduct = $productExact;
+                $this->showVariationModal = true;
+            } else {
+                $this->addToCartInternal($productExact);
+            }
+            $this->search = '';
+        }
     }
 
     public function addToCart($productId)
@@ -186,7 +409,7 @@ class SalesInterface extends Component
         $this->selectingProduct = null;
     }
 
-    protected function addToCartInternal($product, $variation = null)
+    protected function addToCartInternal($product, $variation = null, $quantity = 1)
     {
         $cartKey = $variation ? 'v' . $variation->id : 'p' . $product->id;
         
@@ -206,14 +429,28 @@ class SalesInterface extends Component
         // Stock Validation
         if ($product->manage_stock) {
             $currentQty = isset($this->cart[$cartKey]) ? $this->cart[$cartKey]['quantity'] : 0;
-            if ($stock < ($currentQty + 1)) {
+            if ($stock < ($currentQty + $quantity)) {
                 $this->dispatch('error-movement', 'Stock insuficiente. Disponible: ' . $stock);
                 return;
+            }
+        } elseif ($product->parent_id) {
+            $parentProduct = Product::find($product->parent_id);
+            if ($parentProduct && $parentProduct->manage_stock && isset($branchId)) {
+                $parentBranchStock = $parentProduct->branchStocks()->where('branch_id', $branchId)->first();
+                $parentStock = $parentBranchStock ? $parentBranchStock->stock : 0;
+                
+                $currentQty = isset($this->cart[$cartKey]) ? $this->cart[$cartKey]['quantity'] : 0;
+                $quantityToDeduct = ($currentQty + $quantity) * $product->fraction_multiplier;
+                
+                if ($parentStock < $quantityToDeduct) {
+                    $this->dispatch('error-movement', 'Stock insuficiente en la botella padre. Disponible: ' . $parentStock . ' (' . ($parentStock / $product->fraction_multiplier) . ' decants max)');
+                    return;
+                }
             }
         }
 
         if(isset($this->cart[$cartKey])) {
-            $this->cart[$cartKey]['quantity']++;
+            $this->cart[$cartKey]['quantity'] += $quantity;
         } else {
             // Apply product discount if setting is enabled
             $effectivePrice = ($this->discountProductEnabled && $product->discount_percentage > 0)
@@ -227,7 +464,7 @@ class SalesInterface extends Component
                 'price'            => $effectivePrice,
                 'original_price'   => $price,
                 'discount_pct'     => ($this->discountProductEnabled) ? $product->discount_percentage : 0,
-                'quantity'         => 1,
+                'quantity'         => (float)$quantity,
                 'unit_type'        => $product->unit_type ?? 'unit',
                 'sku'              => $sku
             ];
@@ -478,6 +715,11 @@ class SalesInterface extends Component
 
     public function clearCart()
     {
+        // In restaurant mode, going back to table map also saves if cart not empty
+        if ($this->isRestaurantMode && $this->activeTableId) {
+            $this->backToTableMap();
+            return;
+        }
         $this->cart = [];
         $this->importingWebOrderId = null;
         $this->calculateTotal();
@@ -785,7 +1027,7 @@ class SalesInterface extends Component
         $this->calculateChange();
     }
 
-    public function processSale()
+    public function processSale(\App\Services\SalesService $salesService)
     {
         if(empty($this->cart)) return;
 
@@ -846,123 +1088,27 @@ class SalesInterface extends Component
         }
 
         try {
-            \DB::transaction(function () use ($branchId) {
-                // 1. Create Sale
-                $sale = \App\Models\Sale::create([
-                    'user_id'                  => auth()->id(),
-                    'branch_id'                => $branchId,
-                    'seller_id'                => $this->sellerId ?: null,
-                    'customer_id'              => $this->selectedCustomer ? $this->selectedCustomer['id'] : null,
-                    'subtotal_before_discount' => $this->subtotalBeforeDiscount,
-                    'discount_amount'          => $this->discountAmount,
-                    'total'                    => $this->total,
-                    'tax_10'                   => (int) round($this->total / 11),
-                    'tax_5'                    => 0,
-                    'tax_exempt'               => 0,
-                    'status'                   => 'completed',
-                    'payment_condition'        => $this->paymentCondition,
-                    'web_order_id'             => $this->importingWebOrderId
-                ]);
+            $sale = $salesService->processSale([
+                'user_id'                  => auth()->id(),
+                'branch_id'                => $branchId,
+                'seller_id'                => $this->sellerId ?: null,
+                'customer_id'              => $this->selectedCustomer ? $this->selectedCustomer['id'] : null,
+                'subtotal_before_discount' => $this->subtotalBeforeDiscount,
+                'discount_amount'          => $this->discountAmount,
+                'total'                    => $this->total,
+                'payment_condition'        => $this->paymentCondition,
+                'payment_method'           => $this->paymentMethod,
+                'multiple_payments'        => $this->multiplePayments,
+                'cheque_details'           => $this->chequeDetails,
+                'rates'                    => $this->rates,
+                'cart'                     => $this->cart,
+                'web_order_id'             => $this->importingWebOrderId,
+                'active_sale_id'           => $this->activeSaleId,
+                'restaurant_table_id'      => $this->activeTableId,
+                'waiter_id'                => $this->activeWaiterId,
+            ]);
 
-                // 2. Create Items & Deduct Stock
-                foreach ($this->cart as $item) {
-                    $product = Product::lockForUpdate()->find($item['id']);
-                    $variation = $item['variation_id'] ? \App\Models\ProductVariation::lockForUpdate()->find($item['variation_id']) : null;
-                    
-                    if (!$product) {
-                        throw new \Exception("El producto '{$item['name']}' ya no existe en la base de datos.");
-                    }
-
-                    if ($product->manage_stock) {
-                        $stockable = $variation ? $variation : $product;
-                        $branchStock = $stockable->branchStocks()->where('branch_id', $branchId)->first();
-                        
-                        $stockToCheck = $branchStock ? $branchStock->stock : 0;
-                        
-                        if ($stockToCheck < $item['quantity']) {
-                            throw new \Exception("Stock insuficiente en esta sucursal para: " . $item['name']);
-                        }
-
-                        if ($branchStock) {
-                            $branchStock->decrement('stock', $item['quantity']);
-                        }
-                        
-                        // We also need to update the total stock in the parent table for quick access
-                        $stockable->decrement('stock', $item['quantity']);
-                    }
-                    
-                    \App\Models\SaleItem::create([
-                        'sale_id' => $sale->id,
-                        'product_id' => $item['id'],
-                        'product_variation_id' => $item['variation_id'],
-                        'product_name' => $item['name'],
-                        'quantity' => $item['quantity'],
-                        'price_unit' => $item['price'],
-                        'subtotal' => $item['price'] * $item['quantity']
-                    ]);
-                }
-
-                // 3. Create Payment (Only if Contado)
-                if ($this->paymentCondition === 'contado') {
-                    if ($this->paymentMethod === 'multiple') {
-                        foreach ($this->multiplePayments as $method => $amount) {
-                            $amount = (float) $amount;
-                            if ($amount > 0) {
-                                $finalAmount = $amount;
-                                $displayName = $method;
-
-                                if ($method === 'efectivo_usd') {
-                                    $finalAmount = (int) round($amount * ($this->rates['usd'] ?: 1));
-                                    $displayName = 'Efectivo USD';
-                                } elseif ($method === 'efectivo_brl') {
-                                    $finalAmount = (int) round($amount * ($this->rates['brl'] ?: 1));
-                                    $displayName = 'Efectivo BRL';
-                                } elseif ($method === 'efectivo_ars') {
-                                    $finalAmount = (int) round($amount * ($this->rates['ars'] ?: 1));
-                                    $displayName = 'Efectivo ARS';
-                                }
-
-                                \App\Models\Payment::create([
-                                    'sale_id' => $sale->id,
-                                    'method' => $displayName,
-                                    'amount' => $finalAmount,
-                                ]);
-                            }
-                        }
-                    } else {
-                        $paymentData = [
-                            'sale_id' => $sale->id,
-                            'method' => $this->paymentMethod,
-                            'amount' => $this->total,
-                        ];
-
-                        if ($this->paymentMethod === 'cheque') {
-                            $paymentData['bank_name'] = $this->chequeDetails['bank_name'];
-                            $paymentData['cheque_number'] = $this->chequeDetails['cheque_number'];
-                            $paymentData['due_date'] = $this->chequeDetails['due_date'];
-                        }
-
-                        \App\Models\Payment::create($paymentData);
-                    }
-                } elseif ($this->paymentCondition === 'credito' && $sale->customer_id) {
-                    CustomerTransaction::create([
-                        'customer_id' => $sale->customer_id,
-                        'type' => 'debit',
-                        'amount' => $this->total,
-                        'reference_type' => 'sale',
-                        'reference_id' => $sale->id,
-                        'description' => 'Venta #' . $sale->id
-                    ]);
-                }
-                
-                $this->lastSaleId = $sale->id;
-
-                // 4. Complete Web Order if applicable
-                if ($this->importingWebOrderId) {
-                    \App\Models\WebOrder::where('id', $this->importingWebOrderId)
-                        ->update(['status' => 'Completado']);
-                }
-            });
+            $this->lastSaleId = $sale->id;
 
             $this->cart = [];
             $this->total = 0;
@@ -970,6 +1116,14 @@ class SalesInterface extends Component
             $this->customerSearch = '';
             $this->importingWebOrderId = null;
             $this->showPaymentModal = false; // Close modal
+
+            // Restaurant: reset table state and go back to map
+            if ($this->isRestaurantMode) {
+                $this->activeTableId   = null;
+                $this->activeWaiterId  = null;
+                $this->activeSaleId    = null;
+                $this->showTableMap    = true;
+            }
             session()->flash('success', 'Venta procesada correctamente');
             session()->flash('last_sale_id', $this->lastSaleId);
 

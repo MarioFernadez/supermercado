@@ -28,6 +28,8 @@ class General extends Component
     public $discount_product_enabled = false;
     public $discount_manual_enabled  = false;
 
+    public $business_type;
+
     // Internal property to hold all settings
     private $settingsCollection;
 
@@ -40,6 +42,8 @@ class General extends Component
     {
         $this->settingsCollection = StoreSetting::all()->pluck('value', 'key');
 
+        $this->business_type = $this->getSetting('business_type', 'generic');
+        
         $this->store_name = $this->getSetting('store_name', 'ZonaPOS Store');
         $this->store_address = $this->getSetting('store_address', '');
         $this->store_phone = $this->getSetting('store_phone', '');
@@ -68,6 +72,7 @@ class General extends Component
     public function save()
     {
         $this->validate([
+            'business_type' => 'nullable|string|in:generic,minimarket,boutique,perfumery,restaurant',
             'store_name' => 'required|string|max:255',
             'store_address' => 'nullable|string|max:255',
             'store_phone' => 'nullable|string|max:50',
@@ -83,6 +88,10 @@ class General extends Component
             'shop_feature_4_title' => 'nullable|string|max:100',
             'shop_feature_4_subtitle' => 'nullable|string|max:100',
         ]);
+
+        if (auth()->user()->role === 'developer' || auth()->user()->role === 'admin') {
+            $this->updateSetting('business_type', $this->business_type, 'Tipo de Negocio del Sistema');
+        }
 
         $this->updateSetting('store_name', $this->store_name, 'Nombre del comercio');
         $this->updateSetting('store_address', $this->store_address, 'Dirección física');

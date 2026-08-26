@@ -19,9 +19,11 @@ class SaleItem extends Model
         'quantity',
         'price_unit',
         'subtotal',
+        'is_sent_to_production',
     ];
 
     protected $casts = [
+        'is_sent_to_production' => 'boolean',
         'quantity' => 'float',
     ];
 

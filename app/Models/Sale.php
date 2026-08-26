@@ -25,6 +25,8 @@ class Sale extends Model
         'payment_condition',
         'web_order_id',
         'branch_id',
+        'restaurant_table_id',
+        'waiter_id',
     ];
 
     /**
@@ -55,6 +57,16 @@ class Sale extends Model
     public function seller()
     {
         return $this->belongsTo(Seller::class)->withTrashed();
+    }
+
+    public function restaurantTable()
+    {
+        return $this->belongsTo(RestaurantTable::class);
+    }
+
+    public function waiter()
+    {
+        return $this->belongsTo(Waiter::class);
     }
 
     public function items()

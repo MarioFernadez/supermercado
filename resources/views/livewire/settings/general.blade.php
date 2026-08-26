@@ -33,7 +33,25 @@
                 <div class="shadow-md rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-6 gap-6">
-                            
+                            @if(auth()->user()->role === 'developer' || auth()->user()->role === 'admin')
+                            <!-- Master/Admin Solo: Selector de Rubro -->
+                            <div class="col-span-6 border border-purple-200 bg-purple-50 dark:bg-purple-900/20 dark:border-purple-800 p-4 rounded-xl shadow-sm mb-4">
+                                <label for="business_type" class="block text-sm font-black text-purple-900 dark:text-purple-300 flex items-center gap-2">
+                                    👑 Tipo de Negocio (Multirrubro)
+                                    <span class="inline-flex px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-purple-200 text-purple-700 dark:bg-purple-800 dark:text-purple-100">Master</span>
+                                </label>
+                                <p class="text-xs text-purple-600 dark:text-purple-400 mb-3 mt-1 font-medium">Define el modelo de negocio para activar/desactivar módulos específicos (ej: Tallas, Desposte, Decants).</p>
+                                <select wire:model="business_type" id="business_type" class="mt-1 focus:ring-purple-500 focus:border-purple-500 block w-full shadow-sm sm:text-sm border-purple-300 rounded-lg dark:border-purple-600 dark:bg-gray-900 dark:text-gray-300">
+                                    <option value="generic">📦 Genérico (Compra/Venta Unitario Estándar)</option>
+                                    <option value="minimarket">🛒 Minimercado / Supermercado / Carnicería (Balanza, Desposte)</option>
+                                    <option value="boutique">👗 Boutique / Ropa / Zapatos (Tallas y Colores)</option>
+                                    <option value="perfumery">🧪 Perfumería (Fraccionamiento / Decants)</option>
+                                    <option value="restaurant">🍽️ Restaurante / Gastronomía (Mesas y Comandas)</option>
+                                </select>
+                                @error('business_type') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                            </div>
+                            @endif
+
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="store_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Nombre del Comercio</label>
                                 <input type="text" wire:model="store_name" id="store_name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300">
@@ -94,6 +112,7 @@
                             </div>
 
                             <!-- Barra de Beneficios (Home) -->
+                            @if(\App\Services\LicenseService::isEcommerceEnabled())
                             <div class="col-span-6 border-t border-gray-100 dark:border-gray-700 pt-5 mt-2">
                                 <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">✨ Barra de Beneficios (Home)</h4>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Esta barra informativa aparece en la página de inicio. Borra el título de una característica si no deseas que aparezca.</p>
@@ -140,6 +159,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
 
                         </div>
                     </div>

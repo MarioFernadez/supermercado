@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/categories', CategoriesIndex::class)->name('categories.index');
         Route::get('/suppliers', \App\Livewire\Suppliers\Index::class)->name('suppliers.index');
         Route::get('/products', \App\Livewire\Products\Index::class)->name('products.index');
+        Route::get('/products/print-labels', \App\Livewire\Products\PrintLabels::class)->name('products.print-labels');
+        Route::get('/products/print-labels/render', [\App\Http\Controllers\PrintController::class, 'labels'])->name('products.print-labels.render');
         Route::get('/products/create', \App\Livewire\Products\Form::class)->name('products.create');
         Route::get('/products/{product}/edit', \App\Livewire\Products\Form::class)->name('products.edit');
         Route::get('/products/export', [\App\Http\Controllers\ProductImportExportController::class, 'export'])->name('products.export');
@@ -78,6 +80,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/expenses', \App\Livewire\Expenses\Index::class)->name('expenses.index');
         Route::get('/expenses/categories', \App\Livewire\Expenses\Categories::class)->name('expenses.categories.index');
         Route::get('/collections', \App\Livewire\Admin\Collections::class)->name('admin.collections');
+        // Taller de Desposte (módulo minimarket / carnicería)
+        Route::get('/admin/deboning', \App\Livewire\Admin\Deboning\Index::class)->name('admin.deboning.index');
+        Route::get('/admin/deboning/create', \App\Livewire\Admin\Deboning\Create::class)->name('admin.deboning.create');
     });
 
     // Admin-Only Routes (system config)
@@ -99,7 +104,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/cash-movement-categories', \App\Livewire\Settings\CashMovementCategories::class)->name('settings.cash-movement-categories');
         Route::post('/settings/backup', [\App\Http\Controllers\BackupController::class, 'run'])->name('settings.backup.run');
         Route::get('/settings/quotation', \App\Livewire\Settings\Quotation::class)->name('settings.quotation');
+        Route::get('/settings/restaurant', \App\Livewire\Settings\Restaurant::class)->name('settings.restaurant');
+        // Restaurant comanda print (accessible by any auth user)
     });
+
+    Route::get('/restaurant/comanda/print', function() {
+        return view('print.comanda');
+    })->name('restaurant.comanda.print');
 
     // Master/Developer Routes
     Route::middleware([\App\Http\Middleware\DeveloperOnly::class])->group(function () {

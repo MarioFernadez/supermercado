@@ -1,17 +1,18 @@
-<div class="py-12" x-data="{ openModal: @entangle('showPaymentModal') }">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-            
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-                <div>
-                    <h2 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Gestión de Cobranzas</h2>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">Listado de clientes con saldos pendientes por cobrar</p>
-                </div>
-                <div class="relative">
-                    <input type="text" wire:model.live="search" placeholder="Buscar cliente..." class="border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-2xl shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500 min-w-[300px] pl-10 py-3 dark:shadow-none">
-                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
+<div x-data="{ openModal: @entangle('showPaymentModal') }">
+    <x-page-header title="Cobranzas" section="Ventas › Cobranzas" :badge="count($customers) . ' deudores'">
+        <x-slot name="actions">
+            <div class="relative w-full md:w-64">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Buscar cliente..." class="w-full pl-9 pr-3 py-1.5 border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
             </div>
+        </x-slot>
+    </x-page-header>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-2xl p-6 border border-gray-200/80 dark:border-gray-700">
 
             @if(session()->has('message'))
                 <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-6 rounded-r-xl dark:bg-emerald-900/30 dark:text-emerald-400" role="alert">

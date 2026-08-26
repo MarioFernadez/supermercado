@@ -1,48 +1,41 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4 dark:bg-gray-800">
-            
-            @if (session()->has('message'))
-                <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md my-3 dark:bg-green-900/40 dark:shadow-none" role="alert">
-                    <div class="flex">
-                        <div>
-                            <p class="text-sm">{{ session('message') }}</p>
+<div>
+    <x-page-header title="Categorías" section="Tienda › Catálogo" :badge="$categories->total() . ' categorías'">
+        <x-slot name="actions">
+            @if(count($selected) > 0)
+                <button wire:click="deleteSelected" 
+                        onclick="confirm('¿Estás seguro?') || event.stopImmediatePropagation()"
+                        class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2 px-3.5 rounded-xl text-xs transition flex items-center gap-1 dark:bg-red-900/30">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Borrar ({{ count($selected) }})
+                </button>
+            @endif
+            <button wire:click="create()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                Nueva Categoría
+            </button>
+        </x-slot>
+    </x-page-header>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-200/80 px-5 py-5 dark:bg-gray-800 dark:border-gray-700">
+                
+                @if (session()->has('message'))
+                    <div class="bg-green-50 border-l-4 border-green-500 text-green-800 px-4 py-3 rounded-lg text-sm mb-4 dark:bg-green-900/30 dark:text-green-300" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                    <div class="w-full md:w-1/2">
+                        <div class="relative group">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition dark:text-gray-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </span>
+                            <input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar categorías..." autocomplete="off" class="pl-10 shadow-sm border border-gray-200 rounded-xl w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
                         </div>
                     </div>
                 </div>
-            @endif
-
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                <div class="w-full md:w-1/3 space-y-2">
-                    <div class="flex items-center">
-                        <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-indigo-200 shadow-sm flex items-center gap-1 dark:text-indigo-400 dark:shadow-none">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                            {{ $categories->total() }} Categorías
-                        </span>
-                    </div>
-                    <div class="relative group">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition dark:text-gray-500">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar categorías..." autocomplete="off" class="pl-10 shadow-sm appearance-none border border-gray-200 rounded-xl w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:shadow-none dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
-                    </div>
-                </div>
-                
-                <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-                    @if(count($selected) > 0)
-                        <button wire:click="deleteSelected" 
-                                onclick="confirm('¿Estás seguro?') || event.stopImmediatePropagation()"
-                                class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2.5 px-4 rounded-xl transition flex items-center dark:bg-red-900/30">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            Borrar ({{ count($selected) }})
-                        </button>
-                    @endif
-                    <button wire:click="create()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2.5 px-6 rounded-xl transition shadow-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                        Nueva Categoría
-                    </button>
-                </div>
-            </div>
 
             <!-- Create/Edit Modal -->
             <x-dialog-modal wire:model="isOpen">

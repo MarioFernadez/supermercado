@@ -1,70 +1,62 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4 dark:bg-gray-800">
-            
-            @if (session()->has('message'))
-                <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md my-3 dark:bg-green-900/40 dark:shadow-none" role="alert">
-                    <div class="flex">
-                        <div>
-                            <p class="text-sm">{{ session('message') }}</p>
-                        </div>
-                    </div>
-                </div>
+<div>
+    <x-page-header title="Productos" section="Tienda › Catálogo" :badge="$products->total() . ' items'">
+        <x-slot name="actions">
+            @if(count($selected) > 0)
+                <a href="{{ route('products.print-labels', ['ids' => implode(',', $selected)]) }}" 
+                   class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold py-2 px-3.5 rounded-xl text-xs transition flex items-center gap-1.5 dark:bg-indigo-900/40 dark:text-indigo-300">
+                    🖨️ Etiquetas ({{ count($selected) }})
+                </a>
+                <button wire:click="deleteSelected" 
+                        onclick="confirm('¿Estás seguro de eliminar los productos seleccionados?') || event.stopImmediatePropagation()"
+                        class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2 px-3.5 rounded-xl text-xs transition flex items-center gap-1 dark:bg-red-900/30">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Borrar ({{ count($selected) }})
+                </button>
             @endif
+            <a href="{{ route('products.export') }}" class="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-bold py-2 px-3.5 rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
+                <svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Exportar
+            </a>
+            <button x-data @click="$dispatch('open-import-modal')" class="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-bold py-2 px-3.5 rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
+                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Importar
+            </button>
+            <a href="{{ route('products.create') }}" wire:navigate class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                Nuevo Producto
+            </a>
+            <a href="{{ route('settings.units') }}" wire:navigate class="p-2 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500" title="Gestionar Unidades">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+            </a>
+        </x-slot>
+    </x-page-header>
 
-            @if (session()->has('error'))
-                <div class="bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md my-3 dark:bg-red-900/40 dark:shadow-none" role="alert">
-                    <div class="flex">
-                        <div>
-                            <p class="text-sm">{{ session('error') }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                <div class="w-full md:w-1/3 space-y-2">
-                    <div class="flex items-center">
-                        <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-indigo-200 shadow-sm flex items-center gap-1 dark:text-indigo-400 dark:shadow-none">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                            {{ $products->total() }} Productos
-                        </span>
-                    </div>
-                    <div class="relative group">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition dark:text-gray-500">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar por Nombre o SKU..." autocomplete="off" class="pl-10 shadow-sm appearance-none border border-gray-200 rounded-xl w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:shadow-none dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
-                    </div>
-                </div>
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-200/80 px-5 py-5 dark:bg-gray-800 dark:border-gray-700">
                 
-                <div class="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto mt-2 md:mt-0">
-                    @if(count($selected) > 0)
-                        <button wire:click="deleteSelected" 
-                                onclick="confirm('¿Estás seguro de eliminar los productos seleccionados?') || event.stopImmediatePropagation()"
-                                class="bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2 px-4 rounded-xl transition flex items-center dark:bg-red-900/30">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            Borrar ({{ count($selected) }})
-                        </button>
-                    @endif
-                    <a href="{{ route('products.export') }}" class="bg-green-50 text-green-600 hover:bg-green-100 font-bold py-2 px-4 rounded-xl transition flex items-center dark:bg-green-900/30">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Exportar
-                    </a>
-                    <button x-data @click="$dispatch('open-import-modal')" class="bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold py-2 px-4 rounded-xl transition flex items-center dark:bg-blue-900/30">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        Importar
-                    </button>
-                    <a href="{{ route('products.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl transition shadow-lg flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Nuevo Producto
-                    </a>
+                @if (session()->has('message'))
+                    <div class="bg-green-50 border-l-4 border-green-500 text-green-800 px-4 py-3 rounded-lg text-sm mb-4 dark:bg-green-900/30 dark:text-green-300" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
 
-                    <a href="{{ route('settings.units') }}" class="p-2 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500 dark:shadow-none" title="Gestionar Unidades">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
-                    </a>
+                @if (session()->has('error'))
+                    <div class="bg-red-50 border-l-4 border-red-500 text-red-800 px-4 py-3 rounded-lg text-sm mb-4 dark:bg-red-900/30 dark:text-red-300" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                    <div class="w-full md:w-1/2">
+                        <div class="relative group">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition dark:text-gray-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </span>
+                            <input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar por Nombre o SKU..." autocomplete="off" class="pl-10 shadow-sm border border-gray-200 rounded-xl w-full py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:border-gray-700 dark:text-gray-300 dark:bg-gray-900">
+                        </div>
+                    </div>
                 </div>
-            </div>
 
             <!-- Import Modal -->
             <div x-data="{ show: false }" x-show="show" @open-import-modal.window="show = true" @close-import-modal.window="show = false" style="display: none;">

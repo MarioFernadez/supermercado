@@ -1,34 +1,25 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-6 py-6 dark:bg-gray-800">
-            
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-                <div>
-                    <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tighter dark:text-white">Gestión de Gastos</h2>
-                    <p class="text-sm text-gray-500 font-medium dark:text-gray-400">Control de egresos y gastos operativos</p>
-                </div>
-                
-                <div class="flex items-center gap-3 w-full md:w-auto">
-                    <div class="bg-red-50 border border-red-100 rounded-2xl px-6 py-3 flex items-center gap-4 shadow-sm mr-4 dark:bg-red-900/30 dark:shadow-none">
-                        <div class="p-2 bg-white rounded-lg text-red-600 shadow-sm dark:bg-gray-800 dark:shadow-none">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-red-500 uppercase tracking-widest">Total Gastos Periodo</p>
-                            <p class="text-xl font-black text-gray-900 tabular-nums dark:text-white">₲ {{ number_format($totalPeriod, 0, ',', '.') }}</p>
-                        </div>
-                    </div>
-
-                    <button wire:click="create" class="bg-gray-900 hover:bg-black text-white font-black py-3 px-8 rounded-2xl transition shadow-lg flex items-center justify-center grow md:grow-0">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        Registrar Gasto
-                    </button>
-
-                    <a href="{{ route('expenses.categories.index') }}" class="p-3 bg-white border-2 border-gray-100 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-2xl transition shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500 dark:shadow-none" title="Gestionar Categorías">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </a>
-                </div>
+<div>
+    <x-page-header title="Gastos" section="Finanzas › Egresos">
+        <x-slot name="actions">
+            <div class="bg-red-50 border border-red-200/80 rounded-xl px-3.5 py-1.5 flex items-center gap-2.5 mr-1 dark:bg-red-900/20 dark:border-red-800/40">
+                <span class="text-[10px] font-bold text-red-600 uppercase tracking-widest dark:text-red-400">Total Periodo:</span>
+                <span class="text-sm font-black text-red-700 dark:text-red-300">₲ {{ number_format($totalPeriod, 0, ',', '.') }}</span>
             </div>
+
+            <button wire:click="create" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Registrar Gasto
+            </button>
+
+            <a href="{{ route('expenses.categories.index') }}" wire:navigate class="p-2 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500" title="Gestionar Categorías">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </a>
+        </x-slot>
+    </x-page-header>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-200/80 px-5 py-5 dark:bg-gray-800 dark:border-gray-700">
 
             <!-- Filters -->
             <div class="bg-gray-50/50 p-4 rounded-3xl border border-gray-100 mb-8 dark:border-gray-700">

@@ -58,6 +58,21 @@ class Form extends Component
     // Variations
     public $has_variations = false;
     public $variations = [];
+    
+    // Matrix generation properties
+    public $selectedSizes = [];
+    public $selectedColors = [];
+    
+    public $availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'Unico'];
+    public $availableColors = ['Blanco', 'Negro', 'Gris', 'Azul', 'Rojo', 'Verde', 'Amarillo', 'Naranja', 'Rosa', 'Beige', 'Marrón'];
+
+    // Decants
+    public $is_decant = false;
+    public $parent_id = null;
+    public $fraction_multiplier = 1.000;
+
+    // Restaurant
+    public $production_zone = 'none';
 
     public function mount(Product $product = null)
     {
@@ -79,6 +94,10 @@ class Form extends Component
             $this->discount_percentage = $product->discount_percentage;
             $this->product_image_path = $product->image_path;
             $this->has_variations = $product->has_variations;
+            $this->is_decant = !is_null($product->parent_id);
+            $this->parent_id = $product->parent_id;
+            $this->fraction_multiplier = $product->fraction_multiplier ?? 1.000;
+            $this->production_zone = $product->production_zone ?? 'none';
             
             $this->branch_stocks = $product->branchStocks->pluck('stock', 'branch_id')->toArray();
 
@@ -103,6 +122,15 @@ class Form extends Component
         $suppliers = Supplier::where('active', true)->orderBy('name')->get();
         $units = \App\Models\Unit::where('is_active', true)->orderBy('name')->get();
         $branches = \App\Models\Branch::where('is_active', true)->orderBy('name')->get();
+        
+        $potentialParents = [];
+        if (hasModule('decants')) {
+            $potentialParents = Product::where('is_active', true)
+                                       ->whereNull('parent_id') // avoid decant of decant
+                                       ->where('id', '!=', $this->productId) // avoid self
+                                       ->orderBy('name')
+                                       ->get();
+        }
 
         return view('livewire.products.form', [
             'categories' => $categories,
@@ -110,6 +138,7 @@ class Form extends Component
             'units' => $units,
             'branches' => $branches,
             'discountProductEnabled' => $discountProductEnabled,
+            'potentialParents' => $potentialParents,
         ])->layout('layouts.app');
     }
 
@@ -127,6 +156,7 @@ class Form extends Component
             'unit_type'  => 'required',
             'discount_percentage' => 'integer|min:0|max:100',
             'product_image' => 'nullable|image|max:1024',
+            'production_zone' => 'nullable|in:none,kitchen,bar',
         ];
 
         $this->validate($rules);
@@ -158,18 +188,21 @@ class Form extends Component
             'price_cost' => $this->price_cost,
             'price_sale' => $this->price_sale,
             'discount_percentage' => (int) $this->discount_percentage,
-            'stock'      => $totalStock,
-            'min_stock'  => $this->manage_stock ? $this->min_stock : 0,
+            'stock'      => $this->is_decant ? 0 : $totalStock, // Decants don't have their own stock
+            'min_stock'  => ($this->manage_stock && !$this->is_decant) ? $this->min_stock : 0,
             'category_id' => $this->category_id ?: null,
             'supplier_id' => $this->supplier_id ?: null,
             'unit_type'  => $this->unit_type,
-            'manage_stock' => $this->manage_stock,
+            'manage_stock' => $this->is_decant ? false : $this->manage_stock,
             'has_variations' => $this->has_variations,
             'is_active'  => $this->is_active,
-            'image_path' => $this->product_image_path
+            'image_path' => $this->product_image_path,
+            'parent_id'  => $this->is_decant ? $this->parent_id : null,
+            'fraction_multiplier' => $this->is_decant ? (float)$this->fraction_multiplier : 1.000,
+            'production_zone' => $this->production_zone,
         ]);
 
-        if ($this->manage_stock && !$this->has_variations) {
+        if ($this->manage_stock && !$this->has_variations && !$this->is_decant) {
             foreach ($this->branch_stocks as $branchId => $bStock) {
                 $product->branchStocks()->updateOrCreate(
                     ['branch_id' => $branchId],
@@ -243,5 +276,70 @@ class Form extends Component
     {
         unset($this->variations[$index]);
         $this->variations = array_values($this->variations);
+    }
+    
+    public function toggleSize($size)
+    {
+        if (in_array($size, $this->selectedSizes)) {
+            $this->selectedSizes = array_diff($this->selectedSizes, [$size]);
+        } else {
+            $this->selectedSizes[] = $size;
+        }
+    }
+
+    public function toggleColor($color)
+    {
+        if (in_array($color, $this->selectedColors)) {
+            $this->selectedColors = array_diff($this->selectedColors, [$color]);
+        } else {
+            $this->selectedColors[] = $color;
+        }
+    }
+
+    public function generateVariations()
+    {
+        if (empty($this->selectedSizes) && empty($this->selectedColors)) {
+            return;
+        }
+
+        $combinations = [];
+
+        if (!empty($this->selectedColors) && !empty($this->selectedSizes)) {
+            foreach ($this->selectedColors as $color) {
+                foreach ($this->selectedSizes as $size) {
+                    $combinations[] = $color . ' - ' . $size;
+                }
+            }
+        } elseif (!empty($this->selectedColors)) {
+            foreach ($this->selectedColors as $color) {
+                $combinations[] = $color;
+            }
+        } elseif (!empty($this->selectedSizes)) {
+            foreach ($this->selectedSizes as $size) {
+                $combinations[] = $size;
+            }
+        }
+
+        // Add to existing variations avoiding duplicates by name
+        $existingNames = array_column($this->variations, 'name');
+        
+        foreach ($combinations as $comboName) {
+            if (!in_array($comboName, $existingNames)) {
+                $this->variations[] = [
+                    'id' => null,
+                    'name' => $comboName,
+                    'sku' => '',
+                    'price_cost' => $this->price_cost,
+                    'price_sale' => $this->price_sale,
+                    'stock' => 0,
+                    'branch_stocks' => []
+                ];
+            }
+        }
+        
+        $this->selectedSizes = [];
+        $this->selectedColors = [];
+        
+        session()->flash('variation_message', 'Variantes generadas correctamente.');
     }
 }

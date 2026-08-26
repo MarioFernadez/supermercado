@@ -37,7 +37,7 @@
             })();
         </script>
     </head>
-    <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
+    <body class="antialiased bg-[#f4f5f7] dark:bg-gray-900" style="font-family: 'Inter', 'Open Sans', sans-serif;">
         <x-banner />
 
         <div class="flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">

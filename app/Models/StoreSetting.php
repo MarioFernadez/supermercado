@@ -15,4 +15,17 @@ class StoreSetting extends Model
         'value',
         'description',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function ($setting) {
+            \Illuminate\Support\Facades\Cache::forget('store_setting_' . $setting->key);
+            \Illuminate\Support\Facades\Cache::forget('store_business_type');
+        });
+
+        static::deleted(function ($setting) {
+            \Illuminate\Support\Facades\Cache::forget('store_setting_' . $setting->key);
+            \Illuminate\Support\Facades\Cache::forget('store_business_type');
+        });
+    }
 }

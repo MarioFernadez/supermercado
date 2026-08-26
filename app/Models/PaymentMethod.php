@@ -14,4 +14,15 @@ class PaymentMethod extends Model
     protected $keyType = 'string';
 
     protected $fillable = ['name', 'type', 'is_active'];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('active_payment_methods');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('active_payment_methods');
+        });
+    }
 }

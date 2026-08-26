@@ -54,6 +54,14 @@ class Category extends Model
                 $category->slug = $slug;
             }
         });
+
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('active_categories');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('active_categories');
+        });
     }
 
     public function parent()

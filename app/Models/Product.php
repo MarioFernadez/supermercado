@@ -32,6 +32,9 @@ class Product extends Model
         'manage_stock',
         'has_variations',
         'image_path',
+        'parent_id',
+        'fraction_multiplier',
+        'production_zone',
     ];
 
     protected $casts = [
@@ -142,9 +145,29 @@ class Product extends Model
         return $this->hasMany(ProductVariation::class);
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(Product::class, 'parent_id');
+    }
+
+    public function decants()
+    {
+        return $this->hasMany(Product::class, 'parent_id');
+    }
+
     public function branchStocks()
     {
         return $this->morphMany(BranchStock::class, 'stockable');
+    }
+
+    public function deboningSessionsAsRawMaterial()
+    {
+        return $this->hasMany(DeboningSession::class, 'raw_material_product_id');
+    }
+
+    public function deboningItemsAsCut()
+    {
+        return $this->hasMany(DeboningItem::class, 'product_id');
     }
 
     /**

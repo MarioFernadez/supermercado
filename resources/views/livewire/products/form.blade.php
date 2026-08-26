@@ -143,8 +143,52 @@
                             </div>
                         </div>
                         @endif
+                        <!-- Decants / Fraccionamiento -->
+                        @if(hasModule('decants'))
+                        <div class="mt-8 pt-8 border-t border-gray-100 border-dashed dark:border-gray-700">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                                <div>
+                                    <h4 class="text-sm font-black text-fuchsia-900 uppercase tracking-widest flex items-center gap-2 dark:text-fuchsia-400">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                        Es un Decant (Fracción)
+                                    </h4>
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase mt-1 dark:text-gray-400">Activa si este producto descuenta stock de un frasco padre.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" wire:model.live="is_decant" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-fuchsia-300 dark:peer-focus:ring-fuchsia-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-fuchsia-600 dark:bg-gray-700"></div>
+                                </label>
+                            </div>
 
+                            @if($is_decant)
+                                <div class="bg-fuchsia-50/50 rounded-2xl p-4 border border-fuchsia-100/50 dark:bg-fuchsia-900/10 dark:border-fuchsia-800/30">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-[10px] font-black text-fuchsia-800 mb-2 uppercase tracking-widest dark:text-fuchsia-400">Seleccionar Producto Padre (Botella)</label>
+                                            <select wire:model="parent_id" class="w-full border-fuchsia-200 rounded-xl py-3 px-4 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent transition dark:bg-gray-900 dark:border-fuchsia-800/50 dark:text-gray-300">
+                                                <option value="">-- Buscar Producto Padre --</option>
+                                                @foreach($potentialParents as $parent)
+                                                    <option value="{{ $parent->id }}">{{ $parent->name }} (Stock: {{ $parent->stock }})</option>
+                                                @endforeach
+                                            </select>
+                                            @error('parent_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>@enderror
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-black text-fuchsia-800 mb-2 uppercase tracking-widest dark:text-fuchsia-400">Multiplicador de Consumo (ej: 0.1)</label>
+                                            <input type="number" step="0.001" wire:model="fraction_multiplier" class="w-full border-fuchsia-200 rounded-xl py-3 px-4 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent transition dark:bg-gray-900 dark:border-fuchsia-800/50 dark:text-gray-300" placeholder="0.100">
+                                            <p class="text-[9px] text-fuchsia-600/80 font-bold uppercase mt-2 dark:text-fuchsia-500/80">Ej: Si el padre tiene 1 unidad (100ml) y vendes 10ml, el multiplicador es 0.1.</p>
+                                            @error('fraction_multiplier') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>@enderror
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-xs font-bold text-fuchsia-700 bg-fuchsia-100 p-3 rounded-lg dark:bg-fuchsia-900/30 dark:text-fuchsia-300">
+                                        ℹ️ Al guardar como Decant, el stock propio de este producto se desactiva. Tomará el stock directamente de su producto padre.
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        @endif
                         <!-- Variantes -->
+                        @if(hasModule('variations'))
                         <div class="mt-8 pt-8 border-t border-gray-100 border-dashed dark:border-gray-700">
                             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                                 <div>
@@ -162,11 +206,47 @@
 
                             @if($has_variations)
                                 <div class="bg-indigo-50/50 rounded-2xl p-1 md:p-4 border border-indigo-100/50 dark:bg-indigo-900/10 dark:border-indigo-800/30">
+                                    
+                                    <!-- Generador Automático de Matriz -->
+                                    <div class="mb-6 p-4 bg-white rounded-xl shadow-sm border border-indigo-100 dark:bg-gray-800 dark:border-gray-700">
+                                        <h5 class="text-xs font-black text-indigo-900 uppercase tracking-widest mb-3 dark:text-indigo-300">Generador Automático de Matriz (Talles x Colores)</h5>
+                                        
+                                        <div class="mb-3">
+                                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Seleccionar Talles:</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach($availableSizes as $size)
+                                                    <button type="button" wire:click="toggleSize('{{ $size }}')" class="px-3 py-1 text-xs font-bold rounded-lg border transition {{ in_array($size, $selectedSizes) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600' }}">
+                                                        {{ $size }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Seleccionar Colores:</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach($availableColors as $color)
+                                                    <button type="button" wire:click="toggleColor('{{ $color }}')" class="px-3 py-1 text-xs font-bold rounded-lg border transition {{ in_array($color, $selectedColors) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600' }}">
+                                                        {{ $color }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="button" wire:click="generateVariations" class="w-full bg-indigo-900 hover:bg-indigo-800 text-white text-xs font-black py-2 rounded-lg uppercase tracking-widest shadow-sm transition">
+                                            Cruzar y Generar Variantes
+                                        </button>
+                                        
+                                        @if(session()->has('variation_message'))
+                                            <p class="mt-2 text-xs font-bold text-green-600 text-center">{{ session('variation_message') }}</p>
+                                        @endif
+                                    </div>
+
                                     <div class="flex justify-between items-center mb-4 px-2">
                                         <h5 class="text-[10px] font-black text-indigo-600 uppercase tracking-widest dark:text-indigo-400">Lista de Variantes</h5>
                                         <button type="button" wire:click="addVariation" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-widest shadow-sm flex items-center gap-1.5 transition">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                            Añadir Variante
+                                            Añadir Manualmente
                                         </button>
                                     </div>
 
@@ -216,6 +296,7 @@
                                 </div>
                             @endif
                         </div>
+                        @endif
 
                     </div>
 
@@ -318,6 +399,18 @@
                                 </select>
                                 @error('unit_type') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>@enderror
                             </div>
+
+                            @if(hasModule('restaurant'))
+                            <div class="pt-5 border-t border-gray-100 border-dashed dark:border-gray-700">
+                                <label class="block text-[10px] font-black text-indigo-500 mb-2 uppercase tracking-widest dark:text-indigo-400">Destino de Comanda (Restaurante)</label>
+                                <select wire:model="production_zone" class="w-full border-indigo-200 rounded-xl py-3 px-4 text-sm text-indigo-900 bg-indigo-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition dark:bg-indigo-900/20 dark:border-indigo-800/50 dark:text-indigo-300">
+                                    <option value="none">No imprimir comanda (Directo)</option>
+                                    <option value="kitchen">🍳 Cocina (Platos, Entradas)</option>
+                                    <option value="bar">🍹 Barra (Bebidas, Tragos)</option>
+                                </select>
+                                @error('production_zone') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>@enderror
+                            </div>
+                            @endif
 
                             <div class="pt-5 border-t border-gray-100 border-dashed dark:border-gray-700">
                                 <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest dark:text-gray-400">SKU / Código Interno</label>
