@@ -11,10 +11,24 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
+    public $selectedSession = null;
+    public bool $showDetailsModal = false;
 
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function viewDetails(string $sessionId): void
+    {
+        $this->selectedSession = DeboningSession::with(['rawMaterial', 'user', 'items.product'])->find($sessionId);
+        $this->showDetailsModal = true;
+    }
+
+    public function closeDetails(): void
+    {
+        $this->showDetailsModal = false;
+        $this->selectedSession = null;
     }
 
     public function render()
