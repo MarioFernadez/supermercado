@@ -83,7 +83,7 @@ class GlobalCommandPalette extends Component
             // Operaciones / POS
             ['title' => 'Punto de Venta (Caja POS)', 'category' => 'Vender', 'url' => route('pos.index'), 'icon' => '⚡', 'keywords' => 'vender caja facturar cobrar'],
             ['title' => 'Directorio de Clientes', 'category' => 'Vender', 'url' => route('customers.index'), 'icon' => '👥', 'keywords' => 'clientes personas compradores'],
-            ['title' => 'Cuentas Corrientes y Cobranzas', 'category' => 'Vender', 'url' => route('admin.collections'), 'icon' => '💳', 'keywords' => 'deudas saldo cobrar creditos'],
+            ['title' => 'Cuentas por Cobrar (Créditos)', 'category' => 'Vender', 'url' => route('admin.collections'), 'icon' => '💳', 'keywords' => 'deudas saldo cobrar creditos libreta'],
             
             // Catálogo
             ['title' => 'Catálogo de Productos', 'category' => 'Catálogo', 'url' => route('products.index'), 'icon' => '📦', 'keywords' => 'articulos stock inventario items'],
@@ -93,8 +93,8 @@ class GlobalCommandPalette extends Component
             ['title' => 'Unidades de Medida', 'category' => 'Catálogo', 'url' => route('settings.units'), 'icon' => '⚖️', 'keywords' => 'kilos gramos litros unidades'],
 
             // Gestión
-            ['title' => 'Taller de Desposte y Cortes', 'category' => 'Gestión', 'url' => route('admin.deboning.index'), 'icon' => '🥩', 'keywords' => 'carne faena rendimiento cortes'],
-            ['title' => 'Facturas de Compra / Entradas', 'category' => 'Gestión', 'url' => route('purchases.index'), 'icon' => '📥', 'keywords' => 'compras gastos proveedores mercaderia'],
+            ['title' => 'Desposte de Carne & Cortes', 'category' => 'Gestión', 'url' => route('admin.deboning.index'), 'icon' => '🥩', 'keywords' => 'carne faena rendimiento cortes res carniceria'],
+            ['title' => 'Registro de Compras (Entradas)', 'category' => 'Gestión', 'url' => route('purchases.index'), 'icon' => '📥', 'keywords' => 'compras gastos proveedores mercaderia stock entradas remisiones'],
             ['title' => 'Directorio de Proveedores', 'category' => 'Gestión', 'url' => route('suppliers.index'), 'icon' => '🏭', 'keywords' => 'proveedores distribuidores'],
             ['title' => 'Gastos y Egresos', 'category' => 'Finanzas', 'url' => route('expenses.index'), 'icon' => '💸', 'keywords' => 'egresos costos salidas dinero'],
 
@@ -107,9 +107,9 @@ class GlobalCommandPalette extends Component
             // Configuración
             ['title' => 'Ajustes Generales del Negocio', 'category' => 'Configuración', 'url' => route('settings.general'), 'icon' => '⚙️', 'keywords' => 'nombre logo ruc moneda ticket'],
             ['title' => 'Sucursales', 'category' => 'Administración', 'url' => route('branches.index'), 'icon' => '🏢', 'keywords' => 'locales tiendas depositos'],
-            ['title' => 'Puntos de Venta (Cajas)', 'category' => 'Administración', 'url' => route('cash_registers.index'), 'icon' => '💻', 'keywords' => 'terminales pos registradoras'],
+            ['title' => 'Cajas Registradoras', 'category' => 'Administración', 'url' => route('cash_registers.index'), 'icon' => '💻', 'keywords' => 'terminales pos registradoras cajas'],
             ['title' => 'Usuarios y Roles', 'category' => 'Administración', 'url' => route('users.index'), 'icon' => '🔑', 'keywords' => 'empleados cajeros permisos'],
-            ['title' => 'Mi Sesión de Caja', 'category' => 'Caja', 'url' => route('cash.index'), 'icon' => '💵', 'keywords' => 'cierre arqueo apertura caja chica'],
+            ['title' => 'Arqueos y Cierres de Caja', 'category' => 'Caja', 'url' => route('cash.index'), 'icon' => '💵', 'keywords' => 'cierre arqueo apertura caja chica sesiones'],
             ['title' => 'Dashboard Principal', 'category' => 'Inicio', 'url' => route('dashboard'), 'icon' => '📈', 'keywords' => 'inicio metricas resumen kpi'],
         ];
     }
