@@ -6,9 +6,9 @@
         activeGroup: null 
     }"
     x-init="$watch('collapsed', v => localStorage.setItem('sidebar_collapsed', v ? '1' : '0'))"
-    :style="collapsed ? 'width: 52px;' : 'width: 220px;'"
+    :style="collapsed ? 'width: 52px;' : 'width: 245px;'"
     class="fixed inset-y-0 left-0 z-50 flex flex-col bg-[#253238] border-r border-slate-700/80 shadow-xl transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto"
-    style="width: 220px;">
+    style="width: 245px;">
 
     {{-- Logo + Toggle PrestaShop Style --}}
     <div class="flex items-center justify-between h-13 px-3 bg-[#1e282c] border-b border-slate-700/70 flex-shrink-0">
@@ -55,7 +55,7 @@
 
         // Sub-item link
         $subLinkClass = fn($active) =>
-            'block px-3 py-1.5 rounded transition-colors duration-150 whitespace-nowrap text-[12.5px] ' .
+            'block px-2.5 py-1.5 rounded transition-colors duration-150 whitespace-nowrap text-[12px] ' .
             ($active
                 ? 'text-white font-bold bg-[#25b9d7]/20 text-[#25b9d7]'
                 : 'text-slate-300 hover:text-white hover:bg-slate-700/50');
@@ -137,7 +137,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 <a href="{{ route('pos.index') }}" class="{{ $subLinkClass(request()->routeIs('pos.*')) }}">
                     ⚡ Punto de Venta (POS)
                 </a>
@@ -158,7 +158,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Pedidos & POS
             </div>
@@ -203,7 +203,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 <a href="{{ route('products.index') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('products.*') && !request()->routeIs('products.print-labels')) }}">
                     📦 Productos
                 </a>
@@ -220,7 +220,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Catálogo
             </div>
@@ -260,7 +260,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 <a href="{{ route('customers.index') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('customers.*')) }}">
                     👥 Directorio Clientes
                 </a>
@@ -273,7 +273,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Clientes
             </div>
@@ -297,14 +297,14 @@
     @if(hasModule('meat_deboning'))
     <div class="relative group/flyout">
         <a href="{{ route('admin.deboning.index') }}" wire:navigate
-           :class="collapsed ? 'justify-center px-0 h-11' : 'px-3.5 py-2.5 gap-3'"
+           :class="collapsed ? 'justify-center px-0 h-11' : 'px-3.5 py-2.5 gap-2.5'"
            class="{{ $topLinkClass(request()->routeIs('admin.deboning.*')) }}"
            title="Desposte de Carne">
             <svg class="w-5 h-5 flex-shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879a3 3 0 11-4.242-4.242L12 5m0 7l-7 7"/>
             </svg>
-            <span x-show="!collapsed" class="truncate font-medium">Desposte de Carne</span>
-            <span x-show="!collapsed" class="ml-auto text-[9px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black">CARNE</span>
+            <span x-show="!collapsed" class="font-medium text-[12.5px] whitespace-nowrap">Desposte de Carne</span>
+            <span x-show="!collapsed" class="ml-auto text-[8.5px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded font-black flex-shrink-0">CARNE</span>
         </a>
         <div x-show="collapsed" class="absolute left-full top-0 ml-1 px-3 py-2 bg-[#1e282c] border border-slate-700 text-white text-xs font-semibold rounded shadow-2xl whitespace-nowrap hidden group-hover/flyout:block z-[9999]">
             🥩 Desposte de Carne
@@ -339,7 +339,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 <a href="{{ route('purchases.index') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('purchases.*')) }}">
                     📥 Registro de Compras
                 </a>
@@ -350,7 +350,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Compras
             </div>
@@ -387,7 +387,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 <a href="{{ route('expenses.index') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('expenses.*') && !request()->routeIs('expenses.categories.*')) }}">
                     💸 Gastos & Egresos
                 </a>
@@ -398,7 +398,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Finanzas
             </div>
@@ -447,7 +447,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 <a href="{{ route('reports.sales') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('reports.sales')) }}">
                     📊 Detalle de Ventas
                 </a>
@@ -464,7 +464,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Estadísticas & Reportes
             </div>
@@ -509,7 +509,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 @can('admin')
                 <a href="{{ route('settings.general') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('settings.general')) }}">
                     ⚙️ Ajustes Generales
@@ -535,7 +535,7 @@
         </div>
 
         {{-- Collapsed Flyout --}}
-        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-52 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
+        <div x-show="collapsed" class="absolute left-full top-0 ml-1 w-56 bg-[#1e282c] border border-slate-700 shadow-2xl rounded py-2 hidden group-hover/flyout:block z-[9999]">
             <div class="px-3.5 py-1.5 text-[11px] font-black text-[#25b9d7] uppercase tracking-wider border-b border-slate-700/60">
                 Parámetros Tienda
             </div>
@@ -584,7 +584,7 @@
 
         {{-- Accordion --}}
         <div x-show="open && !collapsed" x-collapse>
-            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-10 pr-2.5">
+            <div class="pb-1.5 pt-0.5 space-y-0.5 pl-8 pr-2.5">
                 @can('admin')
                 <a href="{{ route('branches.index') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('branches.*')) }}">
                     🏢 Sucursales
