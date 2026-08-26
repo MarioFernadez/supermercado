@@ -110,7 +110,8 @@ class GlobalCommandPalette extends Component
             ['title' => 'Cajas Registradoras', 'category' => 'Administración', 'url' => route('cash_registers.index'), 'icon' => '💻', 'keywords' => 'terminales pos registradoras cajas'],
             ['title' => 'Usuarios y Roles', 'category' => 'Administración', 'url' => route('users.index'), 'icon' => '🔑', 'keywords' => 'empleados cajeros permisos'],
             ['title' => 'Arqueos y Cierres de Caja', 'category' => 'Caja', 'url' => route('cash.index'), 'icon' => '💵', 'keywords' => 'cierre arqueo apertura caja chica sesiones'],
-            ['title' => 'Dashboard Principal', 'category' => 'Inicio', 'url' => route('dashboard'), 'icon' => '📈', 'keywords' => 'inicio metricas resumen kpi'],
+            ['title' => 'Dashboard Principal', 'category' => 'Inicio', 'url' => route('dashboard'), 'icon' => '🏠', 'keywords' => 'inicio metricas resumen kpi panel'],
+            ['title' => 'Acerca de ZonaShop (Soteweb Tecnología)', 'category' => 'Ayuda & Soporte', 'url' => 'about-modal', 'icon' => 'ℹ️', 'keywords' => 'acerca de soporte ayuda contacto soteweb whatsapp telefono version encarnacion'],
         ];
     }
 }

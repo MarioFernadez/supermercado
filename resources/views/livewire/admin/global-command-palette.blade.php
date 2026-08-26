@@ -67,18 +67,32 @@
                     </div>
                     <div class="space-y-0.5">
                         @foreach($filteredNav as $item)
-                        <a href="{{ $item['url'] }}"
-                           wire:navigate
-                           @click="closePalette()"
-                           class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-600 dark:hover:text-indigo-400 transition group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="text-base">{{ $item['icon'] }}</span>
-                                <span class="font-semibold text-xs">{{ $item['title'] }}</span>
-                            </div>
-                            <span class="text-[10px] text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-600">
-                                {{ $item['category'] }}
-                            </span>
-                        </a>
+                            @if($item['url'] === 'about-modal')
+                                <button type="button"
+                                        @click="closePalette(); window.dispatchEvent(new CustomEvent('open-about-modal'))"
+                                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-600 dark:hover:text-indigo-400 transition group text-left">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="text-base">{{ $item['icon'] }}</span>
+                                        <span class="font-semibold text-xs">{{ $item['title'] }}</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-600">
+                                        {{ $item['category'] }}
+                                    </span>
+                                </button>
+                            @else
+                                <a href="{{ $item['url'] }}"
+                                   wire:navigate
+                                   @click="closePalette()"
+                                   class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-600 dark:hover:text-indigo-400 transition group">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="text-base">{{ $item['icon'] }}</span>
+                                        <span class="font-semibold text-xs">{{ $item['title'] }}</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-600">
+                                        {{ $item['category'] }}
+                                    </span>
+                                </a>
+                            @endif
                         @endforeach
                     </div>
                 </div>

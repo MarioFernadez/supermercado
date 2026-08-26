@@ -636,15 +636,26 @@
     </nav>
 
     {{-- User Profile Footer --}}
-    <div class="flex-shrink-0 px-2 py-2 bg-[#1e282c] border-t border-slate-700/70">
-        <div class="flex items-center gap-2 rounded" :class="collapsed ? 'justify-center' : 'px-1'">
-            <div class="w-7 h-7 rounded bg-[#25b9d7] flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-sm" title="{{ auth()->user()->name }}">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+    <div class="flex-shrink-0 px-2.5 py-2 bg-[#1e282c] border-t border-slate-700/70">
+        <div class="flex items-center justify-between gap-2 rounded" :class="collapsed ? 'justify-center' : 'px-1'">
+            <div class="flex items-center gap-2 min-w-0" :class="collapsed ? 'justify-center w-full' : ''">
+                <div class="w-7 h-7 rounded bg-[#25b9d7] flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-sm" title="{{ auth()->user()->name }}">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </div>
+                <div x-show="!collapsed" class="flex-1 min-w-0">
+                    <p class="text-slate-200 font-semibold text-xs truncate leading-tight">{{ auth()->user()->name }}</p>
+                    <p class="text-slate-400 text-[10px] truncate leading-none mt-0.5">{{ auth()->user()->role_label ?? 'Administrador' }}</p>
+                </div>
             </div>
-            <div x-show="!collapsed" class="flex-1 min-w-0">
-                <p class="text-slate-200 font-semibold text-xs truncate leading-tight">{{ auth()->user()->name }}</p>
-                <p class="text-slate-400 text-[10px] truncate leading-none mt-0.5">{{ auth()->user()->role_label ?? 'Administrador' }}</p>
-            </div>
+            <button type="button"
+                    @click="window.dispatchEvent(new CustomEvent('open-about-modal'))"
+                    x-show="!collapsed"
+                    class="p-1 rounded text-slate-400 hover:text-[#25b9d7] hover:bg-slate-700/50 transition flex-shrink-0"
+                    title="Acerca de ZonaShop / Soporte">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
         </div>
     </div>
 
