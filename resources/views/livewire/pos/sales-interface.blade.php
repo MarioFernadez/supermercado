@@ -1471,6 +1471,35 @@
         </div>
     @endif
 
+    {{-- POS Bottom Hotkeys Bar --}}
+    <div class="fixed bottom-0 left-0 right-0 lg:right-[380px] bg-slate-900/90 backdrop-blur-md border-t border-slate-850 px-4 py-1.5 flex items-center justify-between text-[11px] text-slate-300 z-30 shadow-lg select-none">
+        <div class="flex items-center gap-4 overflow-x-auto py-0.5">
+            <span class="flex items-center gap-1.5 cursor-pointer hover:text-white" onclick="document.getElementById('product-search-input')?.focus()">
+                <kbd class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-800 border border-slate-700 text-indigo-400 font-bold rounded">F3</kbd>
+                <span>Buscar Producto</span>
+            </span>
+            <span class="flex items-center gap-1.5 cursor-pointer hover:text-white" wire:click="openCustomerModal">
+                <kbd class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-800 border border-slate-700 text-blue-400 font-bold rounded">F4</kbd>
+                <span>Cliente</span>
+            </span>
+            @if(count($cart) > 0)
+            <span class="flex items-center gap-1.5 cursor-pointer hover:text-emerald-300 font-bold text-emerald-400" wire:click="openPaymentModal">
+                <kbd class="px-1.5 py-0.5 font-mono text-[10px] bg-emerald-950 border border-emerald-700 text-emerald-300 font-bold rounded">F2</kbd>
+                <span>Cobrar Venta</span>
+            </span>
+            @endif
+            @if($isRestaurantMode)
+            <span class="flex items-center gap-1.5 cursor-pointer hover:text-white" wire:click="$set('showTableMap', true)">
+                <kbd class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-800 border border-slate-700 text-amber-400 font-bold rounded">F8</kbd>
+                <span>Mesas</span>
+            </span>
+            @endif
+        </div>
+        <div class="hidden sm:flex items-center gap-2 text-slate-500 font-mono text-[10px]">
+            <span>[ESC] Cerrar / Cancelar</span>
+        </div>
+    </div>
+
     @endif {{-- end @else (restaurant normal mode or non-restaurant mode) --}}
 
 </div>
@@ -1480,5 +1509,34 @@
         Livewire.on('openComanda', ({ url }) => {
             window.open(url, '_blank');
         });
+
+        // POS Keyboard Hotkeys
+        window.addEventListener('keydown', (e) => {
+            // F2: Cobrar
+            if (e.key === 'F2') {
+                e.preventDefault();
+                @this.call('openPaymentModal');
+            }
+            // F3: Buscar Producto
+            else if (e.key === 'F3') {
+                e.preventDefault();
+                const searchInput = document.getElementById('product-search-input');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+            // F4: Cliente
+            else if (e.key === 'F4') {
+                e.preventDefault();
+                @this.call('openCustomerModal');
+            }
+            // F8: Mesas
+            else if (e.key === 'F8') {
+                e.preventDefault();
+                @this.set('showTableMap', true);
+            }
+        });
     });
 </script>
+

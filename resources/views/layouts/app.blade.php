@@ -97,6 +97,8 @@
 
         @stack('modals')
 
+        @livewire('admin.global-command-palette')
+
         @livewireScripts
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         @stack('scripts')

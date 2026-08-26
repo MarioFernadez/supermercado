@@ -68,19 +68,21 @@
                 </div>
             </div>
 
-            {{-- Center / Quick Search (PrestaShop Omni-search Style) --}}
+            {{-- Center / Quick Search (PrestaShop Omni-search Style + Spotlight Trigger) --}}
             <div class="hidden md:flex flex-1 max-w-md mx-4">
-                <div class="relative w-full">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button type="button"
+                        onclick="window.dispatchEvent(new CustomEvent('open-command-palette'))"
+                        class="w-full flex items-center justify-between pl-3.5 pr-2.5 py-1.5 text-xs bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition cursor-pointer text-left shadow-2xs">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
+                        <span class="text-xs text-slate-400 font-normal">Buscar producto, cliente o acción...</span>
                     </div>
-                    <input type="text"
-                           placeholder="Buscar producto o cliente..."
-                           class="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-700 transition"
-                           onkeydown="if(event.key === 'Enter') { window.location.href = '{{ route('products.index') }}?search=' + encodeURIComponent(this.value); }">
-                </div>
+                    <kbd class="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded shadow-2xs">
+                        <span class="text-[9px]">Ctrl</span> K
+                    </kbd>
+                </button>
             </div>
 
             {{-- Right: Quick Tools & Profile --}}

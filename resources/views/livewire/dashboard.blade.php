@@ -15,17 +15,42 @@
             </div>
         </div>
 
+        @php
+            $calcSparkline = function(array $data, int $width = 72, int $height = 24) {
+                if (empty($data)) return '';
+                $max = max($data) ?: 1;
+                $min = min($data);
+                $range = ($max - $min) ?: 1;
+                $points = [];
+                $count = count($data);
+                foreach ($data as $i => $val) {
+                    $x = ($count > 1) ? round(($i / ($count - 1)) * $width, 1) : 0;
+                    $y = round($height - (($val - $min) / $range) * ($height - 6) - 3, 1);
+                    $points[] = "{$x},{$y}";
+                }
+                return implode(' ', $points);
+            };
+        @endphp
+
         <!-- KPI Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-{{ \App\Services\LicenseService::isEcommerceEnabled() ? '5' : '4' }} gap-4 mb-8">
             <!-- Sales Today -->
             <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group dark:shadow-none">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/20 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
                 <div class="relative z-10">
-                    <p class="text-[10px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-widest mb-1">Ventas Hoy</p>
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-[10px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-widest">Ventas Hoy</p>
+                        {{-- Mini Sparkline --}}
+                        <svg class="w-[72px] h-[24px] overflow-visible" viewBox="0 0 72 24">
+                            <polyline fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                                class="text-indigo-500 dark:text-indigo-400"
+                                points="{{ $calcSparkline($salesData ?? []) }}" />
+                        </svg>
+                    </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white leading-none tabular-nums">₲ {{ number_format($totalSalesToday, 0, ',', '.') }}</h3>
                     <div class="mt-4 flex items-center text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg w-fit dark:text-indigo-400 dark:bg-indigo-900/30">
                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                        Actualizado
+                        7 Días Tendencia
                     </div>
                 </div>
             </div>
@@ -47,7 +72,10 @@
                 <a href="{{ route('admin.web-orders.index') }}" class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:border-orange-200 dark:hover:border-orange-500 transition-colors dark:shadow-none">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-orange-50 dark:bg-orange-900/20 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
                     <div class="relative z-10">
-                        <p class="text-[10px] font-black text-orange-400 dark:text-orange-300 uppercase tracking-widest mb-1">Pedidos Web</p>
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-[10px] font-black text-orange-400 dark:text-orange-300 uppercase tracking-widest">Pedidos Web</p>
+                            <span class="text-xs">🌐</span>
+                        </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white leading-none tabular-nums">{{ $pendingWebOrdersCount }}</h3>
                         <div class="mt-4 flex items-center text-[10px] font-bold {{ $pendingWebOrdersCount > 0 ? 'text-orange-600 bg-orange-50 animate-pulse' : 'text-gray-400 bg-gray-50' }} px-2 py-1 rounded-lg w-fit uppercase">
                             {{ $pendingWebOrdersCount > 0 ? 'Pendientes de atención' : 'Sin pendientes' }}
@@ -60,7 +88,10 @@
             <a href="{{ route('customers.index') }}" class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:border-blue-200 dark:hover:border-blue-500 transition-colors dark:shadow-none">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
                 <div class="relative z-10">
-                    <p class="text-[10px] font-black text-blue-400 dark:text-blue-300 uppercase tracking-widest mb-1">Total Clientes</p>
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-[10px] font-black text-blue-400 dark:text-blue-300 uppercase tracking-widest">Total Clientes</p>
+                        <span class="text-xs">👥</span>
+                    </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white leading-none tabular-nums">{{ $totalCustomers }}</h3>
                     <div class="mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-tighter italic dark:text-gray-500">Creciendo contigo</div>
                 </div>
@@ -70,7 +101,10 @@
             <a href="{{ route('cash.index') }}" class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:border-purple-200 dark:hover:border-purple-500 transition-colors dark:shadow-none">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-50 dark:bg-purple-900/20 rounded-full opacity-50 group-hover:scale-125 transition-transform duration-500"></div>
                 <div class="relative z-10">
-                    <p class="text-[10px] font-black text-purple-400 dark:text-purple-300 uppercase tracking-widest mb-1">Cajas Abiertas</p>
+                    <div class="flex items-center justify-between mb-1">
+                        <p class="text-[10px] font-black text-purple-400 dark:text-purple-300 uppercase tracking-widest">Cajas Abiertas</p>
+                        <span class="text-xs">💻</span>
+                    </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white leading-none tabular-nums">{{ $openSessionsCount }}</h3>
                     <div class="mt-4 flex items-center text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-lg w-fit">
                         En operación

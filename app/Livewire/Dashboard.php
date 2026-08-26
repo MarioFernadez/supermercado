@@ -51,22 +51,24 @@ class Dashboard extends Component
             ->take(5)
             ->get();
 
-        // 4. Sales Chart (Last 7 Days) - Single query instead of 7 separate queries
+        // 4. Sales Chart & Sparklines (Last 7 Days)
         $sevenDaysAgo = Carbon::today()->subDays(6)->startOfDay();
-        $dailySales = Sale::selectRaw('DATE(created_at) as date, SUM(total) as total')
+        $dailySales = Sale::selectRaw('DATE(created_at) as date, SUM(total) as total, COUNT(id) as count')
             ->whereBetween('created_at', [$sevenDaysAgo, $endOfToday])
             ->where('status', '!=', 'voided')
             ->groupBy('date')
-            ->pluck('total', 'date')
-            ->toArray();
+            ->get()
+            ->keyBy('date');
 
         $salesData = [];
+        $ordersData = [];
         $salesLabels = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
             $dateKey = $date->format('Y-m-d');
             $salesLabels[] = $date->isoFormat('ddd D');
-            $salesData[] = (float) ($dailySales[$dateKey] ?? 0);
+            $salesData[] = (float) ($dailySales[$dateKey]->total ?? 0);
+            $ordersData[] = (int) ($dailySales[$dateKey]->count ?? 0);
         }
 
         // 5. Pending Web Orders & Customers
@@ -92,6 +94,7 @@ class Dashboard extends Component
             'recentSales' => $recentSales,
             'salesLabels' => $salesLabels,
             'salesData' => $salesData,
+            'ordersData' => $ordersData,
             'pendingWebOrdersCount' => $pendingWebOrdersCount,
             'totalCustomers' => $totalCustomers,
             'topProducts' => $topProducts
