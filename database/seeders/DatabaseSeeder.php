@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             StoreSettingsSeeder::class,
             DefaultCashRegisterSeeder::class,
             PaymentMethodSeeder::class,
+            MinimarketProductsSeeder::class,
         ]);
     }
 }

@@ -35,11 +35,14 @@ class Product extends Model
         'parent_id',
         'fraction_multiplier',
         'production_zone',
+        'product_type',
+        'is_raw_material',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'manage_stock' => 'boolean',
+        'is_raw_material' => 'boolean',
         'stock' => 'float',
         'min_stock' => 'float',
         'price_cost' => 'integer',
