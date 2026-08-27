@@ -700,6 +700,11 @@ class SalesInterface extends Component
         }
     }
 
+    public function openCustomerModal()
+    {
+        $this->openCreateCustomerModal();
+    }
+
     public function openCreateCustomerModal()
     {
         $this->reset(['newCustomerName', 'newCustomerRuc', 'newCustomerEmail', 'newCustomerPhone', 'newCustomerAddress', 'newCustomerIsActive']);
