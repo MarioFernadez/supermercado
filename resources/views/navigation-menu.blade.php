@@ -1,6 +1,6 @@
 <nav x-data="{ open: false, quickAccess: false }" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-750 flex-shrink-0 shadow-xs z-30">
     <div class="px-4 sm:px-6">
-        <div class="flex justify-between h-13 items-center gap-4">
+        <div class="flex justify-between h-16 items-center gap-4">
 
             {{-- Left: Hamburger (mobile) + Breadcrumbs --}}
             <div class="flex items-center gap-3 min-w-0">

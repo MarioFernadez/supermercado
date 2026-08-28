@@ -8,16 +8,16 @@
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             @if($section)
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 dark:text-gray-500" style="font-family: 'Inter', sans-serif;">
+                <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5 dark:text-gray-500" style="font-family: 'Inter', sans-serif;">
                     {{ $section }}
                 </p>
             @endif
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-black text-gray-900 tracking-tight dark:text-white" style="font-family: 'Inter', sans-serif;">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight dark:text-white" style="font-family: 'Inter', sans-serif;">
                     {{ $title }}
                 </h1>
                 @if($badge)
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-800">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200/60 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/40">
                         {{ $badge }}
                     </span>
                 @endif

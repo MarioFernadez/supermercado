@@ -57,10 +57,10 @@
                 </div>
             @endif
 
-            <div class="overflow-hidden border border-gray-100 rounded-3xl shadow-sm dark:border-gray-700 dark:shadow-none">
+            <div class="overflow-x-auto border border-gray-100 rounded-3xl shadow-sm dark:border-gray-700 dark:shadow-none">
                 <table class="w-full text-left border-collapse font-sans">
                     <thead>
-                        <tr class="bg-gray-50 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-gray-100 dark:bg-gray-900 dark:text-gray-500 dark:border-gray-700">
+                        <tr class="bg-gray-50/80 text-gray-500 uppercase text-[11px] font-semibold tracking-wider border-b border-gray-100 dark:bg-gray-900/60 dark:text-gray-400 dark:border-gray-700">
                             <th class="px-6 py-4">Fecha</th>
                             <th class="px-6 py-4">Categoría / Descripción</th>
                             <th class="px-6 py-4">Método / Ref</th>
@@ -68,27 +68,27 @@
                             <th class="px-6 py-4 text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                         @forelse($expenses as $expense)
-                            <tr class="hover:bg-gray-50/50 transition group">
+                            <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition group">
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $expense->date->format('d/m/Y') }}</div>
-                                    <div class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter dark:text-gray-500">{{ $expense->date->diffForHumans() }}</div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $expense->date->format('d/m/Y') }}</div>
+                                    <div class="text-[11px] text-gray-400 font-normal dark:text-gray-500">{{ $expense->date->diffForHumans() }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-xs font-black text-indigo-600 uppercase tracking-widest dark:text-indigo-400">{{ $expense->category->name }}</div>
-                                    <div class="text-sm text-gray-600 font-medium dark:text-gray-400">{{ $expense->description }}</div>
+                                    <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wide dark:text-indigo-400">{{ $expense->category->name }}</div>
+                                    <div class="text-sm text-gray-600 font-normal dark:text-gray-400">{{ $expense->description }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[9px] font-black uppercase rounded border border-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-700">
+                                    <span class="px-2 py-0.5 bg-gray-50 text-gray-600 text-[10px] font-medium uppercase rounded border border-gray-200/80 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700">
                                         {{ $expense->payment_method }}
                                     </span>
                                     @if($expense->reference)
-                                        <div class="text-[10px] text-gray-400 mt-1 truncate max-w-[100px] dark:text-gray-500">{{ $expense->reference }}</div>
+                                        <div class="text-[11px] text-gray-400 mt-1 truncate max-w-[100px] dark:text-gray-500">{{ $expense->reference }}</div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <div class="text-lg font-black text-gray-900 tabular-nums dark:text-white">₲ {{ number_format($expense->amount, 0, ',', '.') }}</div>
+                                    <div class="text-sm font-semibold text-gray-900 tabular-nums dark:text-white"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ number_format($expense->amount, 0, ',', '.') }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-1.5 transition">

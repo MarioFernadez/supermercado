@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sesión Expirada • {{ config('app.name', 'ZonaShop') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Outfit', 'Inter', sans-serif; }</style>
 </head>
-<body class="antialiased bg-[#0f172a] text-slate-100 flex items-center justify-center min-h-screen p-4">
+<body class="antialiased bg-[#0f172a] text-slate-100 flex items-center justify-center min-h-screen p-4 font-sans">
     <div class="max-w-md w-full bg-[#1e293b] rounded-3xl shadow-2xl border border-slate-700/80 p-8 text-center relative overflow-hidden">
         
         {{-- Background ambient glow --}}

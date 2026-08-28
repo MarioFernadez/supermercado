@@ -50,8 +50,8 @@
             <!-- Encabezado -->
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
                 <div>
-                    <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Estado de Suscripción</h2>
-                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Control de Licencias y Auditoría de Facturación</p>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Estado de Suscripción</h2>
+                    <p class="text-gray-400 text-xs mt-0.5 font-normal">Control de licencias y auditoría de facturación</p>
                 </div>
 
                 <div class="flex items-center gap-3">

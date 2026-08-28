@@ -30,8 +30,8 @@
 
                 <!-- Table -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 uppercase text-xs font-black tracking-wider">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 font-sans">
+                        <thead class="bg-gray-50/80 dark:bg-gray-900/60 text-gray-500 dark:text-gray-400 uppercase text-[11px] font-semibold tracking-wider border-b border-gray-100 dark:border-gray-700">
                             <tr>
                                 <th scope="col" class="px-6 py-4 text-left">Materia Prima</th>
                                 <th scope="col" class="px-6 py-4 text-left">Carnicero</th>
@@ -43,20 +43,20 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:divide-gray-700">
                             @forelse($sessions as $session)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-750 transition">
+                                <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-750 transition">
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
                                             <span>🥩</span>
                                             <span>{{ $session->rawMaterial->name ?? 'N/A' }}</span>
                                         </div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">Volumen: {{ number_format($session->total_weight_start, 2) }} Kg</div>
+                                        <div class="text-xs text-gray-400 dark:text-gray-500">Volumen: {{ number_format($session->total_weight_start, 2) }} Kg</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-2">
-                                            <div class="h-6 w-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-xs uppercase">
+                                            <div class="h-6 w-6 rounded-full bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-semibold text-xs uppercase border border-indigo-200/50">
                                                 {{ substr($session->user->name ?? 'U', 0, 1) }}
                                             </div>
-                                            <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">{{ $session->user->name ?? 'Usuario' }}</span>
+                                            <span class="text-sm text-gray-700 dark:text-gray-300 font-normal">{{ $session->user->name ?? 'Usuario' }}</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
@@ -64,17 +64,17 @@
                                             $yieldPct = $session->total_weight_start > 0 ? round(($session->total_weight_yield / $session->total_weight_start) * 100, 1) : 0;
                                         @endphp
                                         <div class="text-sm text-gray-900 dark:text-white mb-1">
-                                            Útil: <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ number_format($session->total_weight_yield, 2) }} Kg</span>
-                                            <span class="text-xs font-semibold text-emerald-500">({{ $yieldPct }}%)</span>
+                                            Útil: <span class="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">{{ number_format($session->total_weight_yield, 2) }} Kg</span>
+                                            <span class="text-xs font-normal text-emerald-500">({{ $yieldPct }}%)</span>
                                         </div>
                                         <div class="flex flex-wrap gap-1">
                                             @foreach($session->items->take(4) as $item)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200">
                                                     {{ $item->product->name ?? 'Corte' }}: {{ number_format($item->weight, 1) }}k
                                                 </span>
                                             @endforeach
                                             @if($session->items->count() > 4)
-                                                <span class="text-[10px] text-slate-400 font-bold self-center">+{{ $session->items->count() - 4 }} cortes más</span>
+                                                <span class="text-[11px] text-slate-400 font-normal self-center">+{{ $session->items->count() - 4 }} cortes más</span>
                                             @endif
                                         </div>
                                     </td>
@@ -82,12 +82,12 @@
                                         @php
                                             $wastePct = $session->total_weight_start > 0 ? round(($session->waste_weight / $session->total_weight_start) * 100, 1) : 0;
                                         @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black {{ $session->waste_weight > 0 ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' : 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' }}">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $session->waste_weight > 0 ? 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40' }}">
                                             {{ number_format($session->waste_weight, 2) }} Kg ({{ $wastePct }}%)
                                         </span>
-                                        <div class="text-[10px] text-gray-400 mt-0.5 uppercase font-bold">Merma</div>
+                                        <div class="text-[10px] text-gray-400 mt-0.5 uppercase font-medium">Merma</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-xs text-gray-500 dark:text-gray-400">
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-mono text-gray-500 dark:text-gray-400">
                                         {{ $session->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -10,11 +10,11 @@
             @endif
 
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight dark:text-white">Reporte de Ventas</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight dark:text-white">Reporte de Ventas</h2>
                 <div class="flex items-center gap-3 w-full md:w-auto">
-                    <a href="{{ route('reports.sales.print', ['from' => $dateFrom, 'to' => $dateTo]) }}" target="_blank" class="flex-1 md:flex-none bg-gray-900 hover:bg-black text-white font-bold py-2.5 px-6 rounded-xl transition shadow-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        PDF
+                    <a href="{{ route('reports.sales.print', ['from' => $dateFrom, 'to' => $dateTo]) }}" target="_blank" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Exportar PDF
                     </a>
                 </div>
             </div>
@@ -60,59 +60,59 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider dark:text-gray-400">Ventas Totales</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">₲ {{ format_pyg($this->profitStats['sales']) }}</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Ventas Totales</p>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white tabular-nums"><span class="text-sm font-normal text-gray-400 mr-0.5">₲</span>{{ format_pyg($this->profitStats['sales']) }}</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Cost -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl p-5 border-l-4 border-red-500 group dark:bg-gray-800 dark:shadow-none">
+                <div class="bg-white overflow-hidden shadow-sm rounded-2xl p-5 border-l-4 border-red-500 group dark:bg-gray-800 dark:shadow-none">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-lg bg-red-50 text-red-600 dark:bg-red-900/30">
+                        <div class="p-3 rounded-xl bg-red-50 text-red-600 dark:bg-red-900/30">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="ml-4 flex-1">
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider dark:text-gray-400">Costo Estimado</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">₲ {{ format_pyg($this->profitStats['cost']) }}</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Costo Estimado</p>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white tabular-nums"><span class="text-sm font-normal text-gray-400 mr-0.5">₲</span>{{ format_pyg($this->profitStats['cost']) }}</p>
                         </div>
                     </div>
-                    <div class="h-1 w-full bg-red-50 mt-3 rounded-full overflow-hidden dark:bg-red-900/30">
+                    <div class="h-1.5 w-full bg-red-50 mt-3 rounded-full overflow-hidden dark:bg-red-900/30">
                         <div class="h-full bg-red-400 rounded-full" style="width: 65%"></div>
                     </div>
                 </div>
 
                 <!-- Profit -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl p-5 border-l-4 border-green-500 relative dark:bg-gray-800 dark:shadow-none">
+                <div class="bg-white overflow-hidden shadow-sm rounded-2xl p-5 border-l-4 border-emerald-500 relative dark:bg-gray-800 dark:shadow-none">
                     <div class="absolute right-4 top-4">
-                        <div class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-lg dark:bg-emerald-900/30">
+                        <div class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40">
                             {{ number_format($this->profitStats['margin'], 1) }}%
                         </div>
                     </div>
                     <div class="flex items-center">
-                        <div class="p-3 rounded-lg bg-green-50 text-green-600 dark:bg-green-900/30">
+                        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider dark:text-gray-400">Ganancia Estimada</p>
-                            <p class="text-xl font-bold text-green-600">₲ {{ format_pyg($this->profitStats['profit']) }}</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Ganancia Estimada</p>
+                            <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums"><span class="text-sm font-normal text-emerald-400 mr-0.5">₲</span>{{ format_pyg($this->profitStats['profit']) }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Payments -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl p-5 border-l-4 border-blue-500 dark:bg-gray-800 dark:shadow-none">
+                <div class="bg-white overflow-hidden shadow-sm rounded-2xl p-5 border-l-4 border-indigo-500 dark:bg-gray-800 dark:shadow-none">
                     <div class="flex items-center mb-3">
-                        <div class="p-2 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/30">
+                        <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </div>
-                        <p class="ml-3 text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-400">Medios de Pago</p>
+                        <p class="ml-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Medios de Pago</p>
                     </div>
-                    <div class="space-y-1">
+                    <div class="space-y-1.5">
                         @foreach($this->paymentMethods as $payment)
-                            <div class="flex justify-between items-center bg-gray-50 px-2 py-1 rounded dark:bg-gray-900">
-                                <span class="text-[9px] font-bold text-gray-500 uppercase dark:text-gray-400">{{ $payment->method }}</span>
-                                <span class="text-[10px] font-black text-gray-900 dark:text-white">{{ format_pyg($payment->total) }}</span>
+                            <div class="flex justify-between items-center bg-gray-50/80 px-2.5 py-1 rounded-lg dark:bg-gray-900/50">
+                                <span class="text-xs font-medium text-gray-600 uppercase dark:text-gray-400">{{ $payment->method }}</span>
+                                <span class="text-xs font-semibold text-gray-900 tabular-nums dark:text-white"><span class="text-[10px] text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($payment->total) }}</span>
                             </div>
                         @endforeach
                     </div>
@@ -121,82 +121,88 @@
 
             <!-- Charts Section -->
             <div x-data="salesCharts(@js($this->salesByBranch), @js($this->salesBySeller))" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8" wire:ignore>
-                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
-                    <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4 dark:text-gray-500">Ventas por Sucursal</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 dark:text-gray-300">Ventas por Sucursal</h3>
                     <div x-ref="chartBranches"></div>
                 </div>
-                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
-                    <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4 dark:text-gray-500">Ventas por Vendedor</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 dark:text-gray-300">Ventas por Vendedor</h3>
                     <div x-ref="chartSellers"></div>
                 </div>
             </div>
 
             <!-- Sales Table -->
-            <div class="overflow-x-auto bg-white rounded-3xl border border-gray-100 shadow-sm mt-8 dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
-                <table class="w-full text-left border-collapse">
+            <div class="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm mt-8 dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                <table class="w-full text-left border-collapse font-sans">
                     <thead>
-                        <tr class="bg-gray-50/50 text-gray-400 uppercase text-[10px] tracking-widest border-b border-gray-100 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-900/50">
-                            <th class="px-6 py-4 font-black">ID / Fecha</th>
-                            <th class="px-6 py-4 font-black">Cliente</th>
-                            <th class="px-6 py-4 font-black">Vendedor</th>
-                            <th class="px-6 py-4 font-black text-center">Canal</th>
-                            <th class="px-6 py-4 font-black text-right">Total</th>
-                            <th class="px-6 py-4 font-black text-center">Estado</th>
-                            <th class="px-6 py-4 font-black text-right">Acciones</th>
+                        <tr class="bg-gray-50/80 text-gray-500 uppercase text-[11px] font-semibold tracking-wider border-b border-gray-100 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-900/60">
+                            <th class="px-6 py-4">ID / Fecha</th>
+                            <th class="px-6 py-4">Cliente</th>
+                            <th class="px-6 py-4">Vendedor</th>
+                            <th class="px-6 py-4 text-center">Canal</th>
+                            <th class="px-6 py-4 text-right">Total</th>
+                            <th class="px-6 py-4 text-center">Estado</th>
+                            <th class="px-6 py-4 text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($sales as $sale)
-                            <tr class="group hover:bg-gray-50/50 transition duration-150 dark:bg-gray-900/50">
+                            <tr class="group hover:bg-gray-50/60 transition duration-150 dark:hover:bg-gray-700/30">
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-black text-gray-900 group-hover:text-indigo-600 transition truncate max-w-[100px] dark:text-white">{{ $sale->id }}</div>
-                                    <div class="text-[10px] text-gray-400 font-medium dark:text-gray-400">{{ $sale->created_at->format('d/m/Y H:i') }}</div>
+                                    <div class="text-xs font-mono text-gray-700 group-hover:text-indigo-600 transition truncate max-w-[100px] dark:text-gray-300">{{ $sale->id }}</div>
+                                    <div class="text-xs font-mono text-gray-400 dark:text-gray-500">{{ $sale->created_at->format('d/m/Y H:i') }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-bold text-gray-800 dark:text-white">{{ $sale->customer->name ?? 'Consumidor Final' }}</div>
-                                    <div class="text-[10px] text-gray-400 font-mono dark:text-gray-400">{{ $sale->customer->ruc ?? '—' }}</div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $sale->customer->name ?? 'Consumidor Final' }}</div>
+                                    <div class="text-xs text-gray-400 font-mono dark:text-gray-500">{{ $sale->customer->ruc ?? '—' }}</div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 font-medium dark:text-gray-400">
+                                <td class="px-6 py-4 text-sm text-gray-600 font-normal dark:text-gray-400">
                                     {{ $sale->seller->name ?? '—' }}
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @if($sale->web_order_id)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase tracking-tighter border border-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium border border-indigo-200/60 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/40">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z"></path></svg>
                                             Web
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-50 text-gray-500 text-[9px] font-black uppercase tracking-tighter border border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gray-50 text-gray-600 text-xs font-medium border border-gray-200/60 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                             Tienda
                                         </span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <div class="text-sm font-black text-gray-900 dark:text-white">₲ {{ format_pyg($sale->total) }}</div>
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white tabular-nums"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($sale->total) }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @if($sale->status === 'voided')
-                                        <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-black uppercase dark:bg-red-900/40">Anulada</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200/60 text-xs font-medium dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                            Anulada
+                                        </span>
                                     @else
-                                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase">Completada</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-medium dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Completada
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-1.5 transition">
-                                        <button wire:click="viewDetails('{{ $sale->id }}')" class="text-blue-500 hover:text-blue-700 p-2 rounded-xl hover:bg-blue-50 transition" title="Ver Detalles">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        <button wire:click="viewDetails('{{ $sale->id }}')" class="text-indigo-600 hover:text-indigo-800 p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition" title="Ver Detalles">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </button>
                                         @if($sale->status !== 'voided')
-                                            <button wire:click="reprintReceipt('{{ $sale->id }}')" class="text-indigo-500 hover:text-indigo-700 p-2 rounded-xl hover:bg-indigo-50 transition" title="Reimprimir Ticket">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                            <button wire:click="reprintReceipt('{{ $sale->id }}')" class="text-gray-500 hover:text-gray-700 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" title="Reimprimir Ticket">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                             </button>
                                             @if(auth()->user()->can('admin') || auth()->user()->can('gerente'))
                                                 <button wire:click="voidSale('{{ $sale->id }}')" 
                                                         wire:confirm="¿Estás seguro de que deseas anular esta venta? Esta acción no se puede deshacer y restaurará el stock."
-                                                        class="text-red-400 hover:text-red-600 p-2 rounded-xl hover:bg-red-50 transition"
+                                                        class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-gray-700 transition"
                                                         title="Anular Venta">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                                 </button>
                                             @endif
                                         @endif
@@ -205,7 +211,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">No hay ventas registradas en este periodo.</td>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-400 italic dark:text-gray-500">No hay ventas registradas en este periodo.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -213,29 +219,29 @@
             </div>
             
             <!-- Products & Suppliers Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-100 dark:border-gray-700">
                 
                 <!-- Products Table -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 dark:text-white">Productos Vendidos</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-4 dark:text-white uppercase tracking-wider">Productos Vendidos</h3>
                     <div class="overflow-x-auto">
-                        <table class="table-auto w-full text-left whitespace-no-wrap text-sm">
+                        <table class="w-full text-left whitespace-no-wrap text-sm font-sans">
                             <thead>
-                                <tr>
-                                    <th class="px-4 py-2 bg-gray-100 font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300">Producto</th>
-                                    <th class="px-4 py-2 bg-gray-100 font-medium text-gray-700 text-center dark:bg-gray-700 dark:text-gray-300">Cant.</th>
-                                    <th class="px-4 py-2 bg-gray-100 font-medium text-gray-700 text-right dark:bg-gray-700 dark:text-gray-300">Total</th>
+                                <tr class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
+                                    <th class="px-4 py-3">Producto</th>
+                                    <th class="px-4 py-3 text-center">Cant.</th>
+                                    <th class="px-4 py-3 text-right">Total</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                                 @forelse($this->soldProducts as $item)
-                                    <tr class="border-b border-gray-100 dark:border-gray-700">
-                                        <td class="px-4 py-2 text-gray-900 dark:text-white">{{ $item->product_name }}</td>
-                                        <td class="px-4 py-2 text-gray-900 text-center dark:text-white">{{ $item->total_qty }}</td>
-                                        <td class="px-4 py-2 font-bold text-gray-900 text-right dark:text-white">₲ {{ format_pyg($item->total_amount) }}</td>
+                                    <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30">
+                                        <td class="px-4 py-2.5 text-sm font-medium text-gray-900 dark:text-white">{{ $item->product_name }}</td>
+                                        <td class="px-4 py-2.5 text-xs text-gray-600 text-center tabular-nums dark:text-gray-300">{{ $item->total_qty }}</td>
+                                        <td class="px-4 py-2.5 text-sm font-semibold text-gray-900 text-right tabular-nums dark:text-white"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($item->total_amount) }}</td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="3" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Sin datos.</td></tr>
+                                    <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 italic dark:text-gray-500">Sin datos.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -243,26 +249,26 @@
                 </div>
 
                 <!-- Suppliers Table -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 dark:text-white">Ventas por Proveedor</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-4 dark:text-white uppercase tracking-wider">Ventas por Proveedor</h3>
                     <div class="overflow-x-auto">
-                        <table class="table-auto w-full text-left whitespace-no-wrap text-sm">
+                        <table class="w-full text-left whitespace-no-wrap text-sm font-sans">
                             <thead>
-                                <tr>
-                                    <th class="px-4 py-2 bg-gray-100 font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300">Proveedor</th>
-                                    <th class="px-4 py-2 bg-gray-100 font-medium text-gray-700 text-center dark:bg-gray-700 dark:text-gray-300">Items</th>
-                                    <th class="px-4 py-2 bg-gray-100 font-medium text-gray-700 text-right dark:bg-gray-700 dark:text-gray-300">Total Ventas</th>
+                                <tr class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
+                                    <th class="px-4 py-3">Proveedor</th>
+                                    <th class="px-4 py-3 text-center">Items</th>
+                                    <th class="px-4 py-3 text-right">Total Ventas</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                                 @forelse($this->salesBySupplier as $supplier)
-                                    <tr class="border-b border-gray-100 dark:border-gray-700">
-                                        <td class="px-4 py-2 font-bold text-indigo-700 dark:text-indigo-400">{{ $supplier->supplier_name }}</td>
-                                        <td class="px-4 py-2 text-gray-900 text-center dark:text-white">{{ $supplier->items_count }}</td>
-                                        <td class="px-4 py-2 font-bold text-gray-900 text-right dark:text-white">₲ {{ format_pyg($supplier->total_sales) }}</td>
+                                    <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30">
+                                        <td class="px-4 py-2.5 text-sm font-medium text-indigo-600 dark:text-indigo-400">{{ $supplier->supplier_name }}</td>
+                                        <td class="px-4 py-2.5 text-xs text-gray-600 text-center tabular-nums dark:text-gray-300">{{ $supplier->items_count }}</td>
+                                        <td class="px-4 py-2.5 text-sm font-semibold text-gray-900 text-right tabular-nums dark:text-white"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($supplier->total_sales) }}</td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="3" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">Sin datos.</td></tr>
+                                    <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 italic dark:text-gray-500">Sin datos.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>

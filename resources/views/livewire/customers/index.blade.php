@@ -143,8 +143,8 @@
                 <div class="hidden md:block overflow-x-auto -mx-4">
                     <div class="inline-block min-w-full align-middle font-sans">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-black text-gray-400 dark:bg-gray-900 dark:text-gray-400">
-                                <tr>
+                            <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400">
+                                <tr class="border-b border-gray-100 dark:border-gray-700">
                                     @can('admin')
                                     <th class="px-6 py-4 text-left">
                                         <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400 dark:bg-gray-900">
@@ -160,26 +160,27 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:divide-gray-700">
                                 @foreach($customers as $customer)
-                                    <tr class="hover:bg-blue-50/30 transition group">
+                                    <tr class="hover:bg-blue-50/20 dark:hover:bg-gray-700/40 transition group">
                                         @can('admin')
                                         <td class="px-6 py-4">
                                             <input type="checkbox" wire:model.live="selected" value="{{ $customer->id }}" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600">
                                         </td>
                                         @endcan
-                                        <td class="px-6 py-4 text-sm font-mono text-gray-400 dark:text-gray-500">{{ $customer->ruc }}</td>
+                                        <td class="px-6 py-4 text-xs font-mono text-gray-400 dark:text-gray-500">{{ $customer->ruc }}</td>
                                         <td class="px-6 py-4">
-                                            <div class="text-sm font-bold text-gray-900 leading-tight dark:text-white">{{ $customer->name }}</div>
-                                            <div class="text-[10px] text-gray-400 truncate max-w-[150px] dark:text-gray-500">{{ $customer->email }}</div>
+                                            <div class="text-sm font-medium text-gray-900 leading-snug dark:text-white">{{ $customer->name }}</div>
+                                            <div class="text-[11px] text-gray-400 truncate max-w-[150px] dark:text-gray-500">{{ $customer->email }}</div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $customer->phone ?? '—' }}</td>
                                         <td class="px-6 py-4 text-center">
-                                            <span class="px-2.5 py-1 inline-flex text-[10px] font-black uppercase rounded-full {{ $customer->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
+                                            <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full {{ $customer->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40' : 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40' }}">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $customer->is_active ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
                                                 {{ $customer->is_active ? 'Activo' : 'Inactivo' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <span class="text-sm font-black {{ $customer->balance > 0 ? 'text-blue-700' : 'text-gray-400' }}">
-                                                {{ format_pyg($customer->balance) }} ₲
+                                            <span class="text-sm font-semibold tabular-nums {{ $customer->balance > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400' }}">
+                                                <span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($customer->balance) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-right text-sm font-medium">
@@ -213,10 +214,10 @@
                     <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm relative active:scale-[0.98] transition dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                         <div class="flex justify-between items-start mb-3">
                             <div class="flex-1 pr-12">
-                                <h3 class="font-black text-gray-900 text-lg leading-tight uppercase tracking-tight dark:text-white">{{ $customer->name }}</h3>
+                                <h3 class="font-semibold text-gray-900 text-base leading-snug dark:text-white">{{ $customer->name }}</h3>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="text-[10px] font-mono text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded dark:text-gray-500 dark:bg-gray-900">{{ $customer->ruc }}</span>
-                                    <span class="text-[10px] uppercase font-black {{ $customer->is_active ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 py-0.5 rounded">
+                                    <span class="text-[10px] uppercase font-bold {{ $customer->is_active ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }} px-1.5 py-0.5 rounded">
                                         {{ $customer->is_active ? 'Activo' : 'Inactivo' }}
                                     </span>
                                 </div>

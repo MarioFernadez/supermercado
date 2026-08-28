@@ -4,16 +4,16 @@
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 font-sans">
                 <div>
-                    <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight dark:text-white">Historial de Cierres</h2>
-                    <p class="text-[10px] font-black text-gray-400 mt-1 uppercase tracking-widest flex items-center gap-2 dark:text-gray-400">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight dark:text-white">Historial de Cierres</h2>
+                    <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-2 dark:text-gray-400 font-normal">
                         <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                        Relación de Sesiones Finalizadas
+                        Relación de sesiones de caja finalizadas
                     </p>
                 </div>
                 <div class="flex gap-3 w-full md:w-auto">
-                    <a href="{{ route('reports.cash.print', ['from' => $dateFrom, 'to' => $dateTo, 'user_id' => $selectedUser]) }}" target="_blank" class="bg-gray-900 hover:bg-black text-white font-black py-2.5 px-6 rounded-xl transition shadow-lg flex items-center justify-center w-full uppercase tracking-widest text-[10px]">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        Imprimir PDF
+                    <a href="{{ route('reports.cash.print', ['from' => $dateFrom, 'to' => $dateTo, 'user_id' => $selectedUser]) }}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl transition shadow-sm flex items-center justify-center w-full text-xs gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Exportar PDF
                     </a>
                 </div>
             </div>
@@ -89,10 +89,10 @@
             <!-- Cash Sessions Table -->
             <div class="w-full font-sans">
                 <!-- Desktop Table -->
-                <div class="hidden md:block bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                <div class="hidden md:block bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                     <table class="w-full text-sm">
-                        <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-black text-gray-400 dark:bg-gray-900 dark:text-gray-400">
-                            <tr class="border-b border-gray-100 dark:border-gray-700">
+                        <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
+                            <tr>
                                 <th class="px-4 py-4 text-left">Usuario</th>
                                 <th class="px-4 py-4 text-left">Apertura</th>
                                 <th class="px-4 py-4 text-left">Cierre</th>
@@ -103,23 +103,23 @@
                                 <th class="px-4 py-4 text-left">Notas</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-50">
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse($sessions as $session)
-                                <tr class="hover:bg-gray-50 border-b border-gray-200 dark:hover:bg-gray-700 dark:border-gray-700">
+                                <tr class="hover:bg-gray-50/60 border-b border-gray-100 dark:hover:bg-gray-700/30 dark:border-gray-700">
                                     <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{{ $session->user?->name ?? 'Usuario Eliminado' }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $session->opened_at->format('d/m H:i') }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ $session->closed_at ? $session->closed_at->format('d/m H:i') : '-' }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-500 text-right dark:text-gray-400">₲ {{ format_pyg($session->opening_amount) }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-500 text-right dark:text-gray-400">₲ {{ format_pyg($session->calculated_amount) }}</td>
-                                    <td class="px-4 py-3 text-sm font-bold text-gray-900 text-right dark:text-white">₲ {{ format_pyg($session->closing_amount) }}</td>
-                                    <td class="px-4 py-3 text-sm font-bold text-right {{ $session->difference < 0 ? 'text-red-600' : ($session->difference > 0 ? 'text-green-600' : 'text-gray-400') }}">
-                                        {{ $session->difference > 0 ? '+' : '' }}₲ {{ format_pyg($session->difference) }}
+                                    <td class="px-4 py-3 text-xs font-mono text-gray-500 dark:text-gray-400">{{ $session->opened_at->format('d/m H:i') }}</td>
+                                    <td class="px-4 py-3 text-xs font-mono text-gray-500 dark:text-gray-400">{{ $session->closed_at ? $session->closed_at->format('d/m H:i') : '-' }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600 text-right tabular-nums dark:text-gray-400"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($session->opening_amount) }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600 text-right tabular-nums dark:text-gray-400"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($session->calculated_amount) }}</td>
+                                    <td class="px-4 py-3 text-sm font-semibold text-gray-900 text-right tabular-nums dark:text-white"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($session->closing_amount) }}</td>
+                                    <td class="px-4 py-3 text-sm font-semibold text-right tabular-nums {{ $session->difference < 0 ? 'text-red-600 dark:text-red-400' : ($session->difference > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400') }}">
+                                        <span class="text-xs font-normal opacity-75 mr-0.5">{{ $session->difference > 0 ? '+' : '' }}₲</span>{{ format_pyg($session->difference) }}
                                     </td>
-                                    <td class="px-4 py-3 text-sm text-gray-500 italic truncate max-w-xs dark:text-gray-400">{{ $session->notes }}</td>
+                                    <td class="px-4 py-3 text-xs text-gray-500 italic truncate max-w-xs dark:text-gray-400">{{ $session->notes }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">No hay cierres de caja registrados en este periodo.</td>
+                                    <td colspan="8" class="px-6 py-12 text-center text-gray-400 italic dark:text-gray-500">No hay cierres de caja registrados en este periodo.</td>
                                 </tr>
                             @endforelse
                         </tbody>

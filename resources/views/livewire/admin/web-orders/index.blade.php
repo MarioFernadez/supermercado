@@ -36,35 +36,35 @@
 
                 <!-- Table -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 dark:bg-gray-900/50">
-                                <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest dark:text-gray-500">Fecha</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest dark:text-gray-500">Cliente</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest dark:text-gray-500">Detalle</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right dark:text-gray-500">Total</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center dark:text-gray-500">Estado</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center dark:text-gray-500">Acciones</th>
+                    <table class="w-full text-left border-collapse font-sans">
+                        <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
+                            <tr>
+                                <th class="px-6 py-4">Fecha</th>
+                                <th class="px-6 py-4">Cliente</th>
+                                <th class="px-6 py-4">Detalle</th>
+                                <th class="px-6 py-4 text-right">Total</th>
+                                <th class="px-6 py-4 text-center">Estado</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse($orders as $order)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-700/30 transition-colors">
                                     <td class="px-6 py-4">
-                                        <div class="text-xs font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ $order->created_at->format('d/m/Y') }}</div>
-                                        <div class="text-[10px] text-gray-400 tabular-nums dark:text-gray-500">{{ $order->created_at->format('H:i') }}</div>
+                                        <div class="text-xs font-mono text-gray-700 dark:text-gray-300 tabular-nums">{{ $order->created_at->format('d/m/Y') }}</div>
+                                        <div class="text-[10px] text-gray-400 font-mono tabular-nums dark:text-gray-500">{{ $order->created_at->format('H:i') }}</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-sm font-bold text-gray-900 dark:text-gray-100 uppercase">{{ $order->customer_name }}</div>
-                                        <div class="text-[11px] text-indigo-600 font-bold tabular-nums dark:text-indigo-400">{{ $order->customer_phone }}</div>
-                                        <div class="text-[10px] text-gray-400 uppercase truncate max-w-[200px] dark:text-gray-500">{{ $order->customer_address }}</div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->customer_name }}</div>
+                                        <div class="text-xs text-indigo-600 font-medium tabular-nums dark:text-indigo-400">{{ $order->customer_phone }}</div>
+                                        <div class="text-xs text-gray-400 truncate max-w-[200px] dark:text-gray-500">{{ $order->customer_address }}</div>
                                     </td>
                                     <td class="px-6 py-4">
                                         @if($order->items_json)
                                             <div class="space-y-1">
                                                 @foreach($order->items_json as $item)
-                                                    <div class="text-[10px] text-gray-600 dark:text-gray-400">
-                                                        <span class="font-bold text-indigo-500">{{ $item['quantity'] }}x</span> {{ $item['name'] }}
+                                                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                                                        <span class="font-semibold text-indigo-500">{{ $item['quantity'] }}x</span> {{ $item['name'] }}
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -75,7 +75,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">₲ {{ number_format($order->total, 0, ',', '.') }}</div>
+                                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ number_format($order->total, 0, ',', '.') }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="inline-block relative">

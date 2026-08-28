@@ -25,8 +25,8 @@
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                 Nuevo Producto
             </a>
-            <a href="{{ route('settings.units') }}" wire:navigate class="p-2 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500" title="Gestionar Unidades">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+            <a href="{{ route('settings.units') }}" wire:navigate class="p-2 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500" title="Gestionar Unidades de Medida">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2zm4-2v4m4-4v2m4-4v4"></path></svg>
             </a>
         </x-slot>
     </x-page-header>
@@ -111,7 +111,7 @@
                 <div class="hidden md:block overflow-x-auto -mx-4">
                     <div class="inline-block min-w-full align-middle font-sans">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-black text-gray-400 dark:bg-gray-900 dark:text-gray-400">
+                            <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400">
                                 <tr class="border-b border-gray-100 dark:border-gray-700">
                                     <th class="px-6 py-4 text-left w-10">
                                         <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400 dark:bg-gray-900"> 
@@ -127,7 +127,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:divide-gray-700">
                                 @foreach($products as $product)
-                                    <tr class="hover:bg-indigo-50/30 transition group">
+                                    <tr class="hover:bg-indigo-50/20 dark:hover:bg-gray-700/40 transition group">
                                         <td class="px-6 py-4">
                                             <input type="checkbox" wire:model.live="selected" value="{{ $product->id }}" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400">
                                         </td>
@@ -141,28 +141,29 @@
                                                     </div>
                                                 @endif
                                                 <div>
-                                                    <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $product->name }}</div>
+                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ $product->name }}</div>
                                                     @if($product->discount_percentage > 0)
-                                                        <span class="inline-flex items-center text-[9px] font-black bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full uppercase tracking-tighter mt-1">
+                                                        <span class="inline-flex items-center text-[9px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full uppercase tracking-tighter mt-1">
                                                             {{ $product->discount_percentage }}% OFF
                                                         </span>
                                                     @endif
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm font-mono text-gray-400 lowercase dark:text-gray-500">{{ $product->sku }}</td>
+                                        <td class="px-6 py-4 text-xs font-mono text-gray-400 lowercase dark:text-gray-500">{{ $product->sku }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500 font-medium dark:text-gray-400">{{ $product->category ? $product->category->name : 'N/A' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-400 text-right font-medium dark:text-gray-500">₲ {{ number_format($product->price_cost, 0, ',', '.') }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-400 text-right font-medium tabular-nums dark:text-gray-500"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ number_format($product->price_cost, 0, ',', '.') }}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <div class="text-sm font-black text-gray-900 dark:text-white">₲ {{ number_format($product->price_sale, 0, ',', '.') }}</div>
+                                            <div class="text-sm font-semibold text-gray-900 dark:text-white tabular-nums"><span class="text-xs text-gray-400 font-normal mr-0.5 dark:text-gray-500">₲</span>{{ number_format($product->price_sale, 0, ',', '.') }}</div>
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             @if($product->manage_stock)
-                                                <span class="px-2.5 py-1 inline-flex text-[10px] font-black rounded-full {{ $product->stock <= $product->min_stock ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700' }}">
+                                                <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full {{ $product->stock <= 0 ? 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40' : ($product->stock <= $product->min_stock ? 'bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40') }}">
+                                                    <span class="w-1.5 h-1.5 rounded-full {{ $product->stock <= 0 ? 'bg-red-500' : ($product->stock <= $product->min_stock ? 'bg-amber-500' : 'bg-emerald-500') }}"></span>
                                                     {{ number_format($product->stock, ($product->unit_type === 'unit' ? 0 : 2), ',', '.') }}
                                                 </span>
                                             @else
-                                                <span class="text-gray-300 text-[10px] uppercase font-bold tracking-widest italic">Infinito</span>
+                                                <span class="text-gray-400 text-xs italic font-normal">Infinito</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-right text-sm font-medium">
@@ -188,11 +189,11 @@
                         <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm relative active:scale-[0.98] transition dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex-1 pr-12">
-                                    <h3 class="font-black text-gray-900 text-lg leading-tight uppercase tracking-tight dark:text-white">{{ $product->name }}</h3>
+                                    <h3 class="font-semibold text-gray-900 text-base leading-snug dark:text-white">{{ $product->name }}</h3>
                                     <div class="flex items-center gap-2 mt-1">
                                         <span class="text-[10px] font-mono text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded dark:text-gray-500 dark:bg-gray-900">SKU: {{ $product->sku }}</span>
                                         @if($product->manage_stock)
-                                            <span class="text-[10px] uppercase font-black {{ $product->stock <= $product->min_stock ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600' }} px-1.5 py-0.5 rounded">
+                                            <span class="text-[10px] uppercase font-bold {{ $product->stock <= $product->min_stock ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600' }} px-1.5 py-0.5 rounded">
                                                 Stock: {{ number_format($product->stock, ($product->unit_type === 'unit' ? 0 : 2), ',', '.') }}
                                             </span>
                                         @endif
@@ -203,14 +204,14 @@
                             <!-- Info Grid -->
                             <div class="grid grid-cols-2 gap-4 py-3 border-t border-b border-dashed border-gray-100 dark:border-gray-700">
                                 <div>
-                                    <span class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 dark:text-gray-500">Categoría</span>
-                                    <span class="font-bold text-gray-700 text-sm dark:text-gray-300">{{ $product->category ? $product->category->name : 'N/A' }}</span>
+                                    <span class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 dark:text-gray-500">Categoría</span>
+                                    <span class="font-medium text-gray-700 text-sm dark:text-gray-300">{{ $product->category ? $product->category->name : 'N/A' }}</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 dark:text-gray-500">Precio</span>
-                                    <div class="font-black text-indigo-700 text-lg dark:text-indigo-400">₲ {{ number_format($product->price_sale, 0, ',', '.') }}</div>
+                                    <span class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 dark:text-gray-500">Precio</span>
+                                    <div class="font-semibold text-indigo-700 text-base dark:text-indigo-400 tabular-nums"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ number_format($product->price_sale, 0, ',', '.') }}</div>
                                     @if($product->discount_percentage > 0)
-                                        <span class="text-[9px] text-amber-600 font-extrabold uppercase">🏷️ {{ $product->discount_percentage }}% OFF</span>
+                                        <span class="text-[9px] text-amber-600 font-bold uppercase">🏷️ {{ $product->discount_percentage }}% OFF</span>
                                     @endif
                                 </div>
                             </div>

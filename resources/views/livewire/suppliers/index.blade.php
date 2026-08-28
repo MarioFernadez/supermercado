@@ -114,31 +114,32 @@
             <div class="hidden md:block overflow-x-auto -mx-4">
                 <div class="inline-block min-w-full align-middle font-sans">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-black text-gray-400 dark:bg-gray-900 dark:text-gray-400">
+                        <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400">
                             <tr class="border-b border-gray-100 dark:border-gray-700">
                                     <th class="px-6 py-4 text-left">
                                         <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400 dark:bg-gray-900">
                                     </th>
                                     <th class="px-6 py-4 text-left">Nombre / Empresa</th>
-                                    <th class="px-6 py-4 text-left font-bold">Contacto</th>
+                                    <th class="px-6 py-4 text-left">Contacto</th>
                                     <th class="px-6 py-4 text-left">E-mail</th>
-                                    <th class="px-6 py-4 text-left font-bold">Teléfono</th>
+                                    <th class="px-6 py-4 text-left">Teléfono</th>
                                     <th class="px-6 py-4 text-center">Estado</th>
                                     <th class="px-6 py-4 text-right">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:divide-gray-700">
                             @foreach($suppliers as $supplier)
-                                <tr class="hover:bg-indigo-50/30 transition group">
+                                <tr class="hover:bg-indigo-50/20 dark:hover:bg-gray-700/40 transition group">
                                     <td class="px-6 py-4">
                                         <input type="checkbox" wire:model.live="selected" value="{{ $supplier->id }}" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 dark:border-gray-600 dark:text-indigo-400">
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">{{ $supplier->name }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 font-medium dark:text-gray-400">{{ $supplier->contact_name ?? '—' }}</td>
-                                    <td class="px-6 py-4 text-[11px] text-gray-400 font-mono lower dark:text-gray-500">{{ $supplier->email ?? '—' }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500 font-bold tracking-tighter dark:text-gray-400">{{ $supplier->phone ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $supplier->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600 font-normal dark:text-gray-400">{{ $supplier->contact_name ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-xs text-gray-400 font-mono lower dark:text-gray-500">{{ $supplier->email ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 font-normal dark:text-gray-400">{{ $supplier->phone ?? '—' }}</td>
                                     <td class="px-6 py-4 text-center">
-                                        <span class="px-2.5 py-1 inline-flex text-[10px] font-black uppercase rounded-full {{ $supplier->active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
+                                        <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full {{ $supplier->active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40' : 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40' }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $supplier->active ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
                                             {{ $supplier->active ? 'Activo' : 'Inactivo' }}
                                         </span>
                                     </td>

@@ -3,9 +3,9 @@
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4 dark:bg-gray-800">
             
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight dark:text-white">Reporte de Inventario</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight dark:text-white">Reporte de Inventario</h2>
                 <div class="flex items-center gap-3 w-full md:w-auto">
-                    <button onclick="window.print()" class="bg-gray-800 hover:bg-black text-white font-black py-2.5 px-6 rounded-xl transition text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-gray-100 dark:shadow-none">
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl transition text-xs shadow-sm flex items-center gap-1.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         Exportar a PDF / Imprimir
                     </button>
@@ -72,14 +72,14 @@
             <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 mb-8 dark:border-gray-700 dark:bg-gray-900/50">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 dark:text-gray-400">Buscar Producto</label>
+                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Buscar Producto</label>
                         <input wire:model.live.debounce.300ms="search" type="text" placeholder="Nombre o SKU..." 
-                               class="w-full border-gray-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:shadow-none dark:bg-gray-900 dark:text-gray-300">
+                               class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 dark:text-gray-400">Categoría</label>
+                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Categoría</label>
                         <select wire:model.live="filterCategory" 
-                                class="w-full border-gray-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:shadow-none dark:bg-gray-900 dark:text-gray-300">
+                                class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
                             <option value="">Todas las Categorías</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -87,9 +87,9 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 dark:text-gray-400">Proveedor</label>
+                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Proveedor</label>
                         <select wire:model.live="filterSupplier" 
-                                class="w-full border-gray-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:shadow-none dark:bg-gray-900 dark:text-gray-300">
+                                class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
                             <option value="">Todos los Proveedores</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
@@ -97,9 +97,9 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 dark:text-gray-400">Estado de Existencia</label>
+                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Estado de Existencia</label>
                         <select wire:model.live="filterStock" 
-                                class="w-full border-gray-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:shadow-none dark:bg-gray-900 dark:text-gray-300">
+                                class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm py-2 px-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
                             <option value="">Todos los Estados</option>
                             <option value="ok">Stock OK (Suficiente)</option>
                             <option value="low">⚠️ Stock Bajo</option>
@@ -110,20 +110,19 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto bg-white rounded-3xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
-                <table class="w-full text-left border-collapse">
+            <div class="overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                <table class="w-full text-left border-collapse font-sans">
                     <thead>
-                        <tr class="bg-gray-50/50 text-gray-400 uppercase text-[10px] tracking-widest border-b border-gray-100 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-900/50">
-                            <th class="px-6 py-4 font-black">Producto / Código</th>
-                            <th class="px-6 py-4 font-black">Categoría / Prov.</th>
-                            <th class="px-6 py-4 font-black text-center">Existencia</th>
-                            <th class="px-6 py-4 font-black text-right">Precio Costo</th>
-                            <th class="px-6 py-4 font-black text-right">Valor en Stock</th>
-                            <th class="px-6 py-4 font-black text-right w-10">Acción</th>
-
+                        <tr class="bg-gray-50/80 text-gray-500 uppercase text-[11px] font-semibold tracking-wider border-b border-gray-100 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-900/60">
+                            <th class="px-6 py-4">Producto / Código</th>
+                            <th class="px-6 py-4">Categoría / Prov.</th>
+                            <th class="px-6 py-4 text-center">Existencia</th>
+                            <th class="px-6 py-4 text-right">Precio Costo</th>
+                            <th class="px-6 py-4 text-right">Valor en Stock</th>
+                            <th class="px-6 py-4 text-right w-10">Acción</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($products as $product)
                             @php
                                 $stockStatus = 'ok';
@@ -133,43 +132,44 @@
                                     elseif($totalStock <= $product->min_stock) $stockStatus = 'low';
                                 }
                             @endphp
-                            <tr class="group hover:bg-indigo-50/30 transition duration-150 {{ $product->has_variations ? 'bg-gray-50/30' : '' }}">
+                            <tr class="group hover:bg-gray-50/60 transition duration-150 {{ $product->has_variations ? 'bg-gray-50/30' : '' }} dark:hover:bg-gray-700/30">
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-black text-gray-900 group-hover:text-indigo-600 transition dark:text-white">{{ $product->name }}</div>
-                                    <div class="text-[10px] text-gray-400 font-mono tracking-tighter dark:text-gray-400">{{ $product->sku ?? 'SIN SKU' }}</div>
+                                    <div class="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition dark:text-white">{{ $product->name }}</div>
+                                    <div class="text-xs text-gray-400 font-mono dark:text-gray-400">{{ $product->sku ?? 'SIN SKU' }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-xs font-bold text-gray-800 dark:text-white">{{ $product->category->name ?? '—' }}</div>
-                                    <div class="text-[10px] text-gray-400 uppercase tracking-widest font-medium dark:text-gray-400">{{ $product->supplier->name ?? '—' }}</div>
+                                    <div class="text-sm text-gray-700 font-medium dark:text-white">{{ $product->category->name ?? '—' }}</div>
+                                    <div class="text-xs text-gray-400 dark:text-gray-400">{{ $product->supplier->name ?? '—' }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @if($product->has_variations)
                                         <div class="flex flex-col items-center gap-1">
                                             @foreach($product->variations as $v)
-                                                <div class="flex items-center gap-2 text-[9px]">
-                                                    <span class="text-gray-400 font-bold uppercase truncate max-w-[80px] dark:text-gray-400">{{ $v->name }}:</span>
-                                                    <span class="font-black {{ $v->stock <= $product->min_stock ? 'text-red-600' : 'text-gray-700' }}">{{ number_format($v->stock, 0) }}</span>
+                                                <div class="flex items-center gap-2 text-[10px]">
+                                                    <span class="text-gray-400 uppercase truncate max-w-[80px] dark:text-gray-400">{{ $v->name }}:</span>
+                                                    <span class="font-semibold tabular-nums {{ $v->stock <= $product->min_stock ? 'text-red-600' : 'text-gray-700 dark:text-gray-200' }}">{{ number_format($v->stock, 0) }}</span>
                                                 </div>
                                             @endforeach
                                         </div>
                                     @else
-                                        <span class="px-2.5 py-1 inline-flex text-[10px] font-black rounded-full uppercase tracking-tighter shadow-sm {{ $stockStatus === 'out' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : ($stockStatus === 'low' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400') }} dark:shadow-none">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-full tabular-nums {{ $stockStatus === 'out' ? 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40' : ($stockStatus === 'low' ? 'bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40') }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $stockStatus === 'out' ? 'bg-red-500' : ($stockStatus === 'low' ? 'bg-amber-500' : 'bg-emerald-500') }}"></span>
                                             {{ $product->manage_stock ? number_format($product->stock, 2, ',', '.') : '∞' }}
                                         </span>
                                     @endif
                                     @if($product->manage_stock && $product->min_stock > 0 && !$product->has_variations)
-                                        <div class="text-[9px] text-gray-400 mt-1 font-bold dark:text-gray-400">Mín: {{ number_format($product->min_stock, 0) }}</div>
+                                        <div class="text-[10px] text-gray-400 mt-1 dark:text-gray-400">Mín: {{ number_format($product->min_stock, 0) }}</div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <div class="text-sm font-bold text-gray-900 dark:text-white">₲ {{ format_pyg($product->price_cost) }}</div>
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white tabular-nums"><span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($product->price_cost) }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <div class="text-sm font-black {{ ($product->has_variations ? $product->variations->sum('stock') : $product->stock) > 0 ? 'text-indigo-600' : 'text-gray-300' }}">
+                                    <div class="text-sm font-semibold tabular-nums {{ ($product->has_variations ? $product->variations->sum('stock') : $product->stock) > 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-300 dark:text-gray-600' }}">
                                         @if($product->has_variations)
-                                            ₲ {{ format_pyg($product->variations->sum(fn($v) => $v->stock * ($v->price_cost ?: $product->price_cost))) }}
+                                            <span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ format_pyg($product->variations->sum(fn($v) => $v->stock * ($v->price_cost ?: $product->price_cost))) }}
                                         @else
-                                            ₲ {{ $product->manage_stock ? format_pyg($product->stock * $product->price_cost) : '—' }}
+                                            <span class="text-xs text-gray-400 font-normal mr-0.5">₲</span>{{ $product->manage_stock ? format_pyg($product->stock * $product->price_cost) : '—' }}
                                         @endif
                                     </div>
                                 </td>

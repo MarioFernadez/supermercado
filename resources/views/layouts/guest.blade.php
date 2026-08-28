@@ -7,18 +7,38 @@
 
         <title>{{ config('app.name', 'ZonaShop') }}</title>
 
+        @php
+            $favicon = \App\Models\StoreSetting::where('key', 'shop_favicon_path')->first()?->value;
+        @endphp
+        @if($favicon)
+            <link rel="icon" type="image/x-icon" href="{{ Storage::url($favicon) }}">
+        @endif
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- Styles -->
         @livewireStyles
+
+        <!-- Dark mode init -->
+        <script>
+            (function() {
+                const stored = localStorage.getItem('zonashop_theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (stored === 'dark' || (!stored && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+        </script>
     </head>
-    <body>
-        <div class="font-sans text-gray-900 dark:text-gray-100 antialiased">
+    <body class="font-sans text-gray-900 dark:text-gray-100 antialiased bg-gray-50/50 dark:bg-gray-900" style="font-family: 'Inter', system-ui, sans-serif;">
+        <div>
             {{ $slot }}
         </div>
 

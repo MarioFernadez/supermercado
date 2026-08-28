@@ -42,8 +42,8 @@
                 <div class="overflow-x-auto -mx-4 sm:mx-0">
                     <div class="inline-block min-w-full align-middle font-sans">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-black text-gray-400">
-                                <tr class="border-b border-gray-100">
+                            <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 border-b border-gray-100">
+                                <tr>
                                     <th class="px-6 py-4 text-left">Fecha</th>
                                     <th class="px-6 py-4 text-left">Producto</th>
                                     <th class="px-6 py-4 text-center">Tipo</th>
@@ -54,28 +54,32 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @forelse($movements as $movement)
-                                    <tr class="hover:bg-indigo-50/30 transition group">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                                    <tr class="hover:bg-indigo-50/20 transition group">
+                                        <td class="px-6 py-4 text-xs font-mono text-gray-500 whitespace-nowrap">
                                             {{ $movement->created_at->format('d/m/Y H:i') }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm font-bold text-gray-900">
-                                            {{ $movement->product->name ?? 'Producto Eliminado' }}
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $movement->product->name ?? 'Producto Eliminado' }}
+                                            </div>
                                             @if($movement->product)
-                                            <span class="block text-[10px] text-gray-400 font-normal">Ref: {{ $movement->product->sku }}</span>
+                                            <span class="block text-xs font-mono text-gray-400">SKU: {{ $movement->product->sku }}</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             @if($movement->type === 'in')
-                                                <span class="px-2.5 py-1 inline-flex text-[10px] font-black uppercase rounded-full bg-emerald-100 text-emerald-700">
+                                                <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                     Entrada
                                                 </span>
                                             @else
-                                                <span class="px-2.5 py-1 inline-flex text-[10px] font-black uppercase rounded-full bg-red-100 text-red-700">
+                                                <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full bg-red-50 text-red-700 border border-red-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                                     Salida
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 text-center text-sm font-bold {{ $movement->type === 'in' ? 'text-emerald-600' : 'text-red-600' }}">
+                                        <td class="px-6 py-4 text-center text-sm font-semibold tabular-nums {{ $movement->type === 'in' ? 'text-emerald-600' : 'text-red-600' }}">
                                             {{ $movement->type === 'in' ? '+' : '-' }}{{ $movement->quantity }}
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-600">

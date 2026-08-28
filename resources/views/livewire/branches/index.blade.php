@@ -94,8 +94,8 @@
             <div class="hidden md:block overflow-x-auto -mx-4">
                 <div class="inline-block min-w-full align-middle font-sans">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-bold text-gray-400 dark:bg-gray-900 dark:text-gray-400">
-                            <tr>
+                        <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400">
+                            <tr class="border-b border-gray-100 dark:border-gray-700">
                                 <th class="px-6 py-4 text-left">Nombre</th>
                                 <th class="px-6 py-4 text-left">Dirección</th>
                                 <th class="px-6 py-4 text-left">Teléfono</th>
@@ -105,12 +105,13 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:divide-gray-700">
                             @foreach($branches as $branch)
-                                <tr class="hover:bg-indigo-50/30 transition group">
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">{{ $branch->name }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500 font-medium dark:text-gray-400">{{ $branch->address ?? '—' }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500 font-medium dark:text-gray-400">{{ $branch->phone ?? '—' }}</td>
+                                <tr class="hover:bg-indigo-50/20 dark:hover:bg-gray-700/40 transition group">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $branch->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 font-normal dark:text-gray-400">{{ $branch->address ?? '—' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 font-normal dark:text-gray-400">{{ $branch->phone ?? '—' }}</td>
                                     <td class="px-6 py-4 text-center">
-                                        <span class="px-2.5 py-1 inline-flex text-[10px] font-black uppercase rounded-full {{ $branch->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
+                                        <span class="px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-medium rounded-full {{ $branch->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40' : 'bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/40' }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $branch->is_active ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
                                             {{ $branch->is_active ? 'Activa' : 'Inactiva' }}
                                         </span>
                                     </td>

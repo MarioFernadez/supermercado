@@ -3,16 +3,16 @@
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-[2.5rem] p-6 md:p-10 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
             
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
-                <h2 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Gestión de Sesión de Caja</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Gestión de Sesión de Caja</h2>
                 <div class="flex items-center gap-3 w-full md:w-auto">
                     {{-- Badge de estado --}}
                     @if($currentSession)
-                        <span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 dark:text-emerald-400">
+                        <span class="px-3.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full flex items-center gap-2 dark:bg-emerald-950/40 dark:text-emerald-300">
                             <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                             Sesión Abierta
                         </span>
                     @else
-                        <span class="px-4 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 text-[10px] font-black uppercase tracking-widest rounded-full">
+                        <span class="px-3.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-semibold rounded-full">
                             Caja Cerrada
                         </span>
                     @endif

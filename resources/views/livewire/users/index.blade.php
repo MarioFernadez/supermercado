@@ -148,8 +148,8 @@
             <div class="hidden md:block overflow-x-auto -mx-4">
                 <div class="inline-block min-w-full align-middle font-sans">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 uppercase text-[10px] tracking-widest font-bold text-gray-400 dark:bg-gray-900 dark:text-gray-400">
-                            <tr>
+                        <thead class="bg-gray-50/80 uppercase text-[11px] tracking-wider font-semibold text-gray-500 dark:bg-gray-900/60 dark:text-gray-400">
+                            <tr class="border-b border-gray-100 dark:border-gray-700">
                                 <th class="px-6 py-4 text-left">Nombre</th>
                                 <th class="px-6 py-4 text-left">E-mail</th>
                                 <th class="px-6 py-4 text-center">Sucursal</th>
@@ -159,14 +159,14 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:divide-gray-700">
                             @foreach($users as $user)
-                                <tr class="hover:bg-indigo-50/30 transition group">
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">{{ $user->name }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500 font-medium dark:text-gray-400">{{ $user->email }}</td>
-                                    <td class="px-6 py-4 text-sm text-center text-gray-500 font-medium dark:text-gray-400">
+                                <tr class="hover:bg-indigo-50/20 dark:hover:bg-gray-700/40 transition group">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $user->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 font-normal dark:text-gray-400">{{ $user->email }}</td>
+                                    <td class="px-6 py-4 text-sm text-center text-gray-500 font-normal dark:text-gray-400">
                                         {{ $user->branch?->name ?? 'Global' }}
                                     </td>
-                                    <td class="px-6 py-4 text-center uppercase tracking-tighter">
-                                        <span class="px-2.5 py-1 inline-flex text-[10px] font-black rounded-full {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'gerente' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600') }}">
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="px-2.5 py-0.5 inline-flex text-xs font-medium uppercase rounded-full {{ $user->role === 'admin' ? 'bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/40' : ($user->role === 'gerente' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/60 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/40' : 'bg-gray-50 text-gray-700 border border-gray-200/60 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700') }}">
                                             {{ $user->role }}
                                         </span>
                                     </td>

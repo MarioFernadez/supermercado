@@ -10,20 +10,21 @@
     class="fixed inset-y-0 left-0 z-50 flex flex-col bg-[#253238] border-r border-slate-700/80 shadow-xl transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto"
     style="width: 245px;">
 
-    {{-- Logo + Toggle PrestaShop Style --}}
-    <div class="flex items-center justify-between h-13 px-3 bg-[#1e282c] border-b border-slate-700/70 flex-shrink-0">
-        <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 min-w-0" x-show="!collapsed">
-            <x-application-mark class="h-6 w-auto flex-shrink-0" />
-            <div class="flex flex-col leading-none min-w-0">
-                <span class="text-white font-black text-sm tracking-tight whitespace-nowrap">Zona<span class="text-[#25b9d7]">Shop</span></span>
-                <span class="text-[8.5px] font-bold text-slate-400 uppercase tracking-widest">Backoffice</span>
+    {{-- Logo + Toggle Header (Shopify/PrestaShop Modern Style) --}}
+    <div class="flex items-center justify-between h-16 px-4 bg-[#1a2327] border-b border-slate-700/70 flex-shrink-0">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-3 min-w-0 group" x-show="!collapsed">
+            <div class="w-8 h-8 rounded-xl bg-slate-800/90 border border-slate-700/70 p-1 flex items-center justify-center shadow-xs flex-shrink-0 group-hover:border-[#25b9d7]/60 transition">
+                <x-application-mark class="w-full h-full object-contain" />
+            </div>
+            <span class="text-white font-bold text-base tracking-tight whitespace-nowrap">Zona<span class="text-[#25b9d7]">Shop</span></span>
+        </a>
+        <a href="{{ route('dashboard') }}" x-show="collapsed" class="flex items-center justify-center w-full" title="ZonaShop">
+            <div class="w-8 h-8 rounded-xl bg-slate-800/90 border border-slate-700/70 p-1 flex items-center justify-center shadow-xs hover:border-[#25b9d7]/60 transition">
+                <x-application-mark class="w-full h-full object-contain" />
             </div>
         </a>
-        <a href="{{ route('dashboard') }}" x-show="collapsed" class="flex items-center justify-center w-full" title="ZonaShop Backoffice">
-            <x-application-mark class="h-6 w-auto flex-shrink-0" />
-        </a>
         <button @click="collapsed = !collapsed"
-            class="flex-shrink-0 p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-700/60 transition"
+            class="flex-shrink-0 p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-700/60 transition"
             :title="collapsed ? 'Expandir menú lateral' : 'Colapsar menú lateral'">
             <svg x-show="!collapsed" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
@@ -61,15 +62,8 @@
                 : 'text-slate-300 hover:text-white hover:bg-slate-700/50');
     @endphp
 
-    {{-- ════════════════════════════════════════════════
-         SECCIÓN: INICIO
-    ═════════════════════════════════════════════════ --}}
-    <div x-show="!collapsed" class="px-3.5 pt-2 pb-1 text-[9.5px] font-black text-slate-400 uppercase tracking-wider">
-        Inicio
-    </div>
-
     {{-- Dashboard / Inicio (Icono Casa / Home) --}}
-    <div class="relative group/flyout">
+    <div class="relative group/flyout mt-1">
         <a href="{{ route('dashboard') }}" wire:navigate
            :class="collapsed ? 'justify-center px-0 h-11' : 'px-3.5 py-2.5 gap-3'"
            class="{{ $topLinkClass(request()->routeIs('dashboard')) }}"
@@ -214,7 +208,7 @@
                     🖨️ Etiquetas & Barcodes
                 </a>
                 <a href="{{ route('settings.units') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('settings.units')) }}">
-                    ⚖️ Unidades de Medida
+                    📏 Unidades de Medida
                 </a>
             </div>
         </div>
@@ -228,7 +222,7 @@
                 <a href="{{ route('products.index') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">📦 Productos</a>
                 <a href="{{ route('categories.index') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">🏷️ Categorías</a>
                 <a href="{{ route('products.print-labels') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">🖨️ Etiquetas & Barcodes</a>
-                <a href="{{ route('settings.units') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">⚖️ Unidades de Medida</a>
+                <a href="{{ route('settings.units') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">📏 Unidades de Medida</a>
             </div>
         </div>
     </div>
