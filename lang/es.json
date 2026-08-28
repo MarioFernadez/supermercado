@@ -1,0 +1,17 @@
+{
+    "Whoops! Something went wrong.": "¡Ups! Algo salió mal.",
+    "Log in": "Iniciar sesión",
+    "Email": "Correo electrónico",
+    "Password": "Contraseña",
+    "Remember me": "Recordarme",
+    "Forgot your password?": "¿Olvidaste tu contraseña?",
+    "Dashboard": "Panel de control",
+    "Profile": "Perfil",
+    "Logout": "Cerrar sesión",
+    "Manage Account": "Administrar cuenta",
+    "API Tokens": "Tokens de API",
+    "Already registered?": "¿Ya estás registrado?",
+    "Register": "Registrarse",
+    "Name": "Nombre",
+    "Confirm Password": "Confirmar contraseña"
+}

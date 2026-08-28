@@ -1,0 +1,97 @@
+# Plan de Implementación: Facturación Electrónica SIFEN v150 (Paraguay)
+
+Este documento detalla los requerimientos técnicos y arquitectónicos para adaptar el sistema actual y cumplir con el Manual Técnico v150 del SIFEN (DNIT - Paraguay).
+
+## 1. Cambios en la Base de Datos (Modelos y Migraciones)
+
+Actualmente, los modelos `Sale` y `Customer` están orientados a un control interno de ventas. Para cumplir con el estándar SIFEN, necesitamos añadir campos obligatorios estipulados en el manual.
+
+### Tabla `sales` (Ventas / Documentos Electrónicos)
+Requerimos crear una migración para añadir:
+- `tipo_documento`: (int) Ej: 1 (Factura Electrónica), 4 (Autofactura), 5 (Nota de Crédito).
+- `sifen_cdc`: (string 44) Código de Control, un identificador único de 44 caracteres exigido por el SIFEN.
+- `sifen_estado`: (enum) Ej: `pendiente`, `aprobado`, `rechazado`, `cancelado`.
+- `sifen_respuesta`: (text) Para almacenar el mensaje de retorno (dMsgRes) y código (dCodRes) de la DNIT.
+- `establecimiento` y `punto_expedicion`: (string) Ej: "001" y "001", necesarios para formar el número de comprobante oficial (001-001-0000123).
+- `sifen_xml`: (text/json) Opcional, ruta del archivo XML firmado almacenado en el servidor.
+- `sifen_kude_url`: (string) URL para generar el Código QR impreso en el KuDE.
+
+### Tabla `customers` (Receptores)
+- `tipo_contribuyente`: (int) Físico (1), Jurídico (2).
+- `tipo_documento_identidad`: (int) RUC (1), CI Paraguaya (2), Pasaporte (3), etc. (Actualmente solo existe `ruc` pero como string libre).
+- `pais_receptor`: (string) Requerido por SIFEN, por defecto "PRY".
+
+### Tabla `store_settings` (Emisor / Empresa)
+- `sifen_ambiente`: (string) `test` o `prod`.
+- `sifen_csc`: (string) Código de Seguridad del Contribuyente (Entregado por el sistema Marangatu).
+- `cert_path`: (string) Ruta absoluta en el VPS al archivo `.p12` (Firma Digital).
+- `cert_password`: (string) Contraseña del certificado (Debe guardarse encriptada).
+- `codigo_actividad_economica`: (string) Código principal de actividad de la empresa.
+
+---
+
+## 2. Librerías Recomendadas (PHP / Laravel)
+
+El estándar del SIFEN utiliza **XMLDSig** (Firma Digital de XML) y **SOAP 1.2** sobre TLS 1.2+.
+
+1. **`robrichards/xmlseclibs`**
+   - **Uso:** Es la librería estándar de facto en PHP para firmar nodos XML utilizando el estándar RSA-SHA256 que requiere el SIFEN.
+   - **Instalación:** `composer require robrichards/xmlseclibs`
+   
+2. **`guzzlehttp/guzzle` o la fachada `Http` de Laravel**
+   - **Uso:** Aunque la DNIT usa SOAP, a menudo es mucho más manejable construir el *Envelope* SOAP manualmente en XML y enviarlo vía un POST HTTP estándar usando Guzzle, ya que las extensiones nativas `ext-soap` de PHP a veces presentan fallos al inyectar certificados para SIFEN.
+
+3. **`chillerlan/php-qrcode`** o **`simplesoftwareio/simple-qrcode`**
+   - **Uso:** Para generar el Código QR obligatorio que debe imprimirse en la representación gráfica (KuDE).
+
+> [!TIP]
+> **Opción Alternativa (Librería Comunitaria):** Existe el paquete `facturacion-electronica-py/sifen-php` o similares en Github que ya traen los esquemas de los 100+ campos del SIFEN mapeados. Sin embargo, si deseas mantener el sistema ligero y con cero dependencias inestables, construir los constructores de XML nativos es muy factible y recomendable para tener control total de los errores.
+
+---
+
+## 3. Esquema de Flujo de SIFEN (Arquitectura)
+
+A continuación, el diagrama de flujo lógico sobre cómo se interceptará la venta, se firmará y se enviará a la DNIT:
+
+```mermaid
+sequenceDiagram
+    participant Cajero (POS)
+    participant Laravel (Controlador)
+    participant SIFEN_Service
+    participant DNIT (WebService)
+
+    Cajero (POS)->>Laravel (Controlador): Confirma Venta (Checkout)
+    Laravel (Controlador)->>Laravel (Controlador): Guarda Sale (status: pending)
+    
+    %% Inicia proceso SIFEN
+    Laravel (Controlador)->>SIFEN_Service: procesarFactura(Sale)
+    SIFEN_Service->>SIFEN_Service: 1. Genera CDC (44 dígitos)
+    SIFEN_Service->>SIFEN_Service: 2. Genera DE (XML Base)
+    SIFEN_Service->>SIFEN_Service: 3. Firma XMLDSig (.p12)
+    SIFEN_Service->>SIFEN_Service: 4. Genera Envoltorio SOAP
+    
+    SIFEN_Service->>DNIT (WebService): HTTP POST /recibe (SOAP)
+    
+    alt Aprobado
+        DNIT (WebService)-->>SIFEN_Service: dCodRes: 0300 (Aprobado)
+        SIFEN_Service-->>Laravel (Controlador): Retorna Éxito
+        Laravel (Controlador)->>Laravel (Controlador): Actualiza Sale (sifen_status: aprobado)
+        Laravel (Controlador)-->>Cajero (POS): Muestra Ticket / KuDE
+    else Rechazado
+        DNIT (WebService)-->>SIFEN_Service: dCodRes: 04xx (Rechazado)
+        SIFEN_Service-->>Laravel (Controlador): Lanza Excepción / Log
+        Laravel (Controlador)->>Laravel (Controlador): Actualiza Sale (sifen_status: rechazado)
+        Laravel (Controlador)-->>Cajero (POS): Muestra Error de validación SIFEN
+    end
+```
+
+### Notas sobre el Flujo (Importante):
+- **Proceso Síncrono vs Asíncrono:** Para ventas en POS (caja rápida), el SIFEN recomienda usar el WS Síncrono (`/recibe`) si el volumen lo permite. En este flujo, el cliente no recibe su ticket hasta que la DNIT responde.
+- Si la DNIT se cae (Timeout), el sistema debe guardar el XML firmado en modo `offline` (Contingencia) y permitir al cajero imprimir el KuDE. Luego un `Job` en background enviará la factura cuando vuelva el internet.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Decisiones Críticas a tomar antes de codificar:**
+> 1. ¿Deseas que programemos todo el XML desde cero (mayor control, pero tomará más tiempo) o preferirías que busquemos integrar algún paquete de terceros exclusivo de SIFEN?
+> 2. En el caso del POS, si la DNIT se demora 4 segundos en responder, ¿quieres que la pantalla de venta espere (Síncrono), o quieres que el cajero imprima el comprobante instantáneamente y el sistema envíe la factura por detrás en una cola de tareas (Asíncrono)?

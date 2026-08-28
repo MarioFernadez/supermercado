@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Auth\Access\Response;
+
+class ProductPolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        // Todos los usuarios pueden ver productos
+        return true;
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, ?Product $product = null): bool
+    {
+        // Todos los usuarios pueden ver productos individuales
+        return true;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
+    }
+
+    public function update(User $user, ?Product $product = null): bool
+    {
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
+    }
+
+    public function delete(User $user, ?Product $product = null): bool
+    {
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, ?Product $product = null): bool
+    {
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
+    }
+
+    public function forceDelete(User $user, ?Product $product = null): bool
+    {
+        return $user->role === 'admin' || $user->role === 'gerente' || $user->role === 'developer';
+    }
+}
