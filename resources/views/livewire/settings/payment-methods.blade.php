@@ -66,53 +66,56 @@
             </div>
 
             <!-- Modal Formulario -->
-            @if($showModal)
+            @if($isOpen)
                 <div class="fixed z-50 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" wire:click="$set('showModal', false)"></div>
+                        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" wire:click="$set('isOpen', false)"></div>
                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                         
                         <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                            <form wire:submit.prevent="save">
+                            <form wire:submit.prevent="store">
                                 <div class="bg-white px-6 pt-6 pb-4 dark:bg-gray-800">
                                     <h3 class="text-lg font-bold text-gray-900 mb-5 dark:text-white" id="modal-title">
-                                        {{ $isEditing ? 'Editar Método de Pago' : 'Nuevo Método de Pago' }}
+                                        {{ $methodId ? 'Editar Método de Pago' : 'Nuevo Método de Pago' }}
                                     </h3>
                         
-                        <div class="space-y-5">
-                            <div>
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1 dark:text-gray-500">Nombre (ej: Banco Itaú Transferencia)</label>
-                                <input type="text" wire:model="name" class="mt-1 block w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition dark:border-gray-700 dark:shadow-none dark:bg-gray-900 dark:text-gray-300">
-                                @error('name') <span class="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{{ $message }}</span> @enderror
-                            </div>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Nombre (ej: Banco Itaú Transferencia)</label>
+                                            <input type="text" wire:model="name" class="w-full rounded-xl border-gray-200 shadow-xs text-xs py-2 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                                            @error('name') <span class="text-rose-500 text-xs font-medium mt-1">{{ $message }}</span> @enderror
+                                        </div>
 
-                            <div>
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1 dark:text-gray-500">Tipo de Método</label>
-                                <select wire:model="type" class="mt-1 block w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition font-bold text-sm dark:border-gray-700 dark:shadow-none dark:bg-gray-900 dark:text-gray-300">
-                                    <option value="cash">Efectivo</option>
-                                    <option value="transfer">Transferencia</option>
-                                    <option value="card">Tarjeta (POS)</option>
-                                    <option value="qr">QR / Billetera</option>
-                                </select>
-                                @error('type') <span class="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{{ $message }}</span> @enderror
-                            </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Tipo de Método</label>
+                                            <select wire:model="type" class="w-full rounded-xl border-gray-200 shadow-xs text-xs py-2 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                                                <option value="cash">Efectivo</option>
+                                                <option value="transfer">Transferencia</option>
+                                                <option value="card">Tarjeta (POS)</option>
+                                                <option value="qr">QR / Billetera</option>
+                                            </select>
+                                            @error('type') <span class="text-rose-500 text-xs font-medium mt-1">{{ $message }}</span> @enderror
+                                        </div>
 
-                            <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100 dark:bg-gray-900 dark:border-gray-700">
-                                <input type="checkbox" wire:model="is_active" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded-lg dark:text-indigo-400 dark:border-gray-600 dark:bg-gray-900">
-                                <label class="block text-sm text-gray-700 font-bold uppercase tracking-tight dark:text-gray-300">Método Activo</label>
-                            </div>
+                                        <div class="flex items-center gap-3 bg-gray-50/70 p-3.5 rounded-xl border border-gray-100 dark:bg-gray-900/50 dark:border-gray-700">
+                                            <input type="checkbox" wire:model="is_active" id="pm_is_active" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:text-indigo-400 dark:border-gray-600 dark:bg-gray-900">
+                                            <label for="pm_is_active" class="text-xs text-gray-700 font-semibold cursor-pointer dark:text-gray-300">Método Activo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 rounded-b-3xl dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700">
+                                    <button type="submit" class="w-full inline-flex justify-center rounded-xl px-5 py-2.5 bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700 shadow-sm transition">
+                                        {{ $methodId ? 'Actualizar' : 'Guardar Método' }}
+                                    </button>
+                                    <button wire:click="$set('isOpen', false)" type="button" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-xl border border-gray-200 px-5 py-2.5 bg-white text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-xs transition dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-4 sm:px-8 sm:flex sm:flex-row-reverse gap-3 rounded-b-2xl dark:bg-gray-900">
-                        <button wire:click="store" type="button" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg px-6 py-2.5 bg-indigo-600 text-xs font-black uppercase tracking-widest text-white hover:bg-indigo-700 focus:outline-none transition">
-                            {{ $methodId ? 'Actualizar' : 'Guardar Método' }}
-                        </button>
-                        <button wire:click="$set('isOpen', false)" type="button" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-200 shadow-sm px-6 py-2.5 bg-white text-xs font-black uppercase tracking-widest text-gray-500 hover:bg-gray-50 focus:outline-none transition sm:mt-0 dark:border-gray-700 dark:shadow-none dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700">
-                            Cancelar
-                        </button>
-                    </div>
                 </div>
-            </div>
+            @endif
         </div>
-    @endif
+    </div>
 </div>
