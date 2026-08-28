@@ -57,8 +57,8 @@ class Index extends BaseCrudComponent
 
     public function calculateTotalReceivable()
     {
-        $debits = CustomerTransaction::where('type', 'debit')->sum('amount');
-        $credits = CustomerTransaction::where('type', 'credit')->sum('amount');
+        $debits = CustomerTransaction::whereHas('customer')->where('type', 'debit')->sum('amount');
+        $credits = CustomerTransaction::whereHas('customer')->where('type', 'credit')->sum('amount');
         $this->totalReceivable = $debits - $credits;
     }
 
