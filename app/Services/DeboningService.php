@@ -51,8 +51,14 @@ class DeboningService
                 'notes'                   => $notes,
             ]);
 
+            $branchId = \App\Models\User::find($userId)->branch_id ?? \App\Models\Branch::first()->id;
+
             // 2. Deduct Raw Material Stock
             $rawMaterial->decrement('stock', $totalStart);
+            $rawMaterial->branchStocks()->firstOrCreate(
+                ['branch_id' => $branchId],
+                ['stock' => 0]
+            )->decrement('stock', $totalStart);
 
             // 3. Create items and increment cut stock
             foreach ($items as $item) {
@@ -65,7 +71,14 @@ class DeboningService
                     'weight'              => $weight,
                 ]);
 
-                Product::where('id', $item['product_id'])->increment('stock', $weight);
+                $productCut = Product::find($item['product_id']);
+                if ($productCut) {
+                    $productCut->increment('stock', $weight);
+                    $productCut->branchStocks()->firstOrCreate(
+                        ['branch_id' => $branchId],
+                        ['stock' => 0]
+                    )->increment('stock', $weight);
+                }
             }
 
             return $session;
