@@ -201,9 +201,14 @@ class Index extends BaseCrudComponent
             'paymentDescription' => 'nullable|string'
         ]);
 
+        if ($this->paymentCustomerBalance <= 0) {
+            $this->addError('paymentAmount', 'El cliente no tiene deuda pendiente.');
+            return;
+        }
+
         if ($this->paymentAmount > $this->paymentCustomerBalance) {
-             // Optional: Allow overpayment? For now, warning or just let it be negative?
-             // Let's allow it, maybe they pay in advance.
+             $this->addError('paymentAmount', 'El monto a cobrar no puede superar el saldo pendiente (₲ ' . format_pyg($this->paymentCustomerBalance) . ').');
+             return;
         }
 
         try {

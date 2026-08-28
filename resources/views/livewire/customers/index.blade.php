@@ -295,6 +295,7 @@
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 font-black text-xl font-mono tracking-tighter">₲</span>
                                     <input type="number" wire:model="paymentAmount" 
+                                        min="1" max="{{ $paymentCustomerBalance > 0 ? $paymentCustomerBalance : 0 }}"
                                         class="pl-10 shadow-sm border border-gray-200 rounded-xl w-full py-4 px-4 text-gray-900 text-2xl font-black text-center focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition placeholder-gray-200 dark:shadow-none dark:border-gray-700 dark:text-white dark:bg-gray-900" 
                                         placeholder="0">
                                 </div>
