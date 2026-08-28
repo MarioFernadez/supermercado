@@ -12,6 +12,7 @@ class Units extends Component
 
     public $search = '';
     public $isOpen = false;
+    public $showModal = false;
     public $unitId;
     public $name = '';
     public $abbreviation = '';

@@ -12,6 +12,7 @@ class CashMovementCategories extends Component
 
     public $search = '';
     public $isOpen = false;
+    public $showModal = false;
     public $categoryId;
     public $name = '';
     public $type = 'both';

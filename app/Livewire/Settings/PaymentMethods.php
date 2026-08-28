@@ -12,6 +12,7 @@ class PaymentMethods extends Component
 
     public $search = '';
     public $isOpen = false;
+    public $showModal = false;
     public $methodId;
     public $name = '';
     public $type = 'cash';
