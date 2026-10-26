@@ -27,6 +27,13 @@ class Sale extends Model
         'branch_id',
         'restaurant_table_id',
         'waiter_id',
+        'sifen_cdc',
+        'sifen_numero_factura',
+        'sifen_estado',
+        'sifen_qr_url',
+        'sifen_xml',
+        'sifen_respuesta',
+        'sifen_tipo_documento',
     ];
 
     /**
@@ -96,5 +103,23 @@ class Sale extends Model
         
         // Return 6-digit padded string (e.g., 000123)
         return str_pad($count, 6, '0', STR_PAD_LEFT);
+    }
+
+    public function isElectronicInvoice(): bool
+    {
+        return !empty($this->sifen_cdc);
+    }
+
+    public function getFormattedCdcAttribute(): ?string
+    {
+        return $this->sifen_cdc ? trim(chunk_split($this->sifen_cdc, 4, ' ')) : null;
+    }
+
+    public function getSifenQrSvgAttribute(): ?string
+    {
+        if (empty($this->sifen_qr_url)) {
+            return null;
+        }
+        return \App\Services\SifenService::renderQrSvg($this->sifen_qr_url, 130);
     }
 }

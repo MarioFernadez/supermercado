@@ -105,6 +105,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/settings/backup', [\App\Http\Controllers\BackupController::class, 'run'])->name('settings.backup.run');
         Route::get('/settings/quotation', \App\Livewire\Settings\Quotation::class)->name('settings.quotation');
         Route::get('/settings/restaurant', \App\Livewire\Settings\Restaurant::class)->name('settings.restaurant');
+        Route::get('/settings/invoicing', \App\Livewire\Settings\Invoicing::class)->name('settings.invoicing');
+        Route::get('/sifen/print-test', [\App\Http\Controllers\SifenPrintController::class, 'printTestTicket'])->name('master.sifen.print-test');
+        Route::get('/sifen/print-test-a4', [\App\Http\Controllers\SifenPrintController::class, 'printTestA4'])->name('master.sifen.print-test-a4');
         // Restaurant comanda print (accessible by any auth user)
     });
 
@@ -115,6 +118,7 @@ Route::middleware(['auth'])->group(function () {
     // Master/Developer Routes
     Route::middleware([\App\Http\Middleware\DeveloperOnly::class])->group(function () {
         Route::get('/master/licensing', \App\Livewire\Admin\LicenseManager::class)->name('master.licensing');
+        Route::get('/master/sifen', \App\Livewire\Admin\SifenManager::class)->name('master.sifen');
     });
 });
 

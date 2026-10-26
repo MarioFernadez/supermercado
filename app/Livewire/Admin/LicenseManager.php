@@ -15,6 +15,7 @@ class LicenseManager extends Component
     public $maxBranches;
     public $tierName;
     public $ecommerceEnabled;
+    public $sifenMasterEnabled;
 
     // Campos de Suscripción
     public $enabledAt;
@@ -35,6 +36,7 @@ class LicenseManager extends Component
         $this->maxBranches = LicenseService::getMaxBranches();
         $this->tierName = LicenseService::getTierName();
         $this->ecommerceEnabled = LicenseService::isEcommerceEnabled();
+        $this->sifenMasterEnabled = LicenseService::isSifenEnabled();
 
         $this->enabledAt = LicenseService::getEnabledAt()->format('Y-m-d');
         $this->expiresAt = LicenseService::getExpiresAt()->format('Y-m-d');
@@ -51,6 +53,7 @@ class LicenseManager extends Component
             'maxBranches' => 'required|integer|min:1',
             'tierName' => 'required|string|min:2',
             'ecommerceEnabled' => 'boolean',
+            'sifenMasterEnabled' => 'boolean',
             'enabledAt' => 'required|date',
             'expiresAt' => 'required|date',
         ]);
@@ -64,6 +67,11 @@ class LicenseManager extends Component
         ]);
 
         StoreSetting::updateOrCreate(
+            ['key' => 'sifen_master_enabled'],
+            ['value' => $this->sifenMasterEnabled ? '1' : '0', 'description' => 'Habilitar Módulo de Facturación Electrónica SIFEN por Master']
+        );
+
+        StoreSetting::updateOrCreate(
             ['key' => 'license_enabled_at'],
             ['value' => $this->enabledAt]
         );
@@ -73,7 +81,7 @@ class LicenseManager extends Component
             ['value' => $this->expiresAt]
         );
 
-        session()->flash('message', 'Licencia y fechas de suscripción actualizadas correctamente.');
+        session()->flash('message', 'Licencia, módulos y fechas de suscripción actualizadas correctamente.');
     }
 
     public function registerPayment()

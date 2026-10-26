@@ -509,7 +509,10 @@
                     ⚙️ Ajustes Generales
                 </a>
                 <a href="{{ route('settings.billing') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('settings.billing')) }}">
-                    🧾 Datos de Facturación
+                    🧾 Plan & Suscripción
+                </a>
+                <a href="{{ route('settings.invoicing') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('settings.invoicing')) }}">
+                    📑 Facturación Electrónica
                 </a>
                 <a href="{{ route('settings.quotation') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('settings.quotation')) }}">
                     💱 Cotizaciones Divisas
@@ -536,7 +539,8 @@
             <div class="p-1 space-y-0.5">
                 @can('admin')
                 <a href="{{ route('settings.general') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">⚙️ Ajustes Generales</a>
-                <a href="{{ route('settings.billing') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">🧾 Facturación</a>
+                <a href="{{ route('settings.billing') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">🧾 Plan & Suscripción</a>
+                <a href="{{ route('settings.invoicing') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">📑 Facturación Electrónica</a>
                 <a href="{{ route('settings.quotation') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">💱 Cotizaciones Divisas</a>
                 @if(hasModule('restaurant'))
                 <a href="{{ route('settings.restaurant') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">🍽️ Mesas & Mozos</a>
@@ -601,6 +605,9 @@
                 <a href="{{ route('master.licensing') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('master.licensing')) }}">
                     ⚡ Master Licensing
                 </a>
+                <a href="{{ route('master.sifen') }}" wire:navigate class="{{ $subLinkClass(request()->routeIs('master.sifen*')) }}">
+                    📑 Facturación SIFEN
+                </a>
                 @endif
             </div>
         </div>
@@ -621,6 +628,7 @@
                 @endcan
                 @if(auth()->user()->isDeveloper())
                 <a href="{{ route('master.licensing') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">⚡ Master Licensing</a>
+                <a href="{{ route('master.sifen') }}" wire:navigate class="block px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 hover:text-white rounded">📑 Facturación SIFEN</a>
                 @endif
             </div>
         </div>

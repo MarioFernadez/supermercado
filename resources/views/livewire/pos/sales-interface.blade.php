@@ -95,6 +95,12 @@
                     </div>
                     @endif
 
+                    @if(\App\Services\SifenService::isEnabled())
+                    <div class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider {{ \App\Services\SifenService::isTestMode() ? 'bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40' }}" title="Facturación Electrónica SIFEN Activa">
+                        <span>{{ \App\Services\SifenService::isTestMode() ? '🧪 SIFEN Test' : '🛡️ SIFEN' }}</span>
+                    </div>
+                    @endif
+
                     <!-- Web Orders Button -->
                     @if(\App\Services\LicenseService::isEcommerceEnabled())
                     <button type="button" wire:click="openWebOrdersModal" class="relative bg-indigo-50 border border-indigo-200/80 hover:bg-indigo-100 text-indigo-700 p-2 rounded-xl transition-all flex items-center justify-center shadow-sm active:scale-95 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/50" title="Pedidos Web Pendientes">
@@ -461,7 +467,7 @@
                     @if(session('last_sale_id'))
                         <a href="{{ route('sales.ticket', session('last_sale_id')) }}" target="_blank" class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center text-xs">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                            IMPRIMIR TICKET
+                            {{ \App\Services\SifenService::isEnabled() ? 'IMPRIMIR FACTURA ELECTRÓNICA (KuDE)' : 'IMPRIMIR TICKET' }}
                         </a>
                         <button wire:click="$set('lastSaleId', null)" class="mt-2 text-xs text-gray-500 hover:underline dark:text-gray-400">Nueva Venta</button>
                     @endif

@@ -34,6 +34,12 @@ class LicenseService
         return $setting ? $setting->value === '1' : true;
     }
 
+    public static function isSifenEnabled(): bool
+    {
+        $setting = StoreSetting::where('key', 'sifen_master_enabled')->first();
+        return $setting ? ($setting->value === '1' || $setting->value === 1) : true;
+    }
+
     public static function getCurrentUserCount(): int
     {
         return User::where('email', '!=', config('services.developer.email'))->count();

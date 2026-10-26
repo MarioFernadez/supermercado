@@ -204,7 +204,10 @@
 
                             @if(auth()->user()->isDeveloper())
                                 <x-dropdown-link href="{{ route('master.licensing') }}" class="bg-yellow-50 dark:bg-yellow-950/40 hover:bg-yellow-100 text-yellow-800 dark:text-yellow-400 font-bold">
-                                    🗝️ {{ __('Master Control') }}
+                                    🗝️ {{ __('Master Licensing') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link href="{{ route('master.sifen') }}" class="bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 text-indigo-800 dark:text-indigo-400 font-bold">
+                                    📑 {{ __('Facturación SIFEN') }}
                                 </x-dropdown-link>
                                 <div class="border-t border-slate-100 dark:border-slate-700"></div>
                             @endif

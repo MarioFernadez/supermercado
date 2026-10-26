@@ -178,6 +178,11 @@ class SalesService
                 ]);
             }
 
+            // 6. Process Electronic Invoicing (SIFEN v150) if enabled
+            if (\App\Services\SifenService::isEnabled()) {
+                $sale = \App\Services\SifenService::processSaleElectronicInvoice($sale);
+            }
+
             return $sale;
         });
     }
